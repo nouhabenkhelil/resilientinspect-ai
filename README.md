@@ -1,7 +1,7 @@
 # ResilientInspect AI
 
 Projet de Deep Learning avancé, Axe 1 CNN et Transfer Learning. Le socle de la
-phase 0 est validé. La **phase 1 couvre l'audit et la préparation des données**,
+phase 0 est validé. La **phase 1 couvre l'audit, la préparation et l'EDA visuelle**,
 autorisés le 6 novembre 2026. Les expériences B0/A1 et T0/T1/T2 restent prévues,
 sans modèle ni entraînement implémenté. Toute étape suivante nécessite une
 nouvelle validation de l'utilisateur.
@@ -23,7 +23,7 @@ Le test officiel est conservé et aucun entraînement ni réglage de seuil n'est
 
 ## Arborescence
 
-`src/data/` contient l'audit, la préparation et le Dataset. Les autres emplacements des phases suivantes
+`src/data/` contient l'audit, la préparation, le Dataset et l'EDA visuelle. Les autres emplacements des phases suivantes
 restent des dossiers vides ou des modules contenant une docstring.
 
 ```text
@@ -34,14 +34,16 @@ data/manifests/{manifest.csv,train.csv,val.csv,test.csv,preparation.json}
 src/
   __init__.py
   {data,models,training,evaluation,export,mlops}/__init__.py
-  data/{audit.py,prepare.py,dataset.py}
+  data/{audit.py,prepare.py,dataset.py,eda.py}
 backend/{app/routes,tests}/        # réservé
 frontend/src/{components,pages,services,styles}/  # réservé
 tests/test_smoke.py
 tests/test_audit.py
 tests/{test_prepare.py,test_dataset.py}
+tests/test_eda.py
 reports/{eda,figures,tables,experiments,latex}/
   eda/{audit.json,audit_summary.csv,audit_by_defect.csv,layout_correction.json}
+  eda/visual/                     # figures et constats locaux, ignores par Git
   experiments/decision_log.md
   experiments/{data_preparation.json,data_preparation_verification.json}
 scripts/{bootstrap.ps1,smoke_test.py}
@@ -72,7 +74,7 @@ powershell -NoProfile -ExecutionPolicy RemoteSigned -File .\scripts\bootstrap.ps
 
 # Installer le runtime CPU avant l'extra data (aucun poids de modèle).
 & .\.venv\Scripts\python.exe -m pip install --index-url https://download.pytorch.org/whl/cpu "torch==2.15.0+cpu"
-& .\.venv\Scripts\python.exe -m pip install -e ".[dev,data]"
+& .\.venv\Scripts\python.exe -m pip install -e ".[dev,data,eda]"
 
 & .\.venv\Scripts\python.exe --version
 & .\.venv\Scripts\python.exe -m pip check
@@ -119,6 +121,8 @@ directes et le backend de construction sont fixés dans `pyproject.toml`.
 L'extra `data` ajoute [PyTorch 2.15.0](https://pypi.org/project/torch/2.15.0/)
 et [NumPy 2.3.5](https://pypi.org/project/numpy/2.3.5/). La roue CPU est installée
 depuis l'[index officiel PyTorch](https://download.pytorch.org/whl/cpu/torch/).
+L'extra `eda` fixe [Matplotlib 3.10.8](https://pypi.org/project/matplotlib/3.10.8/)
+pour les figures scientifiques locales, avec rendu Agg sans interface graphique.
 Ce fichier ne constitue pas encore un verrou complet des dépendances transitives.
 
 L'audit du 6 novembre 2026 relève un AMD Ryzen 5 5500U (6 cœurs, 12 threads),
@@ -276,6 +280,55 @@ de statistiques. Les tests synthétiques conservent les contrôles historiques d
 socle et ajoutent non-fuite, reproductibilité, préservation du test, alignement,
 chargement par DataLoader et détection d'originaux modifiés.
 
+## EDA visuelle locale
+
+```powershell
+& .\.venv\Scripts\python.exe -m resilientinspect.data.eda --root data/raw/mvtec_ad --manifest data/manifests/manifest.csv --output-dir reports/eda/visual
+& .\.venv\Scripts\python.exe -m pytest -q -W error
+```
+
+L'EDA lit les manifestes figés et vérifie leurs empreintes ainsi que celles des
+images/masques. Elle n'écrit ni dans les originaux ni dans les manifestes. La
+configuration, les scripts de préparation/Dataset, les splits et la géométrie
+scientifique restent inchangés. Les mesures utilisent les pixels **natifs**, sans
+passage à 256 × 256 et sans normalisation apprise.
+
+Définitions : `Y'=(0.2126R+0.7152G+0.0722B)/255` sur RGB encodé, sans linéarisation
+gamma ; il s'agit d'un proxy de luminance. La moyenne de Y' est calculée par
+image, et le contraste RMS est son écart-type de population (`ddof=0`). Les
+histogrammes distinguent train/good, val/good, test/good et test/anomaly. Les
+distributions par image et les histogrammes agrégés de pixels sont séparés.
+Les bornes d'affichage sont fixées à l'avance, sans choix de seuil sur le test.
+
+La surface relative d'un masque est le nombre de pixels non nuls divisé par sa
+surface native totale. Seuls les masques anormaux du test sont inclus ; les
+images normales n'ajoutent pas de faux masques de surface zéro. Les boxplots par
+défaut montrent les médianes, quartiles et valeurs extrêmes, avec axe logarithmique
+si toutes les surfaces sont positives. Un masque touchant le bord est décrit,
+sans être automatiquement considéré comme erroné.
+
+Le dossier local contient :
+
+- `{bottle,hazelnut,leather}_gallery.png` : normaux train/val/test, chaque type de
+  défaut, masque binaire et superposition (rouge : annotation, jaune : contour).
+- `{category}_distributions.png` : luminance moyenne, contraste, histogramme des
+  pixels Y' et distribution des surfaces annotées.
+- `{category}_alignment_XX.png` : toutes les paires anormales, 12 par planche,
+  original et superposition côte à côte. Les crops sont uniquement des vues de
+  contexte pour inspection, sans modification des images ou du Dataset.
+- `image_statistics.csv`, `visual_eda_summary.json` : mesures natives, sélection
+  déterministe, liste exhaustive des paires, coordonnées des crops et SHA256 des
+  figures.
+- `visual_review.json` : revue visuelle consignée après ouverture des figures,
+  avec empreintes et portée de l'inspection ; le générateur ne prétend pas avoir
+  réalisé automatiquement cette vérification sémantique.
+
+Tout `reports/eda/visual/` est ignoré par Git, y compris les figures dérivées du
+dataset. Le journal textuel conserve les constats et limites. L'égalité des
+dimensions et une superposition visuellement plausible ne garantissent pas la
+précision sémantique pixel par pixel des annotations. Aucune observation du test
+n'est utilisée pour modifier les paramètres scientifiques ou entraîner un modèle.
+
 ## Git et critères de validation
 
 Git conserve le code, les configurations, les tests et les rapports textuels.
@@ -293,5 +346,4 @@ L'étape de préparation est prête pour revue lorsque :
 - les effectifs réels et les limites figurent dans le journal.
 
 Les contrôles du jeu test sont descriptifs. Aucun entraînement ni réglage des
-seuils n'utilise le test. Les prochaines étapes d'EDA visuelle et de
-Deep Learning attendent une validation explicite.
+seuils n'utilise le test. Toute étape de Deep Learning attend une validation explicite.

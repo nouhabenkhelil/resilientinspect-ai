@@ -68,6 +68,8 @@ events.out.tfevents.*
 
 # Rapports machine generes localement
 /reports/experiments/environment_audit*.json
+# Figures EDA : contiennent des images derivees du dataset, usage local seulement
+/reports/eda/visual/
 ~$*.docx
 
 # Autoriser seulement les repertoires et marqueurs vides du squelette

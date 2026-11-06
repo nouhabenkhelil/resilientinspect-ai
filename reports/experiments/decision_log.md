@@ -359,3 +359,127 @@ Les fichiers d'audit antérieurs et les images d'origine sont conservés.
 de l'arrondi et de la convention de redimensionnement. Aucun entraînement ni
 nouvelle étape scientifique n'est engagé. Les limites de provenance des archives
 et d'alignement sémantique des annotations, consignées après l'audit, restent valides.
+
+## 2026-11-06 — Phase 1, EDA visuelle avant entraînement
+
+**Périmètre autorisé.** Compléter uniquement l'EDA visuelle des trois catégories
+confirmées, conformément au guide technique (EDA §4.2, séparation des usages du
+test §4.3, organisation et validations §11, §15 et §16). Aucun modèle,
+entraînement, réglage de seuil, nouvelle séparation ni changement de prétraitement.
+Les constats sur le test restent descriptifs et ne déterminent aucun hyperparamètre.
+
+### Mesures et figures locales
+
+`src/data/eda.py` lit le manifeste figé et contrôle son SHA256 ainsi que celui
+de chaque image et masque. Les mesures utilisent la résolution native. Le proxy
+de luminance est `Y'=(0.2126R+0.7152G+0.0722B)/255` sur RGB encodé, sans
+linéarisation gamma ; le contraste RMS est `std(Y', ddof=0)` par image. Aucune
+statistique de normalisation n'est apprise, sur quelque split que ce soit.
+
+Les histogrammes séparent train/good, val/good, test/good et test/anomaly :
+moyenne de luminance et contraste par image, histogramme agrégé des pixels Y'.
+La surface relative est le nombre de pixels non nuls du masque divisé par le
+nombre de pixels de l'image native ; seules les 225 annotations anormales
+contribuent aux distributions par défaut. Les normales ne créent pas de faux
+masques de surface zéro.
+
+**26 PNG générés et ouverts pour inspection** sous `reports/eda/visual/` :
+3 galeries, 3 figures de distributions et 20 planches de détail couvrant toutes
+les paires anormales. Les galeries montrent respectivement 9, 11 et 12 images
+pour bottle, hazelnut et leather : normaux train/val/test, chaque type de défaut,
+masques binaires et superpositions. Les détails affichent l'original et le
+masque rouge translucide à contour jaune, sur des vues de contexte identiques.
+Les recadrages et réductions d'affichage concernent uniquement les figures ;
+ils ne modifient ni les fichiers natifs ni le Dataset à 256 × 256.
+
+| Catégorie | Images mesurées | Paires inspectées | Surface min. (%) | Médiane (%) | Max. (%) |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| bottle | 292 | 63 | 0.575679 | 5.717778 | 27.418642 |
+| hazelnut | 501 | 70 | 0.232887 | 1.615810 | 27.658558 |
+| leather | 369 | 92 | 0.088596 | 0.461531 | 6.859398 |
+| Total | 1 162 | 225 | — | — | — |
+
+`image_statistics.csv` conserve une ligne par image. `visual_eda_summary.json`
+conserve les définitions, statistiques, histogrammes, sélections, chemins de
+toutes les paires, coordonnées natives des vues et SHA256 des 26 figures.
+`visual_review.json` consigne la revue réellement effectuée par l'assistant,
+avec les empreintes des figures ouvertes ; elle ne constitue pas une validation
+externe par un annotateur expert.
+
+### Constats visuels et limites
+
+- **Alignement :** les 63 paires bottle, 70 hazelnut et 92 leather ont été
+  examinées sur les 20 planches de détail. Aucun mauvais appariement, décalage
+  global, retournement ou rotation évident n'a été observé. Les contrôles natifs
+  ne détectent ni dimensions incompatibles, ni valeurs non binaires, ni masque
+  anormal vide. Cette revue sur figures ne certifie pas chaque frontière au pixel.
+- **Étendue des annotations :** certains contours englobent du contexte ou des
+  intervalles entre parties visibles du défaut. Exemples traçables :
+  `bottle/test/contamination/008.png` (zone intérieure large),
+  `hazelnut/test/print/011.png` (espaces entre traces de peinture),
+  `leather/test/cut/018.png` (prolongement sombre et peu contrasté de la coupure).
+  Ce sont des incertitudes sur la portée des annotations, sans preuve suffisante
+  d'erreur d'association. Aucune correction de masque n'est effectuée.
+- **Luminance :** les distributions train/validation se recouvrent largement.
+  La moyenne par image de Y' pour leather vaut 0.286161 en train, 0.287895 en
+  validation et 0.329011 en test/good ; pour hazelnut, respectivement 0.190005,
+  0.189421 et 0.208367. Bottle est plus proche : 0.533745, 0.533272 et 0.538992.
+  Il s'agit de différences descriptives, sans test de significativité ni cause
+  d'acquisition établie. Elles ne conduisent à aucun ajustement scientifique.
+- **Surfaces :** forte hétérogénéité entre types de défaut ; les défauts color
+  et poke de leather peuvent être discrets à l'échelle de l'image entière.
+  Le plus petit masque natif est celui de `leather/test/color/006.png`, soit
+  0.088596 % de l'image. Les vues de contexte facilitent leur inspection sans
+  modifier les tailles, interpolations ou paramètres du pipeline figé.
+
+### Vérifications réellement obtenues
+
+Matplotlib 3.10.8 est ajouté dans l'extra `eda`, avec rendu scientifique Agg sans
+interface graphique. L'installation de `.[dev,data,eda]` a réussi ; `pip check`
+a retourné `No broken requirements found.` Les premières planches présentaient
+des légendes tronquées ; leur grille d'affichage a été corrigée, puis les
+26 figures finales ont été ouvertes et les tests réexécutés.
+
+La suite finale `python -m pytest -q -W error` donne **114 passed in 34.60s**,
+sans avertissement, skip ou xfail. Les 100 tests antérieurs sont conservés ;
+14 cas EDA synthétiques vérifient notamment les statistiques natives, les
+superpositions, la couverture des paires, les empreintes, les erreurs de masque,
+le refus d'écriture dans les sources/manifestes et l'exclusion Git des figures.
+
+La vérification finale, horodatée `2026-11-06T13:16:52.260103+00:00`, confirme :
+
+- **1 393 fichiers originaux inchangés**, mêmes ensembles de chemins, SHA256,
+  tailles et dates de modification qu'avant l'EDA.
+- **10 fichiers protégés inchangés**, SHA256 et dates de modification :
+  configuration scientifique, code de préparation/Dataset, rapport de
+  préparation et ensemble des fichiers de manifestes.
+- SHA256 du manifeste toujours
+  `13f55c7cf7c87a3e3739e24920bb0d85cc96a39a00e30d277ddfaa1832b84522`.
+- Empreintes des 26 PNG vérifiées ; 225 paires uniques couvertes exactement une
+  fois sur les planches ; 1 162 lignes de statistiques ; les histogrammes natifs
+  conservent le nombre de pixels attendu dans chacun des groupes.
+- Tout `reports/eda/visual/` est ignoré par Git, y compris les figures et preuves
+  locales. Aucun fichier de ce dossier ou du dataset brut n'est suivi par Git.
+  Aucun commit, push ou publication n'a été effectué.
+
+Les empreintes et résultats du contrôle sont enregistrés localement dans
+`reports/eda/visual/integrity_verification.json`. Les valeurs du tableau sont
+des mesures du dataset présent, et aucune métrique de modèle n'est produite.
+
+### Fichiers et commandes
+
+Créés : `src/data/eda.py`, `tests/test_eda.py` et les artefacts locaux sous
+`reports/eda/visual/`. Modifiés : `.gitignore`, `pyproject.toml`, `README.md` et
+ce journal. Les splits, images, masques et paramètres scientifiques sont conservés.
+
+```powershell
+& .\.venv\Scripts\python.exe -m pip install -e ".[dev,data,eda]"
+& .\.venv\Scripts\python.exe -m resilientinspect.data.eda --root data/raw/mvtec_ad --manifest data/manifests/manifest.csv --output-dir reports/eda/visual
+& .\.venv\Scripts\python.exe -m pip check
+& .\.venv\Scripts\python.exe -m pytest -q -W error
+```
+
+Une relance du générateur ne vaut pas nouvelle revue sémantique : comparer les
+empreintes des figures avec `visual_review.json`, puis refaire la revue si les
+entrées ou le rendu ont changé. **Arrêt après cette vérification de phase 1.**
+L'entraînement et toute nouvelle étape attendent la validation de l'utilisateur.
