@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools==80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "resilientinspect-ai"
+version = "0.0.1"
+description = "Socle experimental pour la detection d'anomalies visuelles - phase 0"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+dependencies = ["PyYAML==6.0.3"]
+
+[project.optional-dependencies]
+dev = ["pytest==9.2.0"]
+
+[tool.setuptools]
+package-dir = {resilientinspect = "src"}
+packages = [
+  "resilientinspect",
+  "resilientinspect.data",
+  "resilientinspect.models",
+  "resilientinspect.training",
+  "resilientinspect.evaluation",
+  "resilientinspect.export",
+  "resilientinspect.mlops",
+]
+
+[tool.pytest.ini_options]
+minversion = "9.2"
+testpaths = ["tests"]
+addopts = "-ra"

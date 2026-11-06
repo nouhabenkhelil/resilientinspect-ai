@@ -1,0 +1,18 @@
+# Phase 0 : declaration uniquement ; aucun telechargement ni chargement.
+schema_version: 1
+phase: 0
+dataset:
+  name: mvtec_ad
+  root_env: MVTEC_AD_ROOT
+  default_root: data/raw/mvtec_ad
+  download: false
+  categories:
+    status: provisional
+    candidates:
+      - hazelnut
+      - bottle
+      - leather
+    confirmed: []
+  notes: >-
+    Les categories ne sont pas encore confirmees. Leur selection definitive
+    necessite la validation de l'utilisateur avant toute phase suivante.

@@ -1,0 +1,77 @@
+# Python, environnements et outils locaux
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+build/
+dist/
+.ipynb_checkpoints/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Secrets : seul le modele sans valeurs sensibles est versionnable
+.env
+.env.*
+!.env.example
+.aws/
+.secrets/
+secrets/
+*credentials*.json
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Donnees : conserver seulement les marqueurs de repertoires vides
+/data/**
+datasets/
+mvtec_ad/
+MVTec_AD/
+
+# Sorties locales et checkpoints, y compris hors des repertoires prevus
+/artifacts/**
+outputs/
+mlruns/
+mlartifacts/
+.dvc/cache/
+.dvc/tmp/
+.dvc/config.local
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.safetensors
+*.h5
+*.hdf5
+*.npy
+*.npz
+*.pkl
+*.pickle
+*.joblib
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.log
+events.out.tfevents.*
+
+# Rapports machine generes localement
+/reports/experiments/environment_audit*.json
+~$*.docx
+
+# Autoriser seulement les repertoires et marqueurs vides du squelette
+!/data/**/
+!/data/**/.gitkeep
+!/artifacts/**/
+!/artifacts/**/.gitkeep
