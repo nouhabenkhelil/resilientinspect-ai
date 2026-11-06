@@ -1,8 +1,8 @@
 # ResilientInspect AI
 
 Projet de Deep Learning avancé, Axe 1 CNN et Transfer Learning. Le socle de la
-phase 0 est validé. La **phase 1 est limitée ici à l'audit descriptif de MVTec AD**,
-autorisé le 6 novembre 2026. Les expériences B0/A1 et T0/T1/T2 restent prévues,
+phase 0 est validé. La **phase 1 couvre l'audit et la préparation des données**,
+autorisés le 6 novembre 2026. Les expériences B0/A1 et T0/T1/T2 restent prévues,
 sans modèle ni entraînement implémenté. Toute étape suivante nécessite une
 nouvelle validation de l'utilisateur.
 
@@ -17,29 +17,33 @@ et non `docs/guide_technique.docx`. Il est conservé à son emplacement d'origin
 Le dataset a été téléchargé localement par l'utilisateur dans
 `data/raw/mvtec_ad/`. Les catégories **bottle, hazelnut, leather** sont maintenant
 confirmées dans [`configs/dataset.yaml`](configs/dataset.yaml). Aucun
-téléchargement automatique n'est effectué. L'audit lit les images et les masques,
-sans créer de manifeste d'apprentissage, split, transformation ou seuil.
+téléchargement automatique n'est effectué. Des manifestes séparent exclusivement
+`train/good` en train/validation ; le Dataset redimensionne les images en mémoire.
+Le test officiel est conservé et aucun entraînement ni réglage de seuil n'est effectué.
 
 ## Arborescence
 
-`src/data/audit.py` contient l'audit. Les autres emplacements des phases suivantes
+`src/data/` contient l'audit, la préparation et le Dataset. Les autres emplacements des phases suivantes
 restent des dossiers vides ou des modules contenant une docstring.
 
 ```text
 .github/workflows/                # réservé
-configs/dataset.yaml              # catégories confirmées, phase 1 audit
+configs/dataset.yaml              # seed, splits et géométrie documentés
 data/{raw,processed,manifests}/    # contenu exclu de Git
+data/manifests/{manifest.csv,train.csv,val.csv,test.csv,preparation.json}
 src/
   __init__.py
   {data,models,training,evaluation,export,mlops}/__init__.py
-  data/audit.py
+  data/{audit.py,prepare.py,dataset.py}
 backend/{app/routes,tests}/        # réservé
 frontend/src/{components,pages,services,styles}/  # réservé
 tests/test_smoke.py
 tests/test_audit.py
+tests/{test_prepare.py,test_dataset.py}
 reports/{eda,figures,tables,experiments,latex}/
   eda/{audit.json,audit_summary.csv,audit_by_defect.csv,layout_correction.json}
   experiments/decision_log.md
+  experiments/{data_preparation.json,data_preparation_verification.json}
 scripts/{bootstrap.ps1,smoke_test.py}
 artifacts/                        # contenu exclu de Git
 pyproject.toml
@@ -66,10 +70,14 @@ py -0p
 # RemoteSigned ne s'applique qu'à ce processus enfant.
 powershell -NoProfile -ExecutionPolicy RemoteSigned -File .\scripts\bootstrap.ps1
 
+# Installer le runtime CPU avant l'extra data (aucun poids de modèle).
+& .\.venv\Scripts\python.exe -m pip install --index-url https://download.pytorch.org/whl/cpu "torch==2.15.0+cpu"
+& .\.venv\Scripts\python.exe -m pip install -e ".[dev,data]"
+
 & .\.venv\Scripts\python.exe --version
 & .\.venv\Scripts\python.exe -m pip check
 & .\.venv\Scripts\python.exe .\scripts\smoke_test.py
-& .\.venv\Scripts\python.exe -m pytest -q
+& .\.venv\Scripts\python.exe -m pytest -q -W error
 ```
 
 Le bootstrap installe `.[dev]` dans `.venv`, sans activation, sans modifier la
@@ -99,7 +107,7 @@ Copie facultative de la configuration locale, sans écraser un fichier existant 
 if (-not (Test-Path -LiteralPath .env)) { Copy-Item -LiteralPath .env.example -Destination .env }
 ```
 
-Le CLI d'audit utilise `--root` explicitement et ne charge pas `.env`.
+Les CLI de données utilisent `--root` explicitement et ne chargent pas `.env`.
 Le smoke test du socle continue de fonctionner sans dataset.
 
 ## Dépendances et matériel
@@ -108,6 +116,9 @@ Le projet utilise [PyYAML 6.0.3](https://pypi.org/project/PyYAML/6.0.3/),
 [Pillow 13.0.0](https://pypi.org/project/pillow/13.0.0/) pour le décodage et
 [pytest 9.2.0](https://pypi.org/project/pytest/9.2.0/) pour les tests ; les versions
 directes et le backend de construction sont fixés dans `pyproject.toml`.
+L'extra `data` ajoute [PyTorch 2.15.0](https://pypi.org/project/torch/2.15.0/)
+et [NumPy 2.3.5](https://pypi.org/project/numpy/2.3.5/). La roue CPU est installée
+depuis l'[index officiel PyTorch](https://download.pytorch.org/whl/cpu/torch/).
 Ce fichier ne constitue pas encore un verrou complet des dépendances transitives.
 
 L'audit du 6 novembre 2026 relève un AMD Ryzen 5 5500U (6 cœurs, 12 threads),
@@ -116,19 +127,18 @@ et Git 2.53.0.windows.1. Aucun GPU NVIDIA n'est déclaré par Windows et
 `nvidia-smi` est absent du PATH. La valeur vidéo WMI de 512 Mio ne représente
 pas toute la mémoire partagée du GPU intégré.
 
-PyTorch n'est pas requis pour l'audit. S'il est déjà installé,
-le smoke test vérifie un petit calcul CPU, interroge `torch.cuda.is_available()`
-et teste chaque GPU CUDA annoncé avec un petit tenseur. Sinon il indique
-`not_installed` et `cuda_available: null` : cela signifie **non testé**.
-Le CPU reste la référence provisoire ; l'installation DL et le choix d'un
-accélérateur seront décidés séparément, sur preuves matérielles.
+PyTorch est désormais requis pour l'étape `preparation`. Son absence ou une
+erreur d'import fait échouer le smoke test et les tests Dataset, sans skip ni
+filtre d'avertissement. Il reste facultatif dans les configurations historiques
+du socle et de l'audit. Le runtime vérifié est `2.15.0+cpu`, sans CUDA ; le smoke
+test vérifie un petit calcul CPU et l'import du module Dataset.
 
 ## Lire les vérifications
 
 Le smoke test retourne un JSON avec la phase configurée, `status: "ok"` et un code de sortie
 0 si Python 3.11 x64, le paquet installé, Git, les répertoires et la configuration
 sont valides, sans accéder aux images. Un champ `status: "error"` et un code 1 identifient un contrôle en
-échec. PyTorch absent reste informatif. Un dépôt sans commit est accepté
+échec. PyTorch absent est une erreur en préparation. Un dépôt sans commit est accepté
 (`head: null`). Aucune sortie n'est une mesure de qualité d'un modèle.
 
 Les tests vérifient notamment l'exécution du CLI depuis un autre répertoire,
@@ -199,6 +209,73 @@ des données de splits.
 Les tests d'audit emploient uniquement de petites données synthétiques dans les
 répertoires temporaires de Pytest. Aucun test automatisé ne dépend du dataset réel.
 
+## Préparation déterministe et Dataset
+
+```powershell
+& .\.venv\Scripts\python.exe -m resilientinspect.data.prepare --root data/raw/mvtec_ad --output-dir data/manifests --report reports/experiments/data_preparation.json
+& .\.venv\Scripts\python.exe -m pytest -q -W error
+```
+
+Les paramètres proviennent de `configs/dataset.yaml` (ou `--config`). Pour chaque
+catégorie, les chemins de `train/good` sont triés, puis mélangés par un générateur
+local `random.Random(42)` réinitialisé par catégorie. Les `ceil(0.2 × N)` premières
+images constituent `val` ; les autres constituent `train`. L'arrondi supérieur
+explique les petits écarts au ratio exact 80/20. L'ordre des catégories, des
+fichiers sur disque et l'état du générateur aléatoire global n'affectent pas le
+résultat. Aucun fichier officiel de test n'est réaffecté.
+
+Les CSV UTF-8 utilisent des chemins POSIX relatifs à `data/raw/mvtec_ad` :
+`image_path,category,split,label,defect_type,mask_path,source_split,sha256,mask_sha256`.
+`label=0` signifie normal, `label=1` anormal ; les images normales ont un chemin
+de masque vide. `source_split` conserve `train`/`test` officiel, y compris pour
+les images de validation issues du train officiel. Les masques sont appariés
+uniquement aux anomalies test correspondantes.
+
+`manifest.csv` contient toutes les lignes ; `train.csv`, `val.csv`, `test.csv`
+en sont des partitions. La validation refuse les chemins dupliqués, contenus
+SHA256 identiques entre splits, anomalies en train/val, chemins hors racine et
+masques incohérents. Une erreur d'audit ou un fichier ambigu/non reconnu dans les
+splits bloque la préparation. Aucun fichier ne disparaît silencieusement.
+
+Les CSV et `preparation.json` sont figés : une relance identique conserve leurs
+octets et dates de modification. Une sortie existante différente est refusée
+avant toute écriture ; pour un protocole futur autorisé, choisir un nouveau
+répertoire de manifestes **et** un nouveau `--report`. Le rapport public conserve
+effectifs, SHA256 des CSV, inventaire des sources et empreintes des deux scripts.
+Les manifestes sous `data/` restent ignorés par Git, comme prévu par le guide.
+
+```python
+from resilientinspect.data.dataset import MVTecDataset
+
+train = MVTecDataset("data/manifests/manifest.csv", "data/raw/mvtec_ad", split="train")
+sample = train[0]  # lecture et transformation en mémoire uniquement
+```
+
+Le split est obligatoire ; utiliser de préférence le manifeste complet pour
+vérifier la disjonction globale. Les originaux du split sélectionné ne sont ouverts
+qu'à `__getitem__`. Leurs empreintes sont vérifiées par défaut avant décodage.
+
+La sortie contient `image` float32 contiguë `[3,256,256]` et `mask` float32
+binaire `[1,256,256]`, avec un masque nul pour les images normales. Le RGB est
+converti par division fixe par 255, sans moyenne/écart-type calculé, sans
+normalisation ImageNet et sans augmentation. Les labels et chemins sont retournés
+avec `has_mask` et les métadonnées de géométrie.
+
+La mise à taille est un **letterbox sans recadrage** : facteur commun
+`min(256/H,256/W)`, dimensions arrondies au plus proche (demi vers le haut), puis
+centrage avec bordures noires. Les images utilisent PIL BILINEAR ; les masques
+utilisent NEAREST puis une conversion binaire `>0`, préservant leurs classes.
+Une bordure impaire ajoute le pixel supplémentaire en bas ou à droite. Un
+`valid_mask` distingue l'image utile des bordures ; `original_size`, `resized_size`
+et `padding` permettent de retrouver la géométrie native. Les trois catégories
+actuelles étant carrées, elles ne nécessitent aucune bordure.
+
+Les masques test sont chargés uniquement avec `split="test"` pour un contrôle
+d'alignement ou une future évaluation. Ils ne servent à aucun réglage ni calcul
+de statistiques. Les tests synthétiques conservent les contrôles historiques du
+socle et ajoutent non-fuite, reproductibilité, préservation du test, alignement,
+chargement par DataLoader et détection d'originaux modifiés.
+
 ## Git et critères de validation
 
 Git conserve le code, les configurations, les tests et les rapports textuels.
@@ -207,13 +284,14 @@ archives, checkpoints, artefacts binaires et caches. Seuls les `.gitkeep` vides
 préservent les répertoires de données/artefacts. Aucun ajout Git ni commit n'est
 effectué automatiquement. Les protections Git sont testées sans créer de données.
 
-L'étape d'audit est prête pour revue lorsque :
+L'étape de préparation est prête pour revue lorsque :
 
 - l'environnement Python 3.11 x64 est identifié et les capacités CPU/GPU sont documentées ;
 - `pip check`, le smoke test et `pytest` réussissent sans dataset ;
 - les exclusions Git protègent les chemins de données, poids et secrets ;
-- les trois catégories sont auditées et les anomalies/limites figurent dans le journal.
+- les manifestes sont figés et les vérifications de splits/géométrie passent ;
+- les effectifs réels et les limites figurent dans le journal.
 
 Les contrôles du jeu test sont descriptifs. Aucun entraînement ni réglage des
-seuils n'utilise le test. Les prochaines étapes de données, d'EDA visuelle et de
+seuils n'utilise le test. Les prochaines étapes d'EDA visuelle et de
 Deep Learning attendent une validation explicite.

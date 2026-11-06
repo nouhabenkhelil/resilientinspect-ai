@@ -53,7 +53,7 @@ def write_config(tmp_path, config):
     return path
 
 
-def test_dataset_declaration_confirms_user_categories_for_audit(smoke_module):
+def test_dataset_declaration_confirms_user_categories_for_preparation(smoke_module):
     config = smoke_module.validate_dataset_config(PROJECT_ROOT / "configs" / "dataset.yaml")
     assert config["phase"] == 1
     assert config["dataset"]["download"] is False
@@ -61,6 +61,9 @@ def test_dataset_declaration_confirms_user_categories_for_audit(smoke_module):
     assert categories["status"] == "confirmed"
     assert categories["confirmed"] == ["bottle", "hazelnut", "leather"]
     assert set(categories["candidates"]) == {"hazelnut", "bottle", "leather"}
+    assert config["dataset"]["stage"] == "preparation"
+    assert config["dataset"]["preparation"]["seed"] == 42
+    assert config["dataset"]["preparation"]["validation_fraction"] == 0.2
 
 
 def test_config_validation_does_not_require_dataset(smoke_module, tmp_path, synthetic_config):
@@ -158,12 +161,35 @@ def test_missing_config_is_an_explicit_error(smoke_module, tmp_path):
         smoke_module.validate_dataset_config(tmp_path / "missing.yaml")
 
 
-def test_collect_report_accepts_optional_dependencies(smoke_module):
+def test_collect_report_checks_required_data_dependencies(smoke_module):
     report = smoke_module.collect_report(PROJECT_ROOT)
     assert report["phase"] == 1
     assert report["status"] == "ok", report
     assert isinstance(report["checks"], dict) and report["checks"]
     assert all(check["status"] in {"ok", "not_installed"} for check in report["checks"].values()), report
+    assert report["checks"]["pytorch"]["required"] is True
+    assert report["checks"]["pytorch"]["status"] == "ok"
+
+
+def test_required_torch_absence_is_not_silently_skipped(smoke_module, monkeypatch, capsys):
+    monkeypatch.setattr(smoke_module, "probe_torch", lambda: {"status": "not_installed"})
+    assert smoke_module.main([]) == 1
+    report = json.loads(capsys.readouterr().out)
+    assert report["checks"]["pytorch"]["status"] == "error"
+
+
+@pytest.mark.parametrize(
+    ("section", "key", "value"),
+    [("preparation", "seed", True), ("preparation", "validation_fraction", 1),
+     ("preparation", "validation_rounding", "floor"),
+     ("preprocessing", "mask_interpolation", "bilinear"),
+     ("preprocessing", "normalization", "fit_on_test")],
+)
+def test_preparation_config_errors_remain_errors(smoke_module, tmp_path, section, key, value):
+    config = yaml.safe_load((PROJECT_ROOT / "configs/dataset.yaml").read_text(encoding="utf-8"))
+    config["dataset"][section][key] = value
+    with pytest.raises(ValueError):
+        smoke_module.validate_dataset_config(write_config(tmp_path, config))
 
 
 def test_smoke_cli_works_outside_repository(tmp_path):
@@ -212,6 +238,7 @@ def test_git_ignores_datasets_checkpoints_and_secrets():
     ignored_paths = {
         "data/raw/mvtec_ad/hazelnut/train/good/sample.png",
         "data/processed/cache.bin",
+        "data/manifests/manifest.csv",
         "datasets/mvtec_ad/sample.png",
         "outputs/checkpoints/b0.pt",
         "artifacts/checkpoints/a1.pth",

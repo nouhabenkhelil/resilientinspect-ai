@@ -1,0 +1,47 @@
+{
+  "checked_at_utc": "2026-11-06T12:42:30.085880+00:00",
+  "status": "ok",
+  "torch_version": "2.15.0+cpu",
+  "cuda_available": false,
+  "manifest_sha256": {
+    "manifest.csv": "13f55c7cf7c87a3e3739e24920bb0d85cc96a39a00e30d277ddfaa1832b84522",
+    "train.csv": "781b1143fee9eab14f871f4f6335a94f9832c8bb0f13efbb8c40f54d3eadc5d4",
+    "val.csv": "08f10f23fa04a531188684a46ae2578c9337e8c81f6c3c20aaf1b3c20b963092",
+    "test.csv": "10b4d50e66d9c98cfd53a55b304be4fe150ad4e1eaf7e7a99c1c019d793d30ac"
+  },
+  "source_inventory_sha256": "c7de69f4dd3c504e4d34055b3986d828a4c3d2c61864a703f82e4b5b1a0385e3",
+  "counts_loaded": {
+    "bottle": {
+      "train": 167,
+      "val": 42,
+      "test": 83
+    },
+    "hazelnut": {
+      "train": 312,
+      "val": 79,
+      "test": 110
+    },
+    "leather": {
+      "train": 196,
+      "val": 49,
+      "test": 124
+    }
+  },
+  "samples_loaded": 1162,
+  "batches_checked": 3,
+  "split_membership_independently_reproduced": true,
+  "official_test_matches_previous_audit": true,
+  "manifest_roundtrip_bytes_and_mtimes_identical": true,
+  "all_originals_sha256_and_mtimes_unchanged": 1393,
+  "tensor_shapes_and_binary_masks_checked": true,
+  "empty_anomaly_masks_after_fixed_resize": [],
+  "all_originals_and_manifests_ignored_by_git": true,
+  "dataset_files_tracked": 0,
+  "normalization_fitted": false,
+  "training_performed": false,
+  "tests": {
+    "command": ".venv/Scripts/python.exe -m pytest -q -W error",
+    "passed": 100,
+    "duration_seconds": 30.7
+  }
+}

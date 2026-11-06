@@ -232,3 +232,130 @@ masques restent à réaliser dans une étape EDA distincte, sur validation.
 
 **Arrêt après l'audit.** Attendre la validation explicite des rapports et de la
 structure corrigée avant toute autre étape de données ou de Deep Learning.
+
+## 2026-11-06 — Phase 1, préparation des données
+
+**Autorisation.** L'utilisateur a validé la poursuite vers des manifestes,
+une séparation déterministe 80/20 de `train/good`, un Dataset PyTorch et une
+géométrie 256 × 256. Catégories inchangées : bottle, hazelnut, leather. Le test
+officiel n'est ni réaffecté ni utilisé pour apprendre une normalisation ou
+régler des hyperparamètres. Aucun modèle n'est construit ou entraîné.
+
+### Protocole retenu
+
+Pour chaque catégorie, trier les chemins relatifs puis les mélanger avec un
+générateur local `random.Random(42)` réinitialisé par catégorie. Réserver les
+`ceil(0.2 × N)` premières images pour `val` et conserver les autres pour `train`.
+L'arrondi supérieur est explicite : le ratio exact 80/20 n'est pas possible pour
+tous les effectifs entiers. Le générateur aléatoire global et l'ordre des
+catégories n'affectent pas la sélection. Le split test provient exclusivement
+du dossier test officiel, sans rééchantillonnage.
+
+Colonnes CSV : `image_path,category,split,label,defect_type,mask_path,source_split,sha256,mask_sha256`.
+Les chemins POSIX sont relatifs à la racine MVTec AD. Label 0 = normal, label 1 =
+anormal. Les masques des images normales sont absents du CSV ; le Dataset produit
+un tenseur de masque nul en mémoire. `source_split=train` permet de tracer
+également la provenance officielle des lignes de validation.
+
+Les chemins dupliqués, contenus SHA256 identiques entre splits, anomalies en
+train/val et associations image/masque incohérentes sont refusés. Les fichiers
+corrompus, masques non binaires et fichiers non reconnus dans les splits bloquent
+la préparation ; aucun fichier n'est omis silencieusement. Un fichier de sortie
+existant différent est refusé avant écriture. Une relance identique ne réécrit
+pas les fichiers, préservant aussi leur date de modification.
+
+### Géométrie et convention des tenseurs
+
+Conserver le ratio par letterbox, sans recadrage. Facteur commun
+`min(256/H,256/W)`, dimensions arrondies au plus proche (demi vers le haut),
+centrage et bordures noires ; pixel de bordure supplémentaire en bas/droite si
+nécessaire. PIL BILINEAR pour le RGB et NEAREST pour le masque, suivie d'une
+conversion binaire `>0`. Les catégories réelles étant carrées, aucune bordure
+n'est nécessaire sur les données actuelles.
+
+Sorties : `image` float32 contiguë `[3,256,256]`, `mask` float32 binaire
+`[1,256,256]`, `valid_mask`, label, catégorie, split, défaut, chemins, `has_mask`,
+tailles native/redimensionnée et padding. Les pixels RGB sont divisés par 255,
+constante fixée à l'avance ; aucune moyenne/variance, normalisation ImageNet ou
+augmentation n'est appliquée. Le split du Dataset est obligatoire et les
+empreintes des originaux sont contrôlées par défaut à la lecture.
+
+### Effectifs générés et chargés réellement
+
+| Catégorie | Train | Validation | Test officiel | Test normal | Test anormal |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| bottle | 167 | 42 | 83 | 20 | 63 |
+| hazelnut | 312 | 79 | 110 | 40 | 70 |
+| leather | 196 | 49 | 124 | 32 | 92 |
+| Total | 675 | 170 | 317 | 92 | 225 |
+
+`data/manifests/manifest.csv` contient **1 162 lignes**. `train.csv`, `val.csv`
+et `test.csv` en sont les partitions. `data/manifests/preparation.json` et
+`reports/experiments/data_preparation.json` enregistrent paramètres, effectifs,
+empreintes des CSV, inventaire des sources et empreintes des deux scripts.
+Le SHA256 du manifeste complet est
+`13f55c7cf7c87a3e3739e24920bb0d85cc96a39a00e30d277ddfaa1832b84522`.
+
+### Vérifications réellement exécutées
+
+PyTorch **2.15.0+cpu** a été installé depuis l'index CPU officiel, sans poids de
+modèle. L'extra `data` fixe torch 2.15.0 et NumPy 2.3.5 ; Python reste 3.11.9,
+Pillow 13.0.0, PyYAML 6.0.3 et pytest 9.2.0. Les versions transitives ne constituent
+pas encore un environnement entièrement verrouillé.
+
+La première suite donnait 99 réussites et un avertissement PyTorch signalant
+l'absence de NumPy. La dépendance NumPy a été ajoutée explicitement, sans filtrer
+l'avertissement. Après ajout du contrôle de fichier non reconnu dans un split,
+la suite finale exécutée avec `-W error` donne **100 passed in 30.70s**, sans
+avertissement, skip ou xfail : 31 cas audit, 34 smoke, 22 préparation, 13 Dataset.
+Les contrôles historiques de phase 0 sont conservés ; seuls les invariants de
+configuration désormais confirmée sont actualisés. L'absence de PyTorch reste
+tolérée pour les anciennes étapes socle/audit, mais provoque une erreur explicite
+pour l'étape préparation. Un test simule cette absence et vérifie le code 1.
+
+| Vérification réelle | Résultat |
+| --- | --- |
+| `pip check` | `No broken requirements found.` |
+| Smoke test | Phase 1, `status: ok`, PyTorch CPU requis/importé, `cuda_available: false`. |
+| Génération des manifestes | Code 0 ; effectifs ci-dessus. |
+| Reproductibilité synthétique | Même seed, ordre des catégories inversé et RNG global différent : mêmes lignes et mêmes octets CSV/JSON. Seed différente : validation différente, test identique. |
+| Non-fuite | Disjonction de chemins et contenus entre splits ; train/val normaux issus uniquement du train officiel. |
+| Reproduction réelle de seed 42 | Sélection reconstruite indépendamment depuis les fichiers présents ; égalité des lignes de validation. |
+| Préservation du test | Chemins, labels, défauts, masques et empreintes des 317 images test concordent avec l'audit antérieur. |
+| Chargement réel | 675 train + 170 val + 317 test parcourus ; géométrie, dtype, plages et masques binaires contrôlés. Trois batches de taille 2 vérifiés. |
+| Masques après taille fixée | Aucun des 225 masques anormaux ne devient vide à 256 × 256 ; aucune taille ni interpolation ajustée sur ce résultat. |
+| Originaux | 1 393 fichiers, SHA256, tailles et dates de modification identiques au relevé avant préparation. |
+| Manifestes figés | Hashes CSV corrects ; réécriture à l'identique sans modification d'octets ni de mtime. |
+| Git | Originaux et manifestes ignorés, aucun fichier de dataset suivi, aucun commit ni push effectué. |
+
+Les preuves de chargement et d'intégrité sont sauvegardées dans
+`reports/experiments/data_preparation_verification.json`, horodaté
+`2026-11-06T12:42:30.085880+00:00` (13:42 à Africa/Lagos). Les masques test ont été
+lus uniquement pour vérifier l'alignement et l'application de paramètres déjà
+fixés par la demande ; aucun choix de modèle, de seuil ou d'hyperparamètre
+n'en découle. Les tests du Dataset train/val vérifient qu'ils n'ouvrent aucun
+fichier du test ni de ground_truth.
+
+### Fichiers et commandes
+
+Créés : `src/data/prepare.py`, `src/data/dataset.py`, `tests/test_prepare.py`,
+`tests/test_dataset.py`, les quatre CSV et `preparation.json` sous
+`data/manifests/`, `reports/experiments/data_preparation.json`,
+`reports/experiments/data_preparation_verification.json`.
+Modifiés : `configs/dataset.yaml`, `pyproject.toml`, `src/data/__init__.py`,
+`scripts/smoke_test.py`, `tests/test_smoke.py`, `README.md`, ce journal.
+Les fichiers d'audit antérieurs et les images d'origine sont conservés.
+
+```powershell
+& .\.venv\Scripts\python.exe -m pip install --index-url https://download.pytorch.org/whl/cpu "torch==2.15.0+cpu"
+& .\.venv\Scripts\python.exe -m pip install -e ".[dev,data]"
+& .\.venv\Scripts\python.exe -m resilientinspect.data.prepare --root data/raw/mvtec_ad --output-dir data/manifests --report reports/experiments/data_preparation.json
+& .\.venv\Scripts\python.exe -m pip check
+& .\.venv\Scripts\python.exe scripts/smoke_test.py
+& .\.venv\Scripts\python.exe -m pytest -q -W error
+```
+
+**Arrêt après la préparation.** Attendre la validation des manifestes, du ratio,
+de l'arrondi et de la convention de redimensionnement. Aucun entraînement ni
+nouvelle étape scientifique n'est engagé. Les limites de provenance des archives
+et d'alignement sémantique des annotations, consignées après l'audit, restent valides.

@@ -1,7 +1,7 @@
 """Diagnostic du socle des phases 0 et 1, sans donnees, reseau ni entrainement.
 
 Une installation PyTorch existante est sondee avec de petits tenseurs ; son
-absence est informative et ne bloque pas le socle Python.
+absence est informative pour le socle/audit, mais bloque l'etape de preparation.
 """
 
 from __future__ import annotations
@@ -77,6 +77,12 @@ def validate_dataset_config(path: Path) -> dict[str, Any]:
         or not set(confirmed).issubset(candidates)
     ):
         raise ValueError("La phase 1 exige des categories confirmees uniques parmi les candidates.")
+    if dataset.get("stage") not in (None, "audit", "preparation"):
+        raise ValueError("Etape de donnees inconnue.")
+    if dataset.get("stage") == "preparation":
+        from resilientinspect.data.prepare import validate_preparation_settings
+
+        validate_preparation_settings(config)
     return config
 
 
@@ -124,6 +130,7 @@ def collect_report(project_root: Path = PROJECT_ROOT) -> dict[str, Any]:
     """Collecte uniquement les preuves verifiables du socle local."""
     checks: dict[str, dict[str, Any]] = {}
     phase: int | None = None
+    pytorch_required = False
     checks["python"] = {
         "status": "ok" if sys.version_info[:2] == (3, 11) and struct.calcsize("P") == 8 else "error",
         "version": platform.python_version(),
@@ -143,6 +150,7 @@ def collect_report(project_root: Path = PROJECT_ROOT) -> dict[str, Any]:
     try:
         config = validate_dataset_config(project_root / "configs" / "dataset.yaml")
         phase = config["phase"]
+        pytorch_required = config["dataset"].get("stage") == "preparation"
         checks["dataset_config"] = {
             "status": "ok",
             "categories_status": config["dataset"]["categories"]["status"],
@@ -169,6 +177,16 @@ def collect_report(project_root: Path = PROJECT_ROOT) -> dict[str, Any]:
     except (OSError, subprocess.SubprocessError, RuntimeError) as exc:
         checks["git"] = {"status": "error", "detail": str(exc)}
     checks["pytorch"] = probe_torch()
+    checks["pytorch"]["required"] = pytorch_required
+    if pytorch_required and checks["pytorch"]["status"] == "not_installed":
+        checks["pytorch"] = {"status": "error", "required": True,
+                             "detail": "La preparation exige PyTorch : installer l'extra data."}
+    if pytorch_required:
+        try:
+            importlib.import_module("resilientinspect.data.dataset")
+            checks["data_module"] = {"status": "ok"}
+        except Exception as exc:
+            checks["data_module"] = {"status": "error", "detail": str(exc)}
     return {
         "phase": phase,
         "checked_at_utc": datetime.now(timezone.utc).isoformat(),

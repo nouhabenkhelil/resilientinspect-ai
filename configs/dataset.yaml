@@ -1,4 +1,4 @@
-# Phase 1 : audit du dataset local uniquement ; aucun telechargement ni entrainement.
+# Phase 1 : preparation en lecture seule ; aucun entrainement.
 schema_version: 1
 phase: 1
 dataset:
@@ -6,6 +6,7 @@ dataset:
   root_env: MVTEC_AD_ROOT
   default_root: data/raw/mvtec_ad
   download: false
+  stage: preparation
   categories:
     status: confirmed
     candidates:
@@ -16,7 +17,22 @@ dataset:
       - bottle
       - hazelnut
       - leather
+  preparation:
+    seed: 42
+    validation_fraction: 0.2
+    split_method: sorted_then_python_random_shuffle_per_category_v1
+    validation_rounding: ceil
+  preprocessing:
+    image_size: [256, 256]  # hauteur, largeur
+    aspect_ratio: letterbox
+    image_interpolation: bilinear
+    mask_interpolation: nearest
+    padding_value: 0
+    pixel_scaling: divide_by_255
+    normalization: none
   notes: >-
     Les categories bottle, hazelnut et leather ont ete confirmees par l'utilisateur.
     Le dataset a ete fourni localement dans data/raw/mvtec_ad. Cette phase autorise
-    uniquement l'audit, sans preprocessing, entrainement ni reglage sur le test.
+    l'audit et la preparation de manifestes. La validation provient exclusivement
+    de train/good. Le test officiel reste inchange. Le redimensionnement a lieu
+    en memoire, sans modifier les originaux, sans entrainement ni reglage sur le test.

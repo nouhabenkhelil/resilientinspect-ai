@@ -5,13 +5,14 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "resilientinspect-ai"
 version = "0.0.1"
-description = "Detection d'anomalies visuelles - socle et audit MVTec AD"
+description = "Detection d'anomalies visuelles - audit et preparation MVTec AD"
 readme = "README.md"
 requires-python = ">=3.11,<3.12"
 dependencies = ["PyYAML==6.0.3", "Pillow==13.0.0"]
 
 [project.optional-dependencies]
 dev = ["pytest==9.2.0"]
+data = ["torch==2.15.0", "numpy==2.3.5"]
 
 [tool.setuptools]
 package-dir = {resilientinspect = "src"}
