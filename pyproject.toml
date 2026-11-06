@@ -5,10 +5,10 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "resilientinspect-ai"
 version = "0.0.1"
-description = "Socle experimental pour la detection d'anomalies visuelles - phase 0"
+description = "Detection d'anomalies visuelles - socle et audit MVTec AD"
 readme = "README.md"
 requires-python = ">=3.11,<3.12"
-dependencies = ["PyYAML==6.0.3"]
+dependencies = ["PyYAML==6.0.3", "Pillow==13.0.0"]
 
 [project.optional-dependencies]
 dev = ["pytest==9.2.0"]

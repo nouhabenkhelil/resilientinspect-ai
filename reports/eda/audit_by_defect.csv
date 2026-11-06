@@ -1,0 +1,13 @@
+﻿category,defect,test_images,masks,matched_pairs
+bottle,broken_large,20,20,20
+bottle,broken_small,22,22,22
+bottle,contamination,21,21,21
+hazelnut,crack,18,18,18
+hazelnut,cut,17,17,17
+hazelnut,hole,18,18,18
+hazelnut,print,17,17,17
+leather,color,19,19,19
+leather,cut,19,19,19
+leather,fold,17,17,17
+leather,glue,19,19,19
+leather,poke,18,18,18

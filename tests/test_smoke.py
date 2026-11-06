@@ -1,4 +1,4 @@
-"""Verifications de phase 0 sans donnees, reseau ni entrainement."""
+"""Verifications du socle sans donnees, reseau ni entrainement."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ SMOKE_SCRIPT = PROJECT_ROOT / "scripts" / "smoke_test.py"
 @pytest.fixture(scope="module")
 def smoke_module():
     """Charger le script sans modifier le chemin d'import du projet."""
-    spec = importlib.util.spec_from_file_location("phase_zero_smoke", SMOKE_SCRIPT)
+    spec = importlib.util.spec_from_file_location("project_smoke", SMOKE_SCRIPT)
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
@@ -53,13 +53,13 @@ def write_config(tmp_path, config):
     return path
 
 
-def test_dataset_declaration_remains_provisional(smoke_module):
+def test_dataset_declaration_confirms_user_categories_for_audit(smoke_module):
     config = smoke_module.validate_dataset_config(PROJECT_ROOT / "configs" / "dataset.yaml")
-    assert config["phase"] == 0
+    assert config["phase"] == 1
     assert config["dataset"]["download"] is False
     categories = config["dataset"]["categories"]
-    assert categories["status"] == "provisional"
-    assert categories["confirmed"] == []
+    assert categories["status"] == "confirmed"
+    assert categories["confirmed"] == ["bottle", "hazelnut", "leather"]
     assert set(categories["candidates"]) == {"hazelnut", "bottle", "leather"}
 
 
@@ -74,7 +74,7 @@ def test_config_validation_does_not_require_dataset(smoke_module, tmp_path, synt
 @pytest.mark.parametrize(
     ("field_path", "invalid_value"),
     [
-        (("phase",), 1),
+        (("phase",), 2),
         (("dataset", "download"), True),
         (("dataset", "categories", "status"), "confirmed"),
         (("dataset", "categories", "confirmed"), ["hazelnut"]),
@@ -88,6 +88,55 @@ def test_reject_unsafe_or_ambiguous_config(
     smoke_module, tmp_path, synthetic_config, field_path, invalid_value
 ):
     config = deepcopy(synthetic_config)
+    target = config
+    for key in field_path[:-1]:
+        target = target[key]
+    target[field_path[-1]] = invalid_value
+    with pytest.raises(ValueError):
+        smoke_module.validate_dataset_config(write_config(tmp_path, config))
+
+
+@pytest.fixture
+def synthetic_phase_one_config(synthetic_config):
+    config = deepcopy(synthetic_config)
+    config["phase"] = 1
+    config["dataset"]["categories"].update(
+        status="confirmed", confirmed=["bottle", "hazelnut", "leather"]
+    )
+    return config
+
+
+@pytest.mark.parametrize("confirmed", [["bottle"], ["bottle", "hazelnut", "leather"]])
+def test_phase_one_accepts_confirmed_candidates_without_reading_data(
+    smoke_module, tmp_path, synthetic_phase_one_config, confirmed
+):
+    config = deepcopy(synthetic_phase_one_config)
+    config["dataset"]["categories"]["confirmed"] = confirmed
+    missing_dataset = tmp_path / config["dataset"]["default_root"]
+    assert not missing_dataset.exists()
+    assert smoke_module.validate_dataset_config(write_config(tmp_path, config)) == config
+    assert not missing_dataset.exists()
+
+
+@pytest.mark.parametrize(
+    ("field_path", "invalid_value"),
+    [
+        (("phase",), True),
+        (("dataset", "download"), True),
+        (("dataset", "categories", "status"), "provisional"),
+        (("dataset", "categories", "confirmed"), []),
+        (("dataset", "categories", "confirmed"), ["bottle", "bottle"]),
+        (("dataset", "categories", "confirmed"), ["unknown_category"]),
+        (("dataset", "categories", "confirmed"), [""]),
+        (("dataset", "categories", "confirmed"), [None]),
+        (("dataset", "categories", "confirmed"), "bottle"),
+    ],
+    ids=["boolean-phase", "download", "provisional", "empty", "duplicates", "unknown", "empty-name", "null-name", "scalar"],
+)
+def test_phase_one_rejects_unsafe_or_ambiguous_config(
+    smoke_module, tmp_path, synthetic_phase_one_config, field_path, invalid_value
+):
+    config = deepcopy(synthetic_phase_one_config)
     target = config
     for key in field_path[:-1]:
         target = target[key]
@@ -111,6 +160,7 @@ def test_missing_config_is_an_explicit_error(smoke_module, tmp_path):
 
 def test_collect_report_accepts_optional_dependencies(smoke_module):
     report = smoke_module.collect_report(PROJECT_ROOT)
+    assert report["phase"] == 1
     assert report["status"] == "ok", report
     assert isinstance(report["checks"], dict) and report["checks"]
     assert all(check["status"] in {"ok", "not_installed"} for check in report["checks"].values()), report
@@ -128,6 +178,7 @@ def test_smoke_cli_works_outside_repository(tmp_path):
     )
     assert result.returncode == 0, result.stdout + result.stderr
     report = json.loads(result.stdout)
+    assert report["phase"] == 1
     assert report["status"] == "ok", report
     assert isinstance(report["checks"], dict) and report["checks"]
     assert all(check["status"] in {"ok", "not_installed"} for check in report["checks"].values()), report

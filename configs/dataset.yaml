@@ -1,18 +1,22 @@
-# Phase 0 : declaration uniquement ; aucun telechargement ni chargement.
+# Phase 1 : audit du dataset local uniquement ; aucun telechargement ni entrainement.
 schema_version: 1
-phase: 0
+phase: 1
 dataset:
   name: mvtec_ad
   root_env: MVTEC_AD_ROOT
   default_root: data/raw/mvtec_ad
   download: false
   categories:
-    status: provisional
+    status: confirmed
     candidates:
       - hazelnut
       - bottle
       - leather
-    confirmed: []
+    confirmed:
+      - bottle
+      - hazelnut
+      - leather
   notes: >-
-    Les categories ne sont pas encore confirmees. Leur selection definitive
-    necessite la validation de l'utilisateur avant toute phase suivante.
+    Les categories bottle, hazelnut et leather ont ete confirmees par l'utilisateur.
+    Le dataset a ete fourni localement dans data/raw/mvtec_ad. Cette phase autorise
+    uniquement l'audit, sans preprocessing, entrainement ni reglage sur le test.

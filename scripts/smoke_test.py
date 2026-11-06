@@ -1,7 +1,7 @@
-"""Diagnostic de phase 0, sans donnees, reseau ni entrainement.
+"""Diagnostic du socle des phases 0 et 1, sans donnees, reseau ni entrainement.
 
 Une installation PyTorch existante est sondee avec de petits tenseurs ; son
-absence est informative et ne bloque pas le socle Python de la phase 0.
+absence est informative et ne bloque pas le socle Python.
 """
 
 from __future__ import annotations
@@ -34,7 +34,7 @@ REQUIRED_DIRECTORIES = (
 
 
 def validate_dataset_config(path: Path) -> dict[str, Any]:
-    """Valide la declaration provisoire, sans acceder au dataset."""
+    """Valide la declaration de phase 0 ou 1, sans acceder au dataset."""
     import yaml
 
     try:
@@ -46,18 +46,16 @@ def validate_dataset_config(path: Path) -> dict[str, Any]:
         raise ValueError("La configuration doit etre un mapping YAML.")
     if type(config.get("schema_version")) is not int or config["schema_version"] != 1:
         raise ValueError("schema_version doit valoir 1.")
-    if type(config.get("phase")) is not int or config["phase"] != 0:
-        raise ValueError("Seule la phase 0 est autorisee.")
+    if type(config.get("phase")) is not int or config["phase"] not in (0, 1):
+        raise ValueError("Seules les phases 0 et 1 sont autorisees.")
     dataset = config.get("dataset")
     if not isinstance(dataset, dict) or dataset.get("name") != "mvtec_ad":
         raise ValueError("Le dataset declare doit etre mvtec_ad.")
     if dataset.get("download") is not False:
-        raise ValueError("download doit rester false en phase 0.")
+        raise ValueError("download doit rester false.")
     categories = dataset.get("categories")
     if not isinstance(categories, dict):
         raise ValueError("La declaration des categories est absente.")
-    if categories.get("status") != "provisional" or categories.get("confirmed") != []:
-        raise ValueError("Les categories doivent rester provisoires et non confirmees.")
     candidates = categories.get("candidates")
     if (
         not isinstance(candidates, list)
@@ -66,6 +64,19 @@ def validate_dataset_config(path: Path) -> dict[str, Any]:
         or len(set(candidates)) != len(candidates)
     ):
         raise ValueError("Les categories candidates doivent etre des noms uniques non vides.")
+    confirmed = categories.get("confirmed")
+    if config["phase"] == 0:
+        if categories.get("status") != "provisional" or confirmed != []:
+            raise ValueError("La phase 0 exige des categories provisoires et non confirmees.")
+    elif (
+        categories.get("status") != "confirmed"
+        or not isinstance(confirmed, list)
+        or not confirmed
+        or any(not isinstance(name, str) or not name.strip() for name in confirmed)
+        or len(set(confirmed)) != len(confirmed)
+        or not set(confirmed).issubset(candidates)
+    ):
+        raise ValueError("La phase 1 exige des categories confirmees uniques parmi les candidates.")
     return config
 
 
@@ -112,6 +123,7 @@ def _git(*arguments: str, root: Path) -> str:
 def collect_report(project_root: Path = PROJECT_ROOT) -> dict[str, Any]:
     """Collecte uniquement les preuves verifiables du socle local."""
     checks: dict[str, dict[str, Any]] = {}
+    phase: int | None = None
     checks["python"] = {
         "status": "ok" if sys.version_info[:2] == (3, 11) and struct.calcsize("P") == 8 else "error",
         "version": platform.python_version(),
@@ -130,6 +142,7 @@ def collect_report(project_root: Path = PROJECT_ROOT) -> dict[str, Any]:
         checks["package"] = {"status": "error", "detail": str(exc)}
     try:
         config = validate_dataset_config(project_root / "configs" / "dataset.yaml")
+        phase = config["phase"]
         checks["dataset_config"] = {
             "status": "ok",
             "categories_status": config["dataset"]["categories"]["status"],
@@ -157,7 +170,7 @@ def collect_report(project_root: Path = PROJECT_ROOT) -> dict[str, Any]:
         checks["git"] = {"status": "error", "detail": str(exc)}
     checks["pytorch"] = probe_torch()
     return {
-        "phase": 0,
+        "phase": phase,
         "checked_at_utc": datetime.now(timezone.utc).isoformat(),
         "status": "error" if any(check["status"] == "error" for check in checks.values()) else "ok",
         "host": {

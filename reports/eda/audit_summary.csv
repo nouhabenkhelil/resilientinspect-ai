@@ -1,0 +1,4 @@
+﻿category,resolved_path,train_good,test_good,test_anomalous,ground_truth_masks,matched_pairs,missing_masks,orphan_masks,corrupt_images,corrupt_masks,mask_size_mismatches,resolutions,formats,modes,errors,warnings
+bottle,bottle,209,20,63,63,63,0,0,0,0,0,"{""images"": {""900x900"": 292}, ""masks"": {""900x900"": 63}}","{""images"": {""PNG"": 292}, ""masks"": {""PNG"": 63}}","{""images"": {""RGB"": 292}, ""masks"": {""L"": 63}}",0,1
+hazelnut,hazelnut,391,40,70,70,70,0,0,0,0,0,"{""images"": {""1024x1024"": 501}, ""masks"": {""1024x1024"": 70}}","{""images"": {""PNG"": 501}, ""masks"": {""PNG"": 70}}","{""images"": {""RGB"": 501}, ""masks"": {""L"": 70}}",0,0
+leather,leather,245,32,92,92,92,0,0,0,0,0,"{""images"": {""1024x1024"": 369}, ""masks"": {""1024x1024"": 92}}","{""images"": {""PNG"": 369}, ""masks"": {""PNG"": 92}}","{""images"": {""RGB"": 369}, ""masks"": {""L"": 92}}",0,0

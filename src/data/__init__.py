@@ -1,1 +1,1 @@
-"""Emplacement reserve aux donnees. Aucun pipeline implemente."""
+"""Audit descriptif MVTec AD en lecture seule ; aucun pipeline d'entrainement."""

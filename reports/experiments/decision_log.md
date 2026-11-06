@@ -117,3 +117,118 @@ séparément, comme décrit ci-dessus.
 **Arrêt avant phase 1.** Attendre la validation explicite de l'utilisateur ;
 aucune autorisation de téléchargement, pipeline de données ou entraînement n'est
 déduite de la réussite des tests smoke.
+
+## 2026-11-06 — Phase 1, étape d'audit uniquement
+
+**Autorisation.** L'utilisateur a ouvert la phase 1 et fourni localement
+`data/raw/mvtec_ad/`, avec les catégories bottle, hazelnut et leather. La mission
+courante est limitée à la structure, l'intégrité, les comptages, les rapports et
+les tests synthétiques. Les catégories sont maintenant confirmées dans la
+configuration ; aucun manifeste d'apprentissage, split, Dataset PyTorch, modèle,
+entraînement ou réglage de seuil n'est autorisé par cette étape.
+
+**Guide.** Les sections 4, 11, 15 et 16 ont été relues depuis le guide DOCX déjà
+identifié. La phase 1 complète du guide couvre davantage de tâches ; le périmètre
+plus étroit de la demande actuelle prévaut. Le jeu test est inspecté uniquement
+pour décrire les fichiers, labels et masques, sans choix d'hyperparamètres.
+
+### Structure et préservation des originaux
+
+L'inspection initiale relève `bottle/bottle/{train,test,ground_truth}`, alors que
+hazelnut et leather ont directement les trois dossiers attendus. Le dossier
+extérieur bottle ne contient que l'emballage bottle, sans collision avec les
+destinations. Chaque catégorie comprend aussi `license.txt` et `readme.txt`.
+
+Après vérification des chemins absolus à l'intérieur du dataset et de l'absence
+de conflits/liens/jonctions, les cinq éléments du bottle intérieur ont été
+déplacés dans le dossier bottle extérieur avec PowerShell `Move-Item -LiteralPath`,
+sans `-Force`. Aucun élément n'a été écrasé ou supprimé. Le dossier vide
+`bottle/bottle` est conservé.
+
+La preuve `reports/eda/layout_correction.json` consigne **1 393 fichiers avant et
+après**, avec égalité des contenus SHA256, tailles et dates de modification après
+correspondance des chemins. Ces fichiers comprennent 1 162 images, 225 masques et
+6 fichiers texte. Une seconde comparaison SHA256, après l'exécution finale de
+l'auditeur, confirme encore l'égalité de tous les 1 393 fichiers. L'auditeur
+lui-même n'effectue aucun déplacement ni aucune écriture dans les originaux.
+
+### Résultats mesurés
+
+Rapport final généré le `2026-11-06T12:12:08.077661+00:00` (13:12 à Africa/Lagos).
+
+| Catégorie | train/good | test/good | Test anormal | Masques / paires | Résolution images et masques |
+| --- | ---: | ---: | ---: | ---: | --- |
+| bottle | 209 | 20 | 63 | 63 / 63 | 900 × 900 |
+| hazelnut | 391 | 40 | 70 | 70 / 70 | 1024 × 1024 |
+| leather | 245 | 32 | 92 | 92 / 92 | 1024 × 1024 |
+| Total | 845 | 92 | 225 | 225 / 225 | Selon catégorie |
+
+Défauts observés, avec un masque apparié par image :
+
+- bottle : broken_large 20, broken_small 22, contamination 21.
+- hazelnut : crack 18, cut 17, hole 18, print 17.
+- leather : color 19, cut 19, fold 17, glue 19, poke 18.
+
+Les 1 387 images/masques sont en PNG décodable : les 1 162 images en RGB et les
+225 masques en L. Aucun fichier corrompu après `verify()` puis décodage complet
+`load()`, aucun masque manquant ou orphelin, aucune différence de dimensions
+image/masque et aucun doublon exact d'image dans une catégorie n'a été détecté.
+Les valeurs de masque ne déclenchent aucune alerte de masque vide/non binaire.
+
+**Statut : `ok`, 0 erreur et 1 avertissement.** L'unique avertissement
+`empty_nested_wrapper` concerne le dossier `bottle/bottle` vide conservé pour
+respecter l'interdiction de suppression.
+
+### Implémentation et vérifications exécutées
+
+Fichiers créés : `src/data/audit.py`, `tests/test_audit.py`,
+`reports/eda/audit.json`, `reports/eda/audit_summary.csv`,
+`reports/eda/audit_by_defect.csv`, `reports/eda/layout_correction.json`.
+Fichiers mis à jour : `pyproject.toml`, `configs/dataset.yaml`,
+`src/data/__init__.py`, `scripts/smoke_test.py`, `tests/test_smoke.py`, `README.md`
+et ce journal.
+
+Pillow 13.0.0 a été ajouté comme dépendance directe fixée et installé dans le
+`.venv` existant par le bootstrap autorisé. PyTorch reste absent. Le smoke test
+accepte maintenant les phases 0 et 1 et lit seulement la configuration, sans
+avoir besoin du dataset.
+
+| Vérification réelle | Résultat |
+| --- | --- |
+| Bootstrap / installation éditable | Réussite ; Python 3.11.9 x64 conservé. |
+| `python -m pip check` via `.venv` | `No broken requirements found.` |
+| `python scripts/smoke_test.py` via `.venv` | Phase 1, `status: ok`, catégories confirmées, `data_accessed: false`. |
+| `python -m pytest -q` via `.venv` | **59 passed in 2.55s** : 31 cas d'audit et 28 cas smoke. |
+| Audit réel CLI | Code 0 ; résultats ci-dessus, 0 erreur / 1 avertissement. |
+| Cohérence CSV/JSON | Tous les effectifs des deux CSV concordent avec le JSON. |
+| Traçabilité | SHA256 du fichier `audit.py` identique à `auditor_sha256` enregistré ; empreintes des 1 387 fichiers audités vérifiées. |
+| Protection Git | Les 1 393 fichiers originaux sont ignorés ; `git ls-files -- data/raw/mvtec_ad` ne retourne aucun fichier. Aucun push effectué. |
+
+Les tests emploient seulement des images temporaires synthétiques et couvrent
+comptages séparés, dimensions/formats/modes, masques manquants/orphelins/ambigus,
+JPEG tronqués détectables seulement au décodage, imbrication et ambiguïté,
+répertoires absents/vides/inattendus, exports et refus d'écrire dans le dataset.
+Ils contrôlent aussi l'invariance des contenus et des dates de modification.
+La revue a conduit à ajouter les signalements de groupes requis vides et de
+dossiers supplémentaires, puis à réexécuter l'audit réel sur le code final.
+
+Commandes reproductibles depuis la racine :
+
+```powershell
+powershell -NoProfile -ExecutionPolicy RemoteSigned -File .\scripts\bootstrap.ps1
+& .\.venv\Scripts\python.exe -m resilientinspect.data.audit --root data/raw/mvtec_ad --categories bottle hazelnut leather --output-dir reports/eda
+& .\.venv\Scripts\python.exe -m pytest -q
+```
+
+### Limites et validation attendue
+
+La date de téléchargement, la version précise et l'empreinte des archives
+d'origine ne sont pas connues ; elles ne sont pas déduites des effectifs. Les
+empreintes locales portent sur les fichiers extraits. L'audit de doublons est
+exact et par catégorie ; il ne détecte pas les images similaires/réencodées.
+L'égalité des tailles image/masque ne prouve pas l'alignement sémantique des
+annotations. Galeries, histogrammes de luminance et inspection visuelle des
+masques restent à réaliser dans une étape EDA distincte, sur validation.
+
+**Arrêt après l'audit.** Attendre la validation explicite des rapports et de la
+structure corrigée avant toute autre étape de données ou de Deep Learning.
