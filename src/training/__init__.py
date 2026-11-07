@@ -1,1 +1,1 @@
-"""Emplacement reserve a l'entrainement. Aucune boucle implementee."""
+"""Entrainement reproductible ; B0 par categorie dans train_ae."""

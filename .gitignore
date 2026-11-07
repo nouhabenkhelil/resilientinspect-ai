@@ -42,6 +42,8 @@ MVTec_AD/
 outputs/
 mlruns/
 mlartifacts/
+mlflow.db
+mlflow.db-*
 .dvc/cache/
 .dvc/tmp/
 .dvc/config.local

@@ -591,3 +591,163 @@ cache local ignoré ; le README fournit un smoke CPU autonome reproductible.
 **Arrêt après l'architecture B0 et ses vérifications.** La prochaine étape
 d'entraînement nécessite la validation de l'utilisateur. Aucun résultat de
 modèle sur MVTec AD, A1, T0/T1/T2 ou exécution CUDA n'est revendiqué.
+
+## 2026-11-07 — Phase 2, étape 2 : pipeline B0 et smoke CPU
+
+**Autorisation.** Architecture B0 validée par l'utilisateur ; préparer le
+pipeline reproductible CPU/Kaggle T4 et exécuter uniquement un court entraînement
+CPU de vérification, en commençant par bottle. Références : guide §5.1, §6,
+§11, §15 et §16. Aucun run complet CPU, A1, T0/T1/T2, évaluation test, export
+ou service de déploiement n'est ajouté.
+
+### Protocole initial, sans optimalité démontrée
+
+| Paramètre | Choix initial |
+| --- | --- |
+| Catégorie par défaut | bottle ; un modèle/optimiseur neuf par appel |
+| Taille et prétraitement | 256 × 256, letterbox bilinear/nearest, pixels /255 inchangés |
+| Batch size / maximum d'époques | 16 / 20 |
+| Optimiseur | Adam, lr 0.001, betas 0.9/0.999, eps 1e-8, weight decay 0 |
+| Perte | L1 moyenne sur batch, canaux et pixels |
+| Sélection | Plus petite L1 val, strictement ; conserver le premier en cas d'égalité |
+| Early stopping | Patience 5, min_delta 0 ; compteur séparé du minimum strict du checkpoint |
+| Seed | 42, Python / NumPy / PyTorch / DataLoader et workers |
+| Précision | AMP désactivée ; activer mixed_precision est refusé à cette étape |
+| Chargement | num_workers 0, drop_last false ; train mélangé, val ordonné |
+| Smoke seulement | Une époque, batch size 2, au plus deux mini-batches par split, num_workers 0 |
+
+Ces choix sont enregistrés dans `configs/train_ae_b0.yaml` pour permettre une
+future comparaison contrôlée B0/A1. La configuration du modèle et le Dataset
+existants sont réutilisés sans modification. Les champs de configuration
+inconnus sont refusés pour éviter des paramètres enregistrés mais ignorés.
+
+Le pipeline ne construit que `MVTecDataset(split="train")` et
+`MVTecDataset(split="val")`, pour une seule catégorie. Les deux groupes exigent
+label normal, provenance officielle train et absence de masque. Le manifeste
+figé est contrôlé par SHA256 à partir de `preparation.json`. Les métadonnées
+du manifeste complet sont lues pour les contrôles structurels ; aucune image
+ou annotation test n'est ouverte. Les mises à jour Adam utilisent train ; val
+utilise eval sans gradient ni mise à jour des buffers BatchNorm. La perte
+d'époque est pondérée par le nombre d'images, y compris le dernier batch court.
+
+Les algorithmes déterministes sont requis, cuDNN benchmark désactivé,
+`CUBLAS_WORKSPACE_CONFIG=:4096:8` fixé avant exécution GPU. Chaque appel
+réinitialise modèle et optimiseur, crée un nouveau run et un nouveau dossier.
+Il n'existe pas de reprise implicite de checkpoint. L'identité entre versions
+PyTorch ou entre CPU et CUDA n'est pas garantie ; la reproductibilité testée
+concerne deux runs synthétiques dans le même environnement CPU.
+
+### Suivi MLflow et dépendances
+
+MLflow suit l'expérience `resilientinspect-ae`, avec tags variant, catégorie,
+seed, scope, version dataset (SHA256 du manifeste), Git SHA et split de sélection.
+Paramètres effectifs, séries train/val par époque, meilleur checkpoint, CSV,
+figure des pertes, environnement, chemins des images réellement utilisées et
+sources sont sauvegardés localement et enregistrés comme artefacts. Le statut
+d'un run interrompu en erreur est `FAILED`. Un smoke porte explicitement
+`scope=smoke` ; son checkpoint reste séparé des runs complets.
+
+Backend SQLite local : `artifacts/training/mlflow.db`, artefacts sous
+`artifacts/training/mlartifacts/`. Aucun serveur distant n'est configuré.
+L'extra `train` contient MLflow Skinny 3.16.1, SQLAlchemy 2.0.57, Alembic 1.20.1
+et Matplotlib 3.10.8, sans dépendance PyTorch. Aucun code du pipeline ne lance pip.
+Les sources sont copiées avec leurs empreintes pour conserver l'état exact même
+si Git indique des modifications non commitées.
+
+L'installation initiale avec SQLAlchemy 2.1.8 a déclenché un
+`SADeprecationWarning` sur la stratégie `noload` utilisée par MLflow. La première
+suite ciblée a donc donné 14 réussites et 5 erreurs avec `-W error`. SQLAlchemy
+a été fixé à **2.0.57** ; aucun filtre d'avertissement n'a été ajouté. Une suite
+ciblée intermédiaire a ensuite donné 19 réussites en 50.07 s. Après ajout du
+contrôle des champs inconnus et des copies de sources, la suite finale contient
+20 nouveaux tests de pipeline, tous réussis.
+
+Les rapports d'installation pip confirment qu'aucun paquet torch n'a été
+installé ou remplacé. PyTorch reste **2.15.0+cpu**, NumPy **2.3.5**, Pillow
+**13.0.0**, PyYAML **6.0.3**. `pip check` donne `No broken requirements found.`
+L'installation éditable a été rafraîchie avec `--no-deps --no-build-isolation`.
+
+### Smoke officiel réellement exécuté
+
+Commande PowerShell :
+
+```powershell
+& .\.venv\Scripts\python.exe -W error -m resilientinspect.training.train_ae --config configs/train_ae_b0.yaml --root data/raw/mvtec_ad --manifest data/manifests/manifest.csv --category bottle --device cpu --output-dir artifacts/training --smoke
+```
+
+Run MLflow **`b453d9b1af9d4186abcffa41afc10a87`**, statut **FINISHED**.
+Dossier local ignoré :
+`artifacts/training/bottle/smoke_b453d9b1af9d4186abcffa41afc10a87/`.
+
+| Mesure effective | Résultat |
+| --- | --- |
+| Époques terminées / meilleur checkpoint | 1 / époque 1 |
+| Images disponibles bottle train / val | 167 / 42 |
+| Batches réellement parcourus train / val | 2 / 2 |
+| Images réellement utilisées train / val | 4 / 4 |
+| Pas Adam | 2, vérifiés dans l'état de l'optimiseur sauvegardé |
+| L1 moyenne train, partielle | 0.2950199544429779 |
+| L1 moyenne val, partielle | 0.3324028551578522 |
+| Image/masque test utilisé | Aucun |
+
+Ces pertes sont des diagnostics d'exécution sur un budget minuscule, sans
+interprétation de qualité de détection. Aucune AUROC, AP, F1 ou métrique pixel
+n'est calculée. Les poids diffèrent de l'initialisation ; les tenseurs du
+checkpoint sont finis, les compteurs BN indiquent seulement les deux batches
+train. Le checkpoint a été rechargé sur CPU, puis téléchargé depuis le stockage
+d'artefacts MLflow local : même SHA256. Les séries de métriques MLflow sont
+identiques aux valeurs du CSV et du résumé. La figure des pertes a été ouverte
+et contrôlée ; une seule époque produit deux points, pas une courbe de convergence.
+
+### Tests et intégrité vérifiés
+
+```powershell
+& .\.venv\Scripts\python.exe -m pytest -q -W error --tb=short
+```
+
+Résultat final : **156 passed, 1 skipped in 100.09s**. Le seul skip est le test
+CUDA existant de `test_models.py`, faute de GPU local. Aucun ancien test n'est
+modifié. Les nouveaux tests couvrent : entraînement synthétique avec MLflow
+réel, absence de lecture test/masques/autres catégories, absence de mise à jour
+des poids et buffers en validation, reproductibilité exacte des historiques et
+tenseurs de deux checkpoints CPU, moyenne pondérée du dernier batch, early
+stopping, sélection sur val plutôt que train, échec correctement propagé,
+configuration, manifeste modifié, protection des répertoires et CLI.
+
+Le test de sélection multi-époques utilise des pertes simulées uniquement en
+répertoire temporaire ; il ne représente pas un entraînement officiel ni une
+mesure expérimentale. Le seul entraînement officiel exécuté ici est le smoke
+bottle décrit ci-dessus.
+
+Vérification finale enregistrée dans
+`reports/experiments/b0_training_verification.json` :
+
+- **14 fichiers protégés inchangés**, mêmes SHA256 et dates : manifestes,
+  configuration dataset, modules de données, architecture B0 et sa configuration.
+- **1 393 fichiers originaux**, même inventaire, tailles et dates de modification.
+  Le contrôle ne relit pas les contenus test pour recalculer leurs empreintes.
+- Chemins train et val réellement utilisés disjoints, tous sous
+  `bottle/train/good/` ; aucun masque ou autre catégorie dans ces lectures.
+- 10 artefacts de premier niveau et un dossier de 9 copies de sources présents
+  dans MLflow ; métriques, checkpoint et paramètres vérifiés par le client.
+- Toutes les sorties de l'entraînement sont ignorées par Git. Aucun dataset,
+  manifeste ou checkpoint n'est suivi ; aucun commit, push ou publication.
+
+### Fichiers et préparation Kaggle
+
+Créés : `src/training/train_ae.py`, `configs/train_ae_b0.yaml`,
+`tests/test_training.py`, `reports/experiments/b0_training_verification.json`.
+Modifiés : `src/training/__init__.py`, `pyproject.toml`, `.gitignore`,
+`README.md`, ce journal. Les checkpoints, métriques détaillées, figures et
+copies d'artefacts restent sous `artifacts/training/`, hors Git.
+
+Le README fournit les commandes CPU réelles et les cellules Kaggle : installation
+de `.[train]` exclusivement, contrôle que la version torch installée ne change
+pas, chemins explicites vers le dataset et les manifestes figés, `--device cuda`
+sans repli silencieux, sorties dans `/kaggle/working`. Ne pas installer `.[data]`
+ni une roue CPU sur le notebook CUDA. Le contrat de paquetage reste Python 3.11 ;
+vérifier l'interpréteur Kaggle avant installation. Aucun notebook, GPU T4 ou
+run complet n'a été exécuté/validé depuis cet environnement CPU.
+
+**Arrêt après le pipeline et sa vérification courte.** Attendre la validation
+avant tout entraînement complet et avant A1/T0/T1/T2.

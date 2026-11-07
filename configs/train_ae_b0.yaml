@@ -1,0 +1,28 @@
+# Choix experimentaux initiaux, sans optimalite demontree.
+schema_version: 1
+variant: B0
+category: bottle
+model_config: ae_baseline.yaml  # chemins relatifs a ce YAML
+dataset_config: dataset.yaml
+seed: 42
+training:
+  batch_size: 16
+  max_epochs: 20
+  optimizer: adam
+  learning_rate: 0.001
+  adam_betas: [0.9, 0.999]
+  adam_eps: 1.0e-8
+  weight_decay: 0.0
+  loss: l1
+  mixed_precision: false
+  num_workers: 0
+  cpu_threads: 2
+  early_stopping:
+    patience: 5
+    min_delta: 0.0
+smoke:
+  batch_size: 2
+  max_epochs: 1
+  max_batches_per_split: 2
+tracking:
+  experiment_name: resilientinspect-ae

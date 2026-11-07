@@ -2,9 +2,10 @@
 
 Projet de Deep Learning avancé, Axe 1 CNN et Transfer Learning. Le socle de la
 phase 0 et la phase 1 (audit, préparation, EDA visuelle) sont validés. La
-**phase 2, étape 1 couvre uniquement l'architecture B0 et ses tests synthétiques**,
-autorisés le 7 novembre 2026. B0 est implémenté sans entraînement sur des données.
-A1, T0/T1/T2 et toute étape d'entraînement attendent une nouvelle validation.
+**phase 2, étape 2 couvre le pipeline d'entraînement B0 et son smoke CPU**,
+autorisés le 7 novembre 2026. L'architecture B0 est validée. Un entraînement court
+de vérification bottle/train et bottle/val est exécuté ; le run complet GPU,
+A1 et T0/T1/T2 attendent une nouvelle validation.
 
 ## Référence et périmètre
 
@@ -19,18 +20,21 @@ Le dataset a été téléchargé localement par l'utilisateur dans
 confirmées dans [`configs/dataset.yaml`](configs/dataset.yaml). Aucun
 téléchargement automatique n'est effectué. Des manifestes séparent exclusivement
 `train/good` en train/validation ; le Dataset redimensionne les images en mémoire.
-Le test officiel est conservé et aucun entraînement ni réglage de seuil n'est effectué.
+Le test officiel est conservé ; aucune de ses images ou annotations n'est lue
+par le pipeline d'entraînement ou de validation.
 
 ## Arborescence
 
 `src/data/` contient l'audit, la préparation, le Dataset et l'EDA visuelle.
 `src/models/autoencoder.py` contient B0. Les autres emplacements des phases
-suivantes restent des dossiers vides ou des modules contenant une docstring.
+suivantes restent des dossiers vides ou des modules contenant une docstring,
+à l'exception de `src/training/train_ae.py`, qui entraîne B0 par catégorie.
 
 ```text
 .github/workflows/                # réservé
 configs/dataset.yaml              # seed, splits et géométrie documentés
 configs/ae_baseline.yaml          # architecture B0 et choix initial L1
+configs/train_ae_b0.yaml          # protocole initial, Adam, early stopping, smoke
 data/{raw,processed,manifests}/    # contenu exclu de Git
 data/manifests/{manifest.csv,train.csv,val.csv,test.csv,preparation.json}
 src/
@@ -38,6 +42,7 @@ src/
   {data,models,training,evaluation,export,mlops}/__init__.py
   data/{audit.py,prepare.py,dataset.py,eda.py}
   models/autoencoder.py
+  training/train_ae.py
 backend/{app/routes,tests}/        # réservé
 frontend/src/{components,pages,services,styles}/  # réservé
 tests/test_smoke.py
@@ -45,12 +50,14 @@ tests/test_audit.py
 tests/{test_prepare.py,test_dataset.py}
 tests/test_eda.py
 tests/test_models.py
+tests/test_training.py
 reports/{eda,figures,tables,experiments,latex}/
   eda/{audit.json,audit_summary.csv,audit_by_defect.csv,layout_correction.json}
   eda/visual/                     # figures et constats locaux, ignores par Git
   experiments/decision_log.md
   experiments/{data_preparation.json,data_preparation_verification.json}
   experiments/b0_architecture_smoke.json
+  experiments/b0_training_verification.json
 scripts/{bootstrap.ps1,smoke_test.py}
 artifacts/                        # contenu exclu de Git
 pyproject.toml
@@ -411,6 +418,130 @@ instance jetable sont mis à jour par son passage en mode train. Le diagnostic
 L1 sur bruit aléatoire n'est pas une mesure de qualité de reconstruction.
 La preuve détaillée est dans `reports/experiments/b0_architecture_smoke.json`.
 
+## Pipeline B0 : CPU smoke et Kaggle GPU
+
+`src/training/train_ae.py` utilise B0 et `MVTecDataset` sans modifier leurs
+implémentations. Un appel entraîne **une seule catégorie**, bottle par défaut,
+avec une nouvelle initialisation du modèle et d'Adam. Hazelnut et leather
+peuvent être choisis avec `--category`, dans des runs indépendants.
+
+La configuration initiale `configs/train_ae_b0.yaml` fixe 256 × 256, batch size
+16, maximum 20 époques, Adam (lr 0.001, betas 0.9/0.999, eps 1e-8, weight decay
+0), L1 moyenne, patience 5, min_delta 0 et seed 42. AMP est désactivée ; activer
+`mixed_precision` est refusé à cette étape. Ce sont des choix expérimentaux
+initiaux, sans optimalité démontrée. Ils sont sauvegardés pour une future
+comparaison contrôlée B0/A1 ; A1 n'est pas implémenté.
+
+Seuls les Dataset `train` et `val` sont construits pour la catégorie demandée.
+L'apprentissage met à jour les poids sur train ; val utilise `eval()` sans
+gradient ni modification des buffers BN. Le meilleur checkpoint correspond au
+minimum strict de L1 val, indépendamment de la perte train. L'early stopping
+compte les époques sans amélioration supérieure à min_delta ; en cas d'égalité,
+le premier checkpoint est conservé. La moyenne d'époque est pondérée par le
+nombre d'images, pour traiter correctement le dernier batch incomplet.
+
+Le manifeste complet figé et `preparation.json` sont requis. Lire ses métadonnées
+ne charge aucune image test ; seuls les chemins des deux splits sélectionnés
+sont ouverts, avec contrôle SHA256. Aucun score, seuil ou masque test n'est
+utilisé. Le prétraitement letterbox 256 × 256, bilinear/nearest, pixels /255
+est conservé ; la L1 porte sur tous les canaux/pixels, sans normalisation apprise.
+
+Le déterminisme fixe Python, NumPy, PyTorch, les générateurs des DataLoader et
+les workers ; cuDNN benchmark est désactivé et les algorithmes déterministes
+sont requis. Les versions, le matériel, les sources, leur SHA256 et la seed sont
+enregistrés. L'identité numérique entre versions, CPU et GPU n'est pas garantie
+par [PyTorch](https://docs.pytorch.org/docs/2.15/notes/randomness.html).
+
+Installation **locale**, avec PyTorch CPU déjà présent :
+
+```powershell
+& .\.venv\Scripts\python.exe -m pip install -e ".[train]"
+& .\.venv\Scripts\python.exe -m pip check
+& .\.venv\Scripts\python.exe -W error -m resilientinspect.training.train_ae --config configs/train_ae_b0.yaml --root data/raw/mvtec_ad --manifest data/manifests/manifest.csv --category bottle --device cpu --output-dir artifacts/training --smoke
+& .\.venv\Scripts\python.exe -m pytest -q -W error
+```
+
+L'extra `train` ajoute [mlflow-skinny](https://pypi.org/project/mlflow-skinny/3.16.1/),
+SQLAlchemy 2.0.57, Alembic 1.20.1 et Matplotlib 3.10.8. Il ne déclare aucune
+dépendance PyTorch : **ne pas installer l'extra `data` ni la roue CPU sur Kaggle**.
+Le pipeline ne lance jamais pip. L'installation locale a conservé
+PyTorch 2.15.0+cpu et les dépendances scientifiques précédentes.
+
+Le mode `--smoke` surcharge uniquement le budget de vérification : une époque,
+batch size 2, num_workers 0, **au plus deux mini-batches par split** (donc quatre
+au total si train et val en contiennent assez). Il apprend réellement pendant
+ces deux pas Adam, sur quatre images train au maximum. Il est marqué `scope=smoke`
+dans les fichiers et MLflow ; sa validation partielle et son checkpoint ne
+constituent pas un résultat d'expérience complète. En mode normal, tous les
+batches train et val sont parcourus à chaque époque.
+
+Chaque run reçoit un nouveau dossier `artifacts/training/<category>/<scope>_<run_id>/` :
+`best.pt`, `history.csv`, `loss_curves.png`, `summary.json`, `data_usage.json`,
+configuration effective, architecture, environnement, provenance et copies des
+sources. Le checkpoint contient poids, état Adam, époque, perte val, catégorie,
+scope, seed et configuration. Il se recharge avec
+`torch.load(path, map_location="cpu", weights_only=True)` ; la reprise exacte
+en milieu d'entraînement n'est pas implémentée.
+
+MLflow suit l'expérience `resilientinspect-ae` dans une base SQLite locale
+`artifacts/training/mlflow.db`, avec artefacts sous `mlartifacts/`. Paramètres,
+séries train/val par époque, checkpoint, figures et sources sont enregistrés ;
+un échec de boucle marque le run `FAILED`. Aucun serveur distant n'est utilisé.
+Ces sorties restent ignorées par Git. Pour consulter les données sans serveur :
+
+```python
+from pathlib import Path
+from mlflow import MlflowClient
+uri = "sqlite:///" + (Path("artifacts/training/mlflow.db").resolve().as_posix())
+client = MlflowClient(tracking_uri=uri)
+experiment = client.get_experiment_by_name("resilientinspect-ae")
+for run in client.search_runs([experiment.experiment_id]):
+    print(run.info.run_id, run.info.status, run.data.tags, run.data.metrics)
+```
+
+Préparation **Kaggle/T4**, commandes fournies mais non exécutées ici : utiliser
+le code du dépôt, les manifestes figés et le dataset existant, avec des chemins
+adaptés au notebook. Le paquet conserve son contrat Python 3.11 ; vérifier
+l'interpréteur avant installation. Choisir l'accélérateur GPU dans Kaggle,
+puis vérifier le runtime sans réinstaller PyTorch :
+
+```python
+import sys
+import subprocess
+from pathlib import Path
+from importlib.metadata import version
+import torch
+
+repo = Path("/kaggle/working/resilientinspect-ai")  # adapter au code fourni
+assert sys.version_info[:2] == (3, 11), "Le paquet est actuellement valide pour Python 3.11."
+assert torch.cuda.is_available(), "Activer le GPU Kaggle ; aucun repli CPU implicite."
+torch_before = version("torch")
+print(torch_before, torch.version.cuda, torch.cuda.get_device_name(0))
+subprocess.run([sys.executable, "-m", "pip", "install", "-e", f"{repo}[train]"], check=True)
+assert version("torch") == torch_before, "La version CUDA de PyTorch doit rester inchangee."
+
+command = [sys.executable, "-m", "resilientinspect.training.train_ae",
+           "--config", str(repo / "configs/train_ae_b0.yaml"),
+           "--root", "/kaggle/input/VOTRE_DATASET/mvtec_ad",
+           "--manifest", "/kaggle/input/VOS_MANIFESTES/manifest.csv",
+           "--category", "bottle", "--device", "cuda",
+           "--output-dir", "/kaggle/working/b0_runs"]
+subprocess.run(command + ["--smoke"], cwd=repo, check=True)
+# Apres validation du smoke GPU : meme commande sans --smoke pour le run complet.
+```
+
+Le 7 novembre 2026, le smoke réel bottle/CPU a traité **4 images train et
+4 images val**, pertes L1 respectives **0.2950199544** et **0.3324028552**,
+avec deux pas Adam et meilleur checkpoint à l'époque 1. Run MLflow
+`b453d9b1af9d4186abcffa41afc10a87`, statut `FINISHED`. Ces pertes partielles
+ne mesurent pas la qualité de détection. La suite finale donne
+**156 passed, 1 skipped in 100.09s** ; le seul skip est CUDA indisponible.
+Les tests vérifient notamment non-fuite, reproductibilité de deux runs
+synthétiques, absence de mise à jour en validation, sélection val/early stopping,
+rechargement du checkpoint, suivi MLflow réel et propagation des échecs.
+Les résultats et limites sont consignés dans
+`reports/experiments/b0_training_verification.json` et le journal.
+
 ## Git et critères de validation
 
 Git conserve le code, les configurations, les tests et les rapports textuels.
@@ -428,5 +559,5 @@ L'étape de préparation est prête pour revue lorsque :
 - les effectifs réels et les limites figurent dans le journal.
 
 Les contrôles du jeu test sont descriptifs. Aucun entraînement ni réglage des
-seuils n'utilise le test. Tout entraînement et toute autre étape de Deep Learning
+seuils n'utilise le test. Le run complet B0 et toute autre étape de Deep Learning
 attendent une validation explicite.

@@ -1,0 +1,199 @@
+{
+  "status": "verified",
+  "verified_at_utc": "2026-11-07T19:56:55.951303+00:00",
+  "scope": "Phase 2 step 2, official bottle smoke only; no complete CPU training or test evaluation",
+  "executed_command": "& .\\.venv\\Scripts\\python.exe -W error -m resilientinspect.training.train_ae --config configs/train_ae_b0.yaml --root data/raw/mvtec_ad --manifest data/manifests/manifest.csv --category bottle --device cpu --output-dir artifacts/training --smoke",
+  "run": {
+    "status": "completed",
+    "run_id": "b453d9b1af9d4186abcffa41afc10a87",
+    "run_dir": "C:\\Users\\nouhe\\resilientinspect-ai\\artifacts\\training\\bottle\\smoke_b453d9b1af9d4186abcffa41afc10a87",
+    "tracking_uri": "sqlite:///C:/Users/nouhe/resilientinspect-ai/artifacts/training/mlflow.db",
+    "category": "bottle",
+    "scope": "smoke",
+    "epochs_completed": 1,
+    "best_epoch": 1,
+    "best_val_loss": 0.3324028551578522,
+    "selection_split": "val",
+    "test_used": false,
+    "stopped_early": false,
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.2950199544429779,
+        "val_loss": 0.3324028551578522,
+        "train_images": 4,
+        "val_images": 4,
+        "train_batches": 2,
+        "val_batches": 2
+      }
+    ],
+    "checkpoint_sha256": "0b28fe17d1580960bb2e3671bc8406cfb4df100f9e7dc58989ff7229e66e3801",
+    "manifest_sha256": "13f55c7cf7c87a3e3739e24920bb0d85cc96a39a00e30d277ddfaa1832b84522",
+    "manifest_path": "C:\\Users\\nouhe\\resilientinspect-ai\\data\\manifests\\manifest.csv",
+    "dataset_root": "C:\\Users\\nouhe\\resilientinspect-ai\\data\\raw\\mvtec_ad",
+    "git_sha": "afba791256888db398ce4d34d8d4e1b13a7052c1",
+    "git_dirty": true,
+    "source_sha256": {
+      "C:\\Users\\nouhe\\resilientinspect-ai\\configs\\train_ae_b0.yaml": "2d99b8309e219a833cdbbcb06cf38e4b0908890c93e1b9d2778378ba2e29f9b0",
+      "C:\\Users\\nouhe\\resilientinspect-ai\\configs\\ae_baseline.yaml": "6ca8739ea42985f150a594bcdf71d8db9d554d73b461658b51e57a54c130b00f",
+      "C:\\Users\\nouhe\\resilientinspect-ai\\configs\\dataset.yaml": "fa1e2ac94b803ac0983971ec1fe77f67d57438de854c9cfa79dbe3b312772ece",
+      "C:\\Users\\nouhe\\resilientinspect-ai\\src\\training\\train_ae.py": "aae90e06d94652fa22f1faa979f88cc6a6842f9dbad91b91cafd5ab2d26e85a8",
+      "C:\\Users\\nouhe\\resilientinspect-ai\\pyproject.toml": "af5de3360fb47b3210f442812db2196ffaacafb1c8f67ed97ddf7a8df2148edb",
+      "C:\\Users\\nouhe\\resilientinspect-ai\\src\\models\\autoencoder.py": "ce604d569536ade81bc52d13a8349aa1b10d85e16cd9a6f8856ce6f4437beec7",
+      "C:\\Users\\nouhe\\resilientinspect-ai\\src\\data\\dataset.py": "de33d924f5ceaaf1ed1558efc8a23d7728bfe8890ed42530d1c10f0d839a9605",
+      "C:\\Users\\nouhe\\resilientinspect-ai\\src\\data\\prepare.py": "b103f7279d802f2942f46cd4c2f30e207995ec297babcdcc01cc7307c066762e",
+      "C:\\Users\\nouhe\\resilientinspect-ai\\src\\data\\audit.py": "60f11e416d3231e7aab535a171bb8b090f7593a163900334282900dd49925883"
+    }
+  },
+  "data_usage": {
+    "train": [
+      "bottle/train/good/019.png",
+      "bottle/train/good/129.png",
+      "bottle/train/good/150.png",
+      "bottle/train/good/197.png"
+    ],
+    "val": [
+      "bottle/train/good/002.png",
+      "bottle/train/good/003.png",
+      "bottle/train/good/005.png",
+      "bottle/train/good/013.png"
+    ]
+  },
+  "checks": {
+    "checkpoint_loadable_on_cpu": true,
+    "checkpoint_tensors_finite": true,
+    "checkpoint_weights_changed_from_initialization": true,
+    "adam_steps": 2,
+    "batchnorm_train_batches_only": true,
+    "mlflow_status": "FINISHED",
+    "mlflow_metric_history_matches_csv_summary": true,
+    "mlflow_downloaded_checkpoint_sha256_matches": true,
+    "loss_figure_opened_and_visually_checked": true,
+    "all_training_artifacts_ignored_by_git": true,
+    "no_raw_manifest_or_checkpoint_content_tracked_by_git": true,
+    "training_extra_does_not_declare_torch": true,
+    "mlflow_install_did_not_install_or_change_torch": true
+  },
+  "mlflow_artifacts": [
+    "architecture.yaml",
+    "best.pt",
+    "data_usage.json",
+    "dataset_config.yaml",
+    "effective_config.yaml",
+    "environment.json",
+    "history.csv",
+    "loss_curves.png",
+    "provenance.json",
+    "source",
+    "summary.json"
+  ],
+  "mlflow_source_artifacts": [
+    "source/ae_baseline.yaml",
+    "source/audit.py",
+    "source/autoencoder.py",
+    "source/dataset.py",
+    "source/dataset.yaml",
+    "source/prepare.py",
+    "source/pyproject.toml",
+    "source/train_ae.py",
+    "source/train_ae_b0.yaml"
+  ],
+  "integrity": {
+    "protected_files_sha256_and_mtime_unchanged": 14,
+    "original_files_inventory_size_mtime_unchanged": 1393,
+    "limit": "Original file inventory, sizes and mtimes checked, without reading official test image or mask contents.",
+    "protected_files": {
+      "configs\\dataset.yaml": {
+        "sha256": "fa1e2ac94b803ac0983971ec1fe77f67d57438de854c9cfa79dbe3b312772ece",
+        "mtime_ns": 1793968129371977600
+      },
+      "configs\\ae_baseline.yaml": {
+        "sha256": "6ca8739ea42985f150a594bcdf71d8db9d554d73b461658b51e57a54c130b00f",
+        "mtime_ns": 1794074830291679400
+      },
+      "src\\models\\autoencoder.py": {
+        "sha256": "ce604d569536ade81bc52d13a8349aa1b10d85e16cd9a6f8856ce6f4437beec7",
+        "mtime_ns": 1794074827927483000
+      },
+      "src\\data\\audit.py": {
+        "sha256": "60f11e416d3231e7aab535a171bb8b090f7593a163900334282900dd49925883",
+        "mtime_ns": 1793967012570984800
+      },
+      "src\\data\\dataset.py": {
+        "sha256": "de33d924f5ceaaf1ed1558efc8a23d7728bfe8890ed42530d1c10f0d839a9605",
+        "mtime_ns": 1793968303999518500
+      },
+      "src\\data\\eda.py": {
+        "sha256": "1559660abbdf7ef43170186b0bdd8b12d3f4bea16634cdec44574593277bb4df",
+        "mtime_ns": 1793970646525635200
+      },
+      "src\\data\\prepare.py": {
+        "sha256": "b103f7279d802f2942f46cd4c2f30e207995ec297babcdcc01cc7307c066762e",
+        "mtime_ns": 1793968669717071600
+      },
+      "src\\data\\__init__.py": {
+        "sha256": "d5d07fea1301b72368a2324f464a62c079ac0840103d2c3d3c857be94edbb788",
+        "mtime_ns": 1793968672704089200
+      },
+      "data\\manifests\\.gitkeep": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "mtime_ns": 1793962870453054100
+      },
+      "data\\manifests\\manifest.csv": {
+        "sha256": "13f55c7cf7c87a3e3739e24920bb0d85cc96a39a00e30d277ddfaa1832b84522",
+        "mtime_ns": 1793968748948032700
+      },
+      "data\\manifests\\preparation.json": {
+        "sha256": "b7deb937b523c719e4b6b38a585e39003ca4d1aaedcc3b09f872b74a0f55d5b4",
+        "mtime_ns": 1793968748952896900
+      },
+      "data\\manifests\\test.csv": {
+        "sha256": "10b4d50e66d9c98cfd53a55b304be4fe150ad4e1eaf7e7a99c1c019d793d30ac",
+        "mtime_ns": 1793968748951901700
+      },
+      "data\\manifests\\train.csv": {
+        "sha256": "781b1143fee9eab14f871f4f6335a94f9832c8bb0f13efbb8c40f54d3eadc5d4",
+        "mtime_ns": 1793968748949585300
+      },
+      "data\\manifests\\val.csv": {
+        "sha256": "08f10f23fa04a531188684a46ae2578c9337e8c81f6c3c20aaf1b3c20b963092",
+        "mtime_ns": 1793968748950602500
+      }
+    }
+  },
+  "environment": {
+    "python": "3.11.9",
+    "torch": "2.15.0+cpu",
+    "numpy": "2.3.5",
+    "mlflow": "3.16.1",
+    "device": "cpu",
+    "cuda_runtime": null,
+    "gpu_name": null,
+    "cpu_threads": 2,
+    "deterministic_algorithms": true,
+    "cublas_workspace_config": ":4096:8",
+    "mixed_precision": false,
+    "cudnn_version": null,
+    "packages": {
+      "Pillow": "13.0.0",
+      "PyYAML": "6.0.3",
+      "matplotlib": "3.10.8",
+      "sqlalchemy": "2.0.57",
+      "alembic": "1.20.1"
+    }
+  },
+  "pytest": {
+    "command": "python -m pytest -q -W error --tb=short",
+    "passed": 156,
+    "skipped": 1,
+    "duration_seconds": 100.09,
+    "exit_code": 0,
+    "only_skip": "CUDA unavailable: existing test_models CUDA execution test"
+  },
+  "limitations": [
+    "Smoke partial losses are execution diagnostics, not anomaly-detection performance.",
+    "Kaggle/T4 execution and cross-device reproducibility not verified locally.",
+    "Project packaging currently targets Python 3.11; check Kaggle interpreter before installation.",
+    "No resume-in-the-middle feature or full training executed."
+  ]
+}
