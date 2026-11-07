@@ -1,1 +1,1 @@
-"""Emplacement reserve aux modeles. Aucun modele implemente."""
+"""Modeles de reconstruction ; baseline B0 dans le module autoencoder."""

@@ -483,3 +483,111 @@ Une relance du générateur ne vaut pas nouvelle revue sémantique : comparer le
 empreintes des figures avec `visual_review.json`, puis refaire la revue si les
 entrées ou le rendu ont changé. **Arrêt après cette vérification de phase 1.**
 L'entraînement et toute nouvelle étape attendent la validation de l'utilisateur.
+
+## 2026-11-07 — Phase 2, étape 1 : architecture B0 uniquement
+
+**Autorisation.** Phase 1 validée par l'utilisateur ; implémentation de B0,
+configuration et tests synthétiques seulement. Le guide technique §5.1 décrit
+l'AE compact Conv–BN–ReLU / upsampling + Conv ; les sections 11, 15 et 16
+déterminent les chemins, la portée bornée et les commandes PowerShell.
+Le périmètre explicite de cette étape exclut les autres éléments du prompt
+général de phase 2 du guide : aucun entraînement, checkpoint, MLflow, A1 ou
+score/carte d'anomalie n'est ajouté.
+
+### Architecture fixée sans consultation du test officiel
+
+Classe : `resilientinspect.models.autoencoder.ConvAutoencoder`.
+Les choix privilégient un premier modèle compact utilisable sur CPU et
+ultérieurement sur GPU ; ils ne proviennent ni de scores ni d'images test.
+
+| Bloc | Opérations | Sortie hors batch |
+| --- | --- | --- |
+| Entrée | RGB flottant dans [0,1] | 3 × 256 × 256 |
+| Encodeur 1 | Conv 3×3, stride 2, padding 1, BN, ReLU | 16 × 128 × 128 |
+| Encodeur 2 | Conv 3×3, stride 2, padding 1, BN, ReLU | 32 × 64 × 64 |
+| Encodeur 3 | Conv 3×3, stride 2, padding 1, BN, ReLU | 64 × 32 × 32 |
+| Encodeur 4 | Conv 3×3, stride 2, padding 1, BN, ReLU | 128 × 16 × 16 |
+| Décodeur 1 | Upsample nearest ×2, Conv 3×3, padding 1, BN, ReLU | 64 × 32 × 32 |
+| Décodeur 2 | Upsample nearest ×2, Conv 3×3, padding 1, BN, ReLU | 32 × 64 × 64 |
+| Décodeur 3 | Upsample nearest ×2, Conv 3×3, padding 1, BN, ReLU | 16 × 128 × 128 |
+| Sortie | Upsample nearest ×2, Conv 3×3, padding 1, Sigmoid | 3 × 256 × 256 |
+
+**195 107 paramètres, tous entraînables**, comptés sur le modèle instancié :
+8 Conv2d et 7 BatchNorm2d. Pas de skip connections ni poids préentraînés.
+Les convolutions suivies de BN n'ont pas de biais ; la sortie RGB en possède
+un. BN conserve les défauts PyTorch : eps 1e-5, momentum 0.1, affine et suivi
+des statistiques activés. Initialisation PyTorch par défaut, sans règle ajoutée.
+Le modèle ne redimensionne ni ne normalise les tenseurs. Il refuse les entrées
+hors du contrat `[B,3,256,256]` ou de batch vide. Le constructeur accepte trois
+ou quatre niveaux ; la baseline configurée en utilise quatre.
+
+La configuration `configs/ae_baseline.yaml` fournit `model.kwargs.channels` au
+constructeur ; les autres champs décrivent son contrat fixe. Perte initiale :
+`torch.nn.L1Loss(reduction="mean")`, moyenne sur batch, canaux et pixels.
+Le placement CPU/CUDA se fait via `model.to(device)` et les tenseurs de
+l'appelant ; aucun device n'est imposé dans le forward.
+
+### Exécutions et preuves réelles
+
+Environnement constaté : Python **3.11.9**, PyTorch **2.15.0+cpu**, CPU,
+6 threads PyTorch ; `torch.cuda.is_available()` vaut **False**. Aucune
+installation de dépendance supplémentaire n'a été nécessaire.
+
+Smoke CPU exécuté le `2026-11-07T18:08:55.495182+00:00`, sur un batch aléatoire
+`[2,3,256,256]`, seed 42 :
+
+- Les formes de chaque bloc ont été relevées sur le graphe réel et correspondent
+  au tableau. Reconstruction de même dimension en modes train et eval.
+- Reconstruction dans [0,1], sortie et perte finies ; rétropropagation L1 réussie.
+- Tous les paramètres entraînables possèdent des gradients finis ; gradients
+  non nuls dans la première convolution encodeur et la dernière convolution
+  décodeur. Aucun NaN/Inf observé dans ces contrôles.
+- Aucun optimiseur ni pas de mise à jour des poids ; aucun checkpoint.
+  Le forward en mode train met uniquement à jour les buffers BN de cette
+  instance de diagnostic, ensuite abandonnée.
+- La valeur L1 mesurée sur du bruit et des poids aléatoires est sauvegardée comme
+  diagnostic numérique uniquement ; elle n'est pas une métrique de qualité B0.
+
+| Commande réellement exécutée | Résultat |
+| --- | --- |
+| `python -m pytest tests/test_models.py -q -W error` | **22 passed, 1 skipped in 6.79s** |
+| `python -m pytest -q -W error` | **136 passed, 1 skipped in 34.40s** |
+
+Le seul skip est le test explicite `test_cuda_synthetic_forward_and_backward` :
+CUDA est indisponible localement. La compatibilité d'exécution GPU reste donc
+**à vérifier sur Kaggle/Tesla T4**, sans prétendre qu'elle a déjà été validée.
+Les tests CPU couvrent batchs 1/2, modes train/eval, images constantes noire et
+blanche, gradients, entrées invalides, configuration et rechargement du state_dict
+en mémoire (y compris les buffers BN). Les 114 tests antérieurs passent ; aucune
+erreur n'a été masquée ni aucun ancien test modifié.
+
+Les preuves d'architecture, valeurs diagnostiques, environnement, SHA256 du
+modèle/configuration/tests et sorties Pytest sont conservées dans
+`reports/experiments/b0_architecture_smoke.json`.
+
+### Données et protocole conservés
+
+Les nouveaux tests et le smoke utilisent uniquement des tenseurs synthétiques ;
+aucune image ou masque MVTec AD n'a été ouvert pour développer ce modèle.
+La vérification finale confirme les SHA256 et dates de modification inchangés de
+**12 fichiers protégés** (configuration dataset, modules de données, manifestes).
+L'inventaire des **1 393 fichiers originaux**, leurs tailles et dates de
+modification sont identiques avant/après. Leurs contenus ne sont pas relus pour
+recalculer les SHA256 durant cette étape : cette limite du contrôle d'intégrité
+est explicite. Aucun contenu du dataset ou des manifestes n'est suivi par Git.
+Les catégories, splits, seed et prétraitements validés restent inchangés.
+
+Créés : `src/models/autoencoder.py`, `configs/ae_baseline.yaml`,
+`tests/test_models.py`, `reports/experiments/b0_architecture_smoke.json`.
+Modifiés : `src/models/__init__.py` (description), `README.md`, ce journal.
+Le script ponctuel du smoke et le relevé avant modification restent dans le
+cache local ignoré ; le README fournit un smoke CPU autonome reproductible.
+
+```powershell
+& .\.venv\Scripts\python.exe -m pytest tests/test_models.py -q -W error
+& .\.venv\Scripts\python.exe -m pytest -q -W error
+```
+
+**Arrêt après l'architecture B0 et ses vérifications.** La prochaine étape
+d'entraînement nécessite la validation de l'utilisateur. Aucun résultat de
+modèle sur MVTec AD, A1, T0/T1/T2 ou exécution CUDA n'est revendiqué.

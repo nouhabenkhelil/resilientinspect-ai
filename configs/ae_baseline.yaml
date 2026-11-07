@@ -1,0 +1,43 @@
+# Phase 2, etape 1 : architecture seulement. Aucun choix d'entrainement ou de seuil.
+schema_version: 1
+phase: 2
+step: architecture_only
+model:
+  name: B0
+  class: resilientinspect.models.autoencoder.ConvAutoencoder
+  kwargs:
+    channels: [16, 32, 64, 128]
+  input_shape: [3, 256, 256]  # RGB, float32 ; batch variable et non vide
+  input_range: [0.0, 1.0]  # division par 255 deja fixee dans le Dataset
+  encoder:
+    blocks: 4
+    kernel_size: 3
+    stride: 2
+    padding: 1
+    normalization: batch_norm
+    activation: relu
+    conv_bias: false
+  bottleneck_shape: [128, 16, 16]
+  decoder:
+    upsample_mode: nearest
+    scale_factor: 2
+    kernel_size: 3
+    padding: 1
+    intermediate_normalization: batch_norm
+    intermediate_activation: relu
+    intermediate_conv_bias: false
+    output_conv_bias: true
+  # Valeurs par defaut PyTorch explicitees ; aucune personnalisation de l'initialisation.
+  batch_norm:
+    eps: 1.0e-5
+    momentum: 0.1
+    affine: true
+    track_running_stats: true
+  output_activation: sigmoid
+  skip_connections: false
+  pretrained: false
+loss:
+  name: l1
+  class: torch.nn.L1Loss
+  kwargs:
+    reduction: mean  # moyenne sur batch, canaux et pixels

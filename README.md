@@ -1,10 +1,10 @@
 # ResilientInspect AI
 
 Projet de Deep Learning avancé, Axe 1 CNN et Transfer Learning. Le socle de la
-phase 0 est validé. La **phase 1 couvre l'audit, la préparation et l'EDA visuelle**,
-autorisés le 6 novembre 2026. Les expériences B0/A1 et T0/T1/T2 restent prévues,
-sans modèle ni entraînement implémenté. Toute étape suivante nécessite une
-nouvelle validation de l'utilisateur.
+phase 0 et la phase 1 (audit, préparation, EDA visuelle) sont validés. La
+**phase 2, étape 1 couvre uniquement l'architecture B0 et ses tests synthétiques**,
+autorisés le 7 novembre 2026. B0 est implémenté sans entraînement sur des données.
+A1, T0/T1/T2 et toute étape d'entraînement attendent une nouvelle validation.
 
 ## Référence et périmètre
 
@@ -23,29 +23,34 @@ Le test officiel est conservé et aucun entraînement ni réglage de seuil n'est
 
 ## Arborescence
 
-`src/data/` contient l'audit, la préparation, le Dataset et l'EDA visuelle. Les autres emplacements des phases suivantes
-restent des dossiers vides ou des modules contenant une docstring.
+`src/data/` contient l'audit, la préparation, le Dataset et l'EDA visuelle.
+`src/models/autoencoder.py` contient B0. Les autres emplacements des phases
+suivantes restent des dossiers vides ou des modules contenant une docstring.
 
 ```text
 .github/workflows/                # réservé
 configs/dataset.yaml              # seed, splits et géométrie documentés
+configs/ae_baseline.yaml          # architecture B0 et choix initial L1
 data/{raw,processed,manifests}/    # contenu exclu de Git
 data/manifests/{manifest.csv,train.csv,val.csv,test.csv,preparation.json}
 src/
   __init__.py
   {data,models,training,evaluation,export,mlops}/__init__.py
   data/{audit.py,prepare.py,dataset.py,eda.py}
+  models/autoencoder.py
 backend/{app/routes,tests}/        # réservé
 frontend/src/{components,pages,services,styles}/  # réservé
 tests/test_smoke.py
 tests/test_audit.py
 tests/{test_prepare.py,test_dataset.py}
 tests/test_eda.py
+tests/test_models.py
 reports/{eda,figures,tables,experiments,latex}/
   eda/{audit.json,audit_summary.csv,audit_by_defect.csv,layout_correction.json}
   eda/visual/                     # figures et constats locaux, ignores par Git
   experiments/decision_log.md
   experiments/{data_preparation.json,data_preparation_verification.json}
+  experiments/b0_architecture_smoke.json
 scripts/{bootstrap.ps1,smoke_test.py}
 artifacts/                        # contenu exclu de Git
 pyproject.toml
@@ -329,6 +334,83 @@ dimensions et une superposition visuellement plausible ne garantissent pas la
 précision sémantique pixel par pixel des annotations. Aucune observation du test
 n'est utilisée pour modifier les paramètres scientifiques ou entraîner un modèle.
 
+## B0 : architecture et smoke test synthétique
+
+`ConvAutoencoder` est un `torch.nn.Module` compact à **195 107 paramètres
+entraînables**, sans skip connections ni poids préentraînés. Il attend un tenseur
+flottant RGB `[B,3,256,256]`, avec B ≥ 1 et des pixels déjà divisés par 255.
+Il ne modifie pas le prétraitement. Les autres dimensions sont refusées
+explicitement, sans redimensionnement silencieux.
+
+| Étape | Canaux × hauteur × largeur |
+| --- | --- |
+| Entrée | 3 × 256 × 256 |
+| Encodeur 1 | 16 × 128 × 128 |
+| Encodeur 2 | 32 × 64 × 64 |
+| Encodeur 3 | 64 × 32 × 32 |
+| Encodeur 4 / latent | 128 × 16 × 16 |
+| Décodeur 1 | 64 × 32 × 32 |
+| Décodeur 2 | 32 × 64 × 64 |
+| Décodeur 3 | 16 × 128 × 128 |
+| Reconstruction | 3 × 256 × 256 |
+
+Chaque bloc encodeur applique Conv2d 3 × 3, stride 2, padding 1, BatchNorm2d,
+ReLU. Le décodeur applique Upsample nearest ×2, Conv2d 3 × 3, padding 1,
+BatchNorm2d, ReLU dans les trois blocs intermédiaires ; le dernier produit
+3 canaux avec Sigmoid, donc des reconstructions dans [0,1]. Les convolutions
+avant BatchNorm n'ont pas de biais ; la sortie RGB en possède un. BatchNorm
+conserve les valeurs PyTorch par défaut : eps 1e-5, momentum 0.1, paramètres
+affines et statistiques courantes. Initialisation PyTorch par défaut.
+
+`configs/ae_baseline.yaml` fixe les canaux et la perte initiale
+`torch.nn.L1Loss(reduction="mean")`, moyennée sur batch, canaux et pixels.
+`model.kwargs` alimente le constructeur ; les autres champs décrivent le
+contrat fixe de B0. La classe accepte trois ou quatre blocs, mais la baseline
+configurée et vérifiée en utilise quatre. Aucun optimiseur, budget, seuil,
+carte d'anomalie ou entraînement n'est implémenté à cette étape.
+
+Smoke CPU indépendant du dataset, à exécuter depuis PowerShell avec le runtime
+PyTorch déjà installé :
+
+```powershell
+@'
+from pathlib import Path
+import torch
+import yaml
+from resilientinspect.models.autoencoder import ConvAutoencoder
+
+torch.manual_seed(42)
+config = yaml.safe_load(Path("configs/ae_baseline.yaml").read_text(encoding="utf-8"))
+model = ConvAutoencoder(**config["model"]["kwargs"]).to("cpu").train()
+images = torch.rand(2, 3, 256, 256)
+reconstruction = model(images)
+loss = torch.nn.L1Loss(**config["loss"]["kwargs"])(reconstruction, images)
+loss.backward()
+assert reconstruction.shape == images.shape
+assert torch.isfinite(reconstruction).all() and torch.isfinite(loss)
+assert ((reconstruction >= 0) & (reconstruction <= 1)).all()
+assert all(p.grad is not None and torch.isfinite(p.grad).all() for p in model.parameters())
+print("CPU OK:", tuple(reconstruction.shape), sum(p.numel() for p in model.parameters()), "parametres")
+'@ | & .\.venv\Scripts\python.exe -
+
+& .\.venv\Scripts\python.exe -m pytest tests/test_models.py -q -W error
+& .\.venv\Scripts\python.exe -m pytest -q -W error
+```
+
+Le 7 novembre 2026 : **22 tests B0 réussis, 1 test CUDA ignoré en 6,79 s** ;
+suite complète : **136 réussites, 1 test CUDA ignoré en 34,40 s**. CPU vérifié
+sur Python 3.11.9 et PyTorch 2.15.0+cpu ; CUDA reste à exécuter sur Kaggle/T4.
+Le modèle utilise le device choisi par l'appelant (`model.to(device)` et
+tenseurs sur le même device), sans dépendance CUDA imposée.
+
+Les tests couvrent formes et plages en train/eval, batchs 1/2, images constantes,
+gradients L1 finis jusqu'à l'encodeur, erreurs d'entrée et rechargement en mémoire
+du state_dict avec les buffers BatchNorm. Le smoke de rétropropagation ne crée
+aucun optimiseur et ne met pas à jour les poids. Les buffers BatchNorm d'une
+instance jetable sont mis à jour par son passage en mode train. Le diagnostic
+L1 sur bruit aléatoire n'est pas une mesure de qualité de reconstruction.
+La preuve détaillée est dans `reports/experiments/b0_architecture_smoke.json`.
+
 ## Git et critères de validation
 
 Git conserve le code, les configurations, les tests et les rapports textuels.
@@ -346,4 +428,5 @@ L'étape de préparation est prête pour revue lorsque :
 - les effectifs réels et les limites figurent dans le journal.
 
 Les contrôles du jeu test sont descriptifs. Aucun entraînement ni réglage des
-seuils n'utilise le test. Toute étape de Deep Learning attend une validation explicite.
+seuils n'utilise le test. Tout entraînement et toute autre étape de Deep Learning
+attendent une validation explicite.

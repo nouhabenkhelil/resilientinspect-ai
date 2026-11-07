@@ -1,0 +1,194 @@
+{
+  "status": "passed",
+  "verified_at_utc": "2026-11-07T18:08:55.495182+00:00",
+  "scope": "Phase 2 step 1: B0 architecture and synthetic CPU forward/backward only",
+  "environment": {
+    "python": "3.11.9",
+    "torch": "2.15.0+cpu",
+    "device": "cpu",
+    "cuda_available": false,
+    "cpu_threads": 6
+  },
+  "seed": 42,
+  "data_source": "torch.rand only; no official dataset image or mask read",
+  "architecture": {
+    "channels": [
+      16,
+      32,
+      64,
+      128
+    ],
+    "input_shape": [
+      2,
+      3,
+      256,
+      256
+    ],
+    "stage_shapes": {
+      "encoder": [
+        [
+          2,
+          16,
+          128,
+          128
+        ],
+        [
+          2,
+          32,
+          64,
+          64
+        ],
+        [
+          2,
+          64,
+          32,
+          32
+        ],
+        [
+          2,
+          128,
+          16,
+          16
+        ]
+      ],
+      "decoder": [
+        [
+          2,
+          64,
+          32,
+          32
+        ],
+        [
+          2,
+          32,
+          64,
+          64
+        ],
+        [
+          2,
+          16,
+          128,
+          128
+        ],
+        [
+          2,
+          3,
+          256,
+          256
+        ]
+      ]
+    },
+    "output_shape": [
+      2,
+      3,
+      256,
+      256
+    ],
+    "parameters_total": 195107,
+    "parameters_trainable": 195107,
+    "conv2d_layers": 8,
+    "batch_norm_layers": 7
+  },
+  "loss": {
+    "name": "l1",
+    "reduction": "mean",
+    "synthetic_untrained_value": 0.26173022389411926,
+    "interpretation": "Numerical smoke diagnostic on random inputs and random weights, not model performance."
+  },
+  "checks": {
+    "forward_shape_train_and_eval": true,
+    "output_in_unit_interval": true,
+    "input_unchanged": true,
+    "finite_output_loss_and_gradients": true,
+    "all_trainable_parameters_have_gradients": true,
+    "first_encoder_and_last_decoder_weight_gradients_nonzero": true
+  },
+  "training": {
+    "optimizer_created": false,
+    "optimizer_steps": 0,
+    "checkpoints_written": false,
+    "dataset_used": false,
+    "note": "Train-mode forward updates only this disposable instance's BatchNorm buffers; no weights updated."
+  },
+  "cuda_execution_verified": false,
+  "source_sha256": {
+    "configs\\ae_baseline.yaml": "6ca8739ea42985f150a594bcdf71d8db9d554d73b461658b51e57a54c130b00f",
+    "src\\models\\autoencoder.py": "ce604d569536ade81bc52d13a8349aa1b10d85e16cd9a6f8856ce6f4437beec7",
+    "tests\\test_models.py": "992b16e2aa7c88d17b881c55a45f909c888267c223f6f2ee096213d3180586cd"
+  },
+  "pytest": {
+    "models": {
+      "command": "python -m pytest tests/test_models.py -q -W error",
+      "passed": 22,
+      "skipped": 1,
+      "duration_seconds": 6.79,
+      "exit_code": 0
+    },
+    "full_suite": {
+      "command": "python -m pytest -q -W error",
+      "passed": 136,
+      "skipped": 1,
+      "duration_seconds": 34.4,
+      "exit_code": 0
+    },
+    "skip_reason": "CUDA unavailable locally; test_cuda_synthetic_forward_and_backward explicitly skipped, not executed."
+  },
+  "input_integrity": {
+    "verified_at_utc": "2026-11-07T18:12:29.188209+00:00",
+    "protected_input_files_sha256_and_mtime_unchanged": 12,
+    "original_file_count_size_and_mtime_unchanged": 1393,
+    "original_image_or_mask_content_read": false,
+    "verification_limit": "Originals checked by file inventory, size and mtime only; image contents were not re-read for SHA256 during model development.",
+    "protected_inputs": {
+      "configs/dataset.yaml": {
+        "sha256": "fa1e2ac94b803ac0983971ec1fe77f67d57438de854c9cfa79dbe3b312772ece",
+        "mtime_ns": 1793968129371977600
+      },
+      "src/data/audit.py": {
+        "sha256": "60f11e416d3231e7aab535a171bb8b090f7593a163900334282900dd49925883",
+        "mtime_ns": 1793967012570984800
+      },
+      "src/data/dataset.py": {
+        "sha256": "de33d924f5ceaaf1ed1558efc8a23d7728bfe8890ed42530d1c10f0d839a9605",
+        "mtime_ns": 1793968303999518500
+      },
+      "src/data/eda.py": {
+        "sha256": "1559660abbdf7ef43170186b0bdd8b12d3f4bea16634cdec44574593277bb4df",
+        "mtime_ns": 1793970646525635200
+      },
+      "src/data/prepare.py": {
+        "sha256": "b103f7279d802f2942f46cd4c2f30e207995ec297babcdcc01cc7307c066762e",
+        "mtime_ns": 1793968669717071600
+      },
+      "src/data/__init__.py": {
+        "sha256": "d5d07fea1301b72368a2324f464a62c079ac0840103d2c3d3c857be94edbb788",
+        "mtime_ns": 1793968672704089200
+      },
+      "data/manifests/.gitkeep": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "mtime_ns": 1793962870453054100
+      },
+      "data/manifests/manifest.csv": {
+        "sha256": "13f55c7cf7c87a3e3739e24920bb0d85cc96a39a00e30d277ddfaa1832b84522",
+        "mtime_ns": 1793968748948032700
+      },
+      "data/manifests/preparation.json": {
+        "sha256": "b7deb937b523c719e4b6b38a585e39003ca4d1aaedcc3b09f872b74a0f55d5b4",
+        "mtime_ns": 1793968748952896900
+      },
+      "data/manifests/test.csv": {
+        "sha256": "10b4d50e66d9c98cfd53a55b304be4fe150ad4e1eaf7e7a99c1c019d793d30ac",
+        "mtime_ns": 1793968748951901700
+      },
+      "data/manifests/train.csv": {
+        "sha256": "781b1143fee9eab14f871f4f6335a94f9832c8bb0f13efbb8c40f54d3eadc5d4",
+        "mtime_ns": 1793968748949585300
+      },
+      "data/manifests/val.csv": {
+        "sha256": "08f10f23fa04a531188684a46ae2578c9337e8c81f6c3c20aaf1b3c20b963092",
+        "mtime_ns": 1793968748950602500
+      }
+    },
+    "no_dataset_content_tracked_by_git": true
+  }
+}
