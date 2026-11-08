@@ -1,0 +1,410 @@
+{
+  "checked_at_utc": "2026-11-08T10:54:22.164689+00:00",
+  "scope": "Python packaging/runtime checks only; scientific code/configuration and data unchanged",
+  "python_contract": ">=3.11,<3.14",
+  "local_runtime": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "torch": "2.15.0+cpu",
+    "cuda_available": false,
+    "installed_requires_python": "<3.14,>=3.11",
+    "setuptools_used_for_no_build_isolation_metadata_refresh": "78.1.0"
+  },
+  "kaggle_runtime_reported_by_user": {
+    "python": "3.13.16",
+    "torch": "2.11.0+cu130",
+    "gpu": "Tesla T4",
+    "executed_here": false
+  },
+  "metadata_verification": {
+    "source_kind": "PyPI version metadata and official PyTorch wheel index, read only",
+    "checked_at_utc": "2026-11-08T10:35:52.197607+00:00",
+    "dependencies": {
+      "setuptools": {
+        "name": "setuptools",
+        "version": "80.9.0",
+        "source_url": "https://pypi.org/pypi/setuptools/80.9.0/json",
+        "requires_python": ">=3.9",
+        "declared_python_compatibility": {
+          "3.11.9": true,
+          "3.12.0": true,
+          "3.13.16": true
+        },
+        "candidate_linux_cp313_or_universal_wheels": [
+          "setuptools-80.9.0-py3-none-any.whl"
+        ]
+      },
+      "PyYAML": {
+        "name": "PyYAML",
+        "version": "6.0.3",
+        "source_url": "https://pypi.org/pypi/PyYAML/6.0.3/json",
+        "requires_python": ">=3.8",
+        "declared_python_compatibility": {
+          "3.11.9": true,
+          "3.12.0": true,
+          "3.13.16": true
+        },
+        "candidate_linux_cp313_or_universal_wheels": [
+          "pyyaml-6.0.3-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+        ]
+      },
+      "Pillow": {
+        "name": "Pillow",
+        "version": "13.0.0",
+        "source_url": "https://pypi.org/pypi/Pillow/13.0.0/json",
+        "requires_python": ">=3.11",
+        "declared_python_compatibility": {
+          "3.11.9": true,
+          "3.12.0": true,
+          "3.13.16": true
+        },
+        "candidate_linux_cp313_or_universal_wheels": [
+          "pillow-13.0.0-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl"
+        ]
+      },
+      "pytest": {
+        "name": "pytest",
+        "version": "9.2.0",
+        "source_url": "https://pypi.org/pypi/pytest/9.2.0/json",
+        "requires_python": ">=3.10",
+        "declared_python_compatibility": {
+          "3.11.9": true,
+          "3.12.0": true,
+          "3.13.16": true
+        },
+        "candidate_linux_cp313_or_universal_wheels": [
+          "pytest-9.2.0-py3-none-any.whl"
+        ]
+      },
+      "torch": {
+        "name": "torch",
+        "version": "2.15.0",
+        "source_url": "https://pypi.org/pypi/torch/2.15.0/json",
+        "requires_python": ">=3.11",
+        "declared_python_compatibility": {
+          "3.11.9": true,
+          "3.12.0": true,
+          "3.13.16": true
+        },
+        "candidate_linux_cp313_or_universal_wheels": [
+          "torch-2.15.0-cp313-cp313-manylinux_2_28_x86_64.whl"
+        ]
+      },
+      "numpy": {
+        "name": "numpy",
+        "version": "2.3.5",
+        "source_url": "https://pypi.org/pypi/numpy/2.3.5/json",
+        "requires_python": ">=3.11",
+        "declared_python_compatibility": {
+          "3.11.9": true,
+          "3.12.0": true,
+          "3.13.16": true
+        },
+        "candidate_linux_cp313_or_universal_wheels": [
+          "numpy-2.3.5-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "numpy-2.3.5-cp313-cp313t-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl"
+        ]
+      },
+      "matplotlib": {
+        "name": "matplotlib",
+        "version": "3.10.8",
+        "source_url": "https://pypi.org/pypi/matplotlib/3.10.8/json",
+        "requires_python": ">=3.10",
+        "declared_python_compatibility": {
+          "3.11.9": true,
+          "3.12.0": true,
+          "3.13.16": true
+        },
+        "candidate_linux_cp313_or_universal_wheels": [
+          "matplotlib-3.10.8-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+          "matplotlib-3.10.8-cp313-cp313t-manylinux2014_x86_64.manylinux_2_17_x86_64.whl"
+        ]
+      },
+      "mlflow-skinny": {
+        "name": "mlflow-skinny",
+        "version": "3.16.1",
+        "source_url": "https://pypi.org/pypi/mlflow-skinny/3.16.1/json",
+        "requires_python": ">=3.10",
+        "declared_python_compatibility": {
+          "3.11.9": true,
+          "3.12.0": true,
+          "3.13.16": true
+        },
+        "candidate_linux_cp313_or_universal_wheels": [
+          "mlflow_skinny-3.16.1-py3-none-any.whl"
+        ]
+      },
+      "sqlalchemy": {
+        "name": "sqlalchemy",
+        "version": "2.0.57",
+        "source_url": "https://pypi.org/pypi/sqlalchemy/2.0.57/json",
+        "requires_python": ">=3.7",
+        "declared_python_compatibility": {
+          "3.11.9": true,
+          "3.12.0": true,
+          "3.13.16": true
+        },
+        "candidate_linux_cp313_or_universal_wheels": [
+          "sqlalchemy-2.0.57-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+          "sqlalchemy-2.0.57-py3-none-any.whl"
+        ]
+      },
+      "alembic": {
+        "name": "alembic",
+        "version": "1.20.1",
+        "source_url": "https://pypi.org/pypi/alembic/1.20.1/json",
+        "requires_python": ">=3.10",
+        "declared_python_compatibility": {
+          "3.11.9": true,
+          "3.12.0": true,
+          "3.13.16": true
+        },
+        "candidate_linux_cp313_or_universal_wheels": [
+          "alembic-1.20.1-py3-none-any.whl"
+        ]
+      },
+      "torch-kaggle": {
+        "name": "torch",
+        "version": "2.11.0",
+        "source_url": "https://pypi.org/pypi/torch/2.11.0/json",
+        "requires_python": ">=3.10",
+        "declared_python_compatibility": {
+          "3.11.9": true,
+          "3.12.0": true,
+          "3.13.16": true
+        },
+        "candidate_linux_cp313_or_universal_wheels": [
+          "torch-2.11.0-cp313-cp313-manylinux_2_28_x86_64.whl",
+          "torch-2.11.0-cp313-cp313t-manylinux_2_28_x86_64.whl"
+        ]
+      }
+    },
+    "cuda_torch_wheel_availability": {
+      "url": "https://download.pytorch.org/whl/cu130/torch/",
+      "matching_cp313_linux_x86_64_wheels": [
+        "https://download-r2.pytorch.org/whl/cu130/torch-2.11.0%2Bcu130-cp313-cp313-manylinux_2_28_x86_64.whl#sha256=554461b76f21211927c776056bcb0b00fb42972364794b686d768ebb0b586366"
+      ]
+    },
+    "limit": "Requires-Python and available wheels are declarations, not execution or GPU-kernel verification."
+  },
+  "pip_dry_run": {
+    "exit_code": 0,
+    "python_target": "3.13.16",
+    "wheel_target_platforms": [
+      "manylinux_2_28_x86_64",
+      "manylinux2014_x86_64",
+      "manylinux_2_17_x86_64"
+    ],
+    "requested_direct_pins_excluding_torch": [
+      "setuptools==80.9.0",
+      "PyYAML==6.0.3",
+      "Pillow==13.0.0",
+      "pytest==9.2.0",
+      "numpy==2.3.5",
+      "matplotlib==3.10.8",
+      "mlflow-skinny==3.16.1",
+      "sqlalchemy==2.0.57",
+      "alembic==1.20.1"
+    ],
+    "packages_planned": {
+      "setuptools": "80.9.0",
+      "PyYAML": "6.0.3",
+      "pillow": "13.0.0",
+      "pytest": "9.2.0",
+      "numpy": "2.3.5",
+      "matplotlib": "3.10.8",
+      "mlflow-skinny": "3.16.1",
+      "SQLAlchemy": "2.0.57",
+      "alembic": "1.20.1",
+      "anyio": "4.16.0",
+      "cachetools": "7.3.0",
+      "click": "8.5.1",
+      "cloudpickle": "3.1.2",
+      "databricks-sdk": "0.162.0",
+      "fastapi": "0.162.2",
+      "GitPython": "3.2.1",
+      "gitdb": "4.0.12",
+      "google-auth": "2.62.1",
+      "importlib_metadata": "9.1.0",
+      "opentelemetry-api": "1.45.2",
+      "opentelemetry-proto": "1.45.2",
+      "opentelemetry-sdk": "1.45.2",
+      "opentelemetry-semantic-conventions": "0.66b2",
+      "packaging": "26.3",
+      "pluggy": "1.7.0",
+      "protobuf": "7.36.2",
+      "pydantic": "2.14.3",
+      "pydantic_core": "2.50.4",
+      "python-dotenv": "1.2.4",
+      "requests": "2.34.2",
+      "charset-normalizer": "3.5.2",
+      "idna": "3.20",
+      "smmap": "5.0.3",
+      "sqlparse": "0.6.1",
+      "starlette": "1.10.0",
+      "typing_extensions": "4.16.0",
+      "urllib3": "2.8.0",
+      "uvicorn": "0.54.0",
+      "annotated-doc": "0.0.5",
+      "annotated-types": "0.8.0",
+      "certifi": "2026.10.23",
+      "colorama": "0.4.6",
+      "contourpy": "1.4.0",
+      "cryptography": "50.0.2",
+      "cffi": "2.1.1",
+      "cycler": "0.12.1",
+      "fonttools": "4.68.0",
+      "greenlet": "3.5.6",
+      "h11": "0.16.0",
+      "iniconfig": "2.3.1",
+      "kiwisolver": "1.5.1",
+      "pyasn1_modules": "0.4.2",
+      "pyasn1": "0.6.5",
+      "Pygments": "2.21.0",
+      "pyparsing": "3.3.3",
+      "python-dateutil": "4.0.0",
+      "typing-inspection": "0.4.5",
+      "zipp": "4.1.2",
+      "Mako": "1.4.3",
+      "MarkupSafe": "3.0.4",
+      "pycparser": "3.12",
+      "tzdata": "2026.6"
+    },
+    "package_count": 62,
+    "torch_or_cuda_packages_planned": false,
+    "packages_installed_by_simulation": 0,
+    "host_environment_recorded_by_pip": {
+      "implementation_name": "cpython",
+      "implementation_version": "3.11.9",
+      "os_name": "nt",
+      "platform_machine": "AMD64",
+      "platform_release": "10",
+      "platform_system": "Windows",
+      "platform_version": "10.0.26200",
+      "python_full_version": "3.11.9",
+      "platform_python_implementation": "CPython",
+      "python_version": "3.11",
+      "sys_platform": "win32"
+    },
+    "report_sha256": "184c896ef1b0076d3c89e1385e746bdaba1169b6e4205f580113ef31d797aa40",
+    "limit": "pip --python-version/--platform select Requires-Python and wheel tags; dependency environment markers may still reflect the Windows/Python 3.11 host. This is not native Linux/Python 3.13 resolution."
+  },
+  "verification": {
+    "targeted_tests": {
+      "command": "python -m pytest tests/test_compatibility.py tests/test_smoke.py -q -W error --tb=short",
+      "passed": 50,
+      "duration_seconds": 20.76,
+      "exit_code": 0
+    },
+    "full_tests": {
+      "command": "python -m pytest -q -W error --tb=short",
+      "passed": 172,
+      "skipped": 1,
+      "duration_seconds": 93.57,
+      "exit_code": 0,
+      "only_skip": "CUDA not available locally"
+    },
+    "bootstrap": {
+      "command": "powershell -NoProfile -ExecutionPolicy RemoteSigned -File scripts/bootstrap.ps1 -SkipInstall",
+      "exit_code": 0,
+      "existing_venv_reused": true,
+      "packages_installed": false
+    },
+    "smoke": {
+      "command": "python scripts/smoke_test.py",
+      "status": "ok",
+      "actual_interpreter": "3.11.9",
+      "torch": "2.15.0+cpu"
+    },
+    "pip_check": "No broken requirements found.",
+    "note": "3.12/3.13 acceptance and invalid-version checks use synthetic version values; they are not interpreter executions."
+  },
+  "integrity": {
+    "protected_files_sha256_and_mtime_unchanged": 16,
+    "protected_files": {
+      "configs\\ae_baseline.yaml": {
+        "sha256": "6ca8739ea42985f150a594bcdf71d8db9d554d73b461658b51e57a54c130b00f",
+        "mtime_ns": 1794074830291679400
+      },
+      "configs\\dataset.yaml": {
+        "sha256": "fa1e2ac94b803ac0983971ec1fe77f67d57438de854c9cfa79dbe3b312772ece",
+        "mtime_ns": 1793968129371977600
+      },
+      "configs\\train_ae_b0.yaml": {
+        "sha256": "2d99b8309e219a833cdbbcb06cf38e4b0908890c93e1b9d2778378ba2e29f9b0",
+        "mtime_ns": 1794076849816051400
+      },
+      "src\\data\\audit.py": {
+        "sha256": "60f11e416d3231e7aab535a171bb8b090f7593a163900334282900dd49925883",
+        "mtime_ns": 1793967012570984800
+      },
+      "src\\data\\dataset.py": {
+        "sha256": "de33d924f5ceaaf1ed1558efc8a23d7728bfe8890ed42530d1c10f0d839a9605",
+        "mtime_ns": 1793968303999518500
+      },
+      "src\\data\\eda.py": {
+        "sha256": "1559660abbdf7ef43170186b0bdd8b12d3f4bea16634cdec44574593277bb4df",
+        "mtime_ns": 1793970646525635200
+      },
+      "src\\data\\prepare.py": {
+        "sha256": "b103f7279d802f2942f46cd4c2f30e207995ec297babcdcc01cc7307c066762e",
+        "mtime_ns": 1793968669717071600
+      },
+      "src\\data\\__init__.py": {
+        "sha256": "d5d07fea1301b72368a2324f464a62c079ac0840103d2c3d3c857be94edbb788",
+        "mtime_ns": 1793968672704089200
+      },
+      "src\\models\\autoencoder.py": {
+        "sha256": "ce604d569536ade81bc52d13a8349aa1b10d85e16cd9a6f8856ce6f4437beec7",
+        "mtime_ns": 1794074827927483000
+      },
+      "src\\training\\train_ae.py": {
+        "sha256": "aae90e06d94652fa22f1faa979f88cc6a6842f9dbad91b91cafd5ab2d26e85a8",
+        "mtime_ns": 1794080766868840000
+      },
+      "data\\manifests\\.gitkeep": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "mtime_ns": 1793962870453054100
+      },
+      "data\\manifests\\manifest.csv": {
+        "sha256": "13f55c7cf7c87a3e3739e24920bb0d85cc96a39a00e30d277ddfaa1832b84522",
+        "mtime_ns": 1793968748948032700
+      },
+      "data\\manifests\\preparation.json": {
+        "sha256": "b7deb937b523c719e4b6b38a585e39003ca4d1aaedcc3b09f872b74a0f55d5b4",
+        "mtime_ns": 1793968748952896900
+      },
+      "data\\manifests\\test.csv": {
+        "sha256": "10b4d50e66d9c98cfd53a55b304be4fe150ad4e1eaf7e7a99c1c019d793d30ac",
+        "mtime_ns": 1793968748951901700
+      },
+      "data\\manifests\\train.csv": {
+        "sha256": "781b1143fee9eab14f871f4f6335a94f9832c8bb0f13efbb8c40f54d3eadc5d4",
+        "mtime_ns": 1793968748949585300
+      },
+      "data\\manifests\\val.csv": {
+        "sha256": "08f10f23fa04a531188684a46ae2578c9337e8c81f6c3c20aaf1b3c20b963092",
+        "mtime_ns": 1793968748950602500
+      }
+    },
+    "original_inventory_sizes_and_mtimes_unchanged": 1393,
+    "original_image_and_mask_content_read_for_this_audit": false,
+    "data_or_checkpoint_content_published": false
+  },
+  "local_metadata_repair": {
+    "issue": "Legacy ignored root egg-info exposed stale <3.12 metadata before the current installed dist-info.",
+    "action": "Moved the generated legacy metadata directory into .pytest_cache/python_compat_legacy_metadata without overwriting or deleting it.",
+    "result": "Installed metadata now matches pyproject; no interpreter or library was replaced."
+  },
+  "kaggle_installation_policy": {
+    "extras": [
+      "train",
+      "eda",
+      "dev"
+    ],
+    "excluded_extra": "data",
+    "protection": "README cell constrains installed Torch/TorchVision/TorchAudio/Triton/CUDA distributions and checks exact versions after pip.",
+    "real_kaggle_install_tests_and_smoke_still_required": true
+  },
+  "no_full_training_executed": true
+}

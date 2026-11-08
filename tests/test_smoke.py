@@ -260,3 +260,13 @@ def test_git_ignores_datasets_checkpoints_and_secrets():
     )
     assert result.returncode == 0, result.stderr
     assert set(result.stdout.decode("utf-8").split("\0")) - {""} == ignored_paths
+
+
+@pytest.mark.parametrize("version,bits,expected", [
+    ((3, 11, 9), 64, True), ((3, 12, 0), 64, True), ((3, 13, 16), 64, True),
+    ((3, 10, 20), 64, False), ((3, 14, 0), 64, False), ((4, 11, 0), 64, False),
+    ((3, 11, 9), 32, False), ((3, 13, 16), 32, False),
+])
+def test_python_version_policy_accepts_supported_minors_and_rejects_other_runtimes(smoke_module, version, bits, expected):
+    # Test du controle de version, sans simuler une execution sous ces interpreteurs.
+    assert smoke_module.is_supported_python(version, bits) is expected

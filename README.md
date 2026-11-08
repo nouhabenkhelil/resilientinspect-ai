@@ -73,14 +73,16 @@ L'installation éditable est requise ; aucun ajout manuel à `PYTHONPATH`.
 
 ## Installation sous Windows PowerShell
 
-Prérequis : Windows 11, Git et **Python 3.11 x64**. Exécuter depuis la racine :
+Prérequis : Windows 11, Git et **Python 3.11 à 3.13 x64**. Le runtime local
+réellement vérifié reste Python 3.11.9 ; l'exécution Python 3.13 sur Kaggle
+reste à vérifier. Exécuter depuis la racine :
 
 ```powershell
 Set-Location C:\Users\nouhe\resilientinspect-ai
 git --version
 py -0p
 
-# Réutilise .venv s'il est valide, sinon recherche Python 3.11 et le crée.
+# Réutilise .venv s'il est valide, sinon recherche Python 3.11, 3.12 puis 3.13.
 # RemoteSigned ne s'applique qu'à ce processus enfant.
 powershell -NoProfile -ExecutionPolicy RemoteSigned -File .\scripts\bootstrap.ps1
 
@@ -99,7 +101,8 @@ stratégie d'exécution persistante et sans installer PyTorch/CUDA. `-SkipInstal
 permet de vérifier/créer seulement l'environnement. Un `.venv` existant invalide
 est refusé et conservé. Le script fonctionne aussi depuis un autre répertoire.
 
-Si Python 3.11 n'est pas trouvé, fournir son exécutable explicitement :
+Si aucun interpréteur pris en charge n'est trouvé, fournir son exécutable
+explicitement (exemple local en 3.11) :
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy RemoteSigned -File .\scripts\bootstrap.ps1 -PythonPath "$env:LOCALAPPDATA\Programs\Python\Python311\python.exe"
@@ -152,7 +155,7 @@ test vérifie un petit calcul CPU et l'import du module Dataset.
 ## Lire les vérifications
 
 Le smoke test retourne un JSON avec la phase configurée, `status: "ok"` et un code de sortie
-0 si Python 3.11 x64, le paquet installé, Git, les répertoires et la configuration
+0 si Python 3.11, 3.12 ou 3.13 x64, le paquet installé, Git, les répertoires et la configuration
 sont valides, sans accéder aux images. Un champ `status: "error"` et un code 1 identifient un contrôle en
 échec. PyTorch absent est une erreur en préparation. Un dépôt sans commit est accepté
 (`head: null`). Aucune sortie n'est une mesure de qualité d'un modèle.
@@ -501,24 +504,41 @@ for run in client.search_runs([experiment.experiment_id]):
 
 Préparation **Kaggle/T4**, commandes fournies mais non exécutées ici : utiliser
 le code du dépôt, les manifestes figés et le dataset existant, avec des chemins
-adaptés au notebook. Le paquet conserve son contrat Python 3.11 ; vérifier
-l'interpréteur avant installation. Choisir l'accélérateur GPU dans Kaggle,
-puis vérifier le runtime sans réinstaller PyTorch :
+adaptés au notebook. Le paquet autorise Python **>=3.11,<3.14**. L'environnement
+Kaggle communiqué par l'utilisateur est Python **3.13.16**, PyTorch
+**2.11.0+cu130**, Tesla T4 ; ces informations ne constituent pas une exécution
+vérifiée depuis cette machine CPU. Choisir l'accélérateur GPU dans Kaggle,
+puis conserver le runtime existant pendant l'installation :
 
 ```python
 import sys
 import subprocess
 from pathlib import Path
-from importlib.metadata import version
+from importlib.metadata import version, distributions
 import torch
 
 repo = Path("/kaggle/working/resilientinspect-ai")  # adapter au code fourni
-assert sys.version_info[:2] == (3, 11), "Le paquet est actuellement valide pour Python 3.11."
+assert (3, 11) <= sys.version_info[:2] < (3, 14), "Python 3.11 a 3.13 requis."
 assert torch.cuda.is_available(), "Activer le GPU Kaggle ; aucun repli CPU implicite."
 torch_before = version("torch")
 print(torch_before, torch.version.cuda, torch.cuda.get_device_name(0))
-subprocess.run([sys.executable, "-m", "pip", "install", "-e", f"{repo}[train]"], check=True)
-assert version("torch") == torch_before, "La version CUDA de PyTorch doit rester inchangee."
+
+# Contraindre les versions du runtime preinstalle : pip doit echouer plutot que le remplacer.
+protected = {}
+for distribution in distributions():
+    name = distribution.metadata["Name"].lower().replace("_", "-")
+    if name in {"torch", "torchvision", "torchaudio", "triton"} or name.startswith(("nvidia-", "cuda-")):
+        protected[name] = distribution.version
+constraints = Path("/kaggle/working/resilientinspect-runtime-constraints.txt")
+constraints.write_text("\n".join(f"{name}=={value}" for name, value in sorted(protected.items())) + "\n", encoding="utf-8")
+subprocess.run([sys.executable, "-m", "pip", "install", "--constraint", str(constraints),
+                "-e", f"{repo}[train,eda,dev]"], check=True)
+assert all(version(name) == value for name, value in protected.items()), "Runtime CUDA modifie."
+assert version("torch") == torch_before
+
+# Verifications reelles a effectuer dans le notebook avant tout run complet.
+subprocess.run([sys.executable, "-m", "pip", "check"], check=True)
+subprocess.run([sys.executable, "-m", "pytest", "-q", "-W", "error"], cwd=repo, check=True)
 
 command = [sys.executable, "-m", "resilientinspect.training.train_ae",
            "--config", str(repo / "configs/train_ae_b0.yaml"),
@@ -542,6 +562,44 @@ rechargement du checkpoint, suivi MLflow réel et propagation des échecs.
 Les résultats et limites sont consignés dans
 `reports/experiments/b0_training_verification.json` et le journal.
 
+## Compatibilité Python 3.11–3.13
+
+La correction du 8 novembre 2026 élargit uniquement le contrat Python et ses
+contrôles : `pyproject.toml`, smoke Python et bootstrap PowerShell acceptent
+3.11, 3.12 et 3.13 en 64 bits. Les versions de dépendances restent inchangées,
+ainsi que B0, ses configurations, le Dataset, les manifestes et les splits.
+L'extra `data` reste réservé à la reproduction locale (torch 2.15.0) ; ne pas
+l'installer sur le runtime CUDA Kaggle 2.11.0+cu130. Les extras `train,eda,dev`
+ne demandent pas de paquet Torch/CUDA dans l'arbre de dépendances contrôlé.
+
+Les métadonnées officielles des dix dépendances directes épinglées (backend de
+construction inclus) autorisent Python 3.13.16 ; des roues Linux CPython 3.13,
+abi3 ou universelles sont disponibles. En particulier,
+[MLflow Skinny 3.16.1](https://pypi.org/project/mlflow-skinny/3.16.1/) et
+[PyTorch 2.11.0](https://pypi.org/project/torch/2.11.0/) déclarent Python >=3.10.
+L'[index officiel CUDA 13.0](https://download.pytorch.org/whl/cu130/torch/)
+contient une roue `torch-2.11.0+cu130-cp313-cp313` Linux x86_64. Ces éléments
+vérifient la disponibilité et les déclarations des paquets, pas l'exécution GPU.
+
+Une résolution pip `--dry-run --python-version 3.13.16 --only-binary=:all:`
+ciblant les roues Linux a réussi pour les dépendances épinglées hors PyTorch,
+avec 62 paquets proposés et aucun paquet Torch/CUDA. Aucun paquet n'a été
+installé par cette simulation. **Limite :** pip reste exécuté depuis Windows
+Python 3.11 ; ses marqueurs d'environnement peuvent refléter l'hôte (par exemple
+colorama). Ce résultat ne remplace donc pas `pip check`, les tests et le smoke
+GPU dans le vrai notebook Python 3.13.16.
+
+Les nouvelles vérifications conservent tous les tests précédents et ajoutent
+les bornes Python, le contrôle x64, la concordance avec les métadonnées
+installées, le probe PowerShell sans création de venv et l'absence de demande
+Torch/CUDA par les dépendances Kaggle. Les preuves et résultats locaux sont
+enregistrés dans `reports/experiments/python_compatibility.json`.
+Vérification locale finale : **172 passed, 1 skipped in 93.57s** ; le seul skip
+concerne CUDA indisponible. Les 50 tests ciblés de compatibilité/smoke passent
+en 20.76 s ; bootstrap `-SkipInstall`, smoke du socle et `pip check` réussissent.
+Python 3.13.16, PyTorch 2.11.0+cu130 et la T4 restent à vérifier réellement
+dans Kaggle avant tout entraînement complet.
+
 ## Git et critères de validation
 
 Git conserve le code, les configurations, les tests et les rapports textuels.
@@ -552,7 +610,7 @@ effectué automatiquement. Les protections Git sont testées sans créer de donn
 
 L'étape de préparation est prête pour revue lorsque :
 
-- l'environnement Python 3.11 x64 est identifié et les capacités CPU/GPU sont documentées ;
+- la version Python x64 autorisée est identifiée et les capacités CPU/GPU sont documentées ;
 - `pip check`, le smoke test et `pytest` réussissent sans dataset ;
 - les exclusions Git protègent les chemins de données, poids et secrets ;
 - les manifestes sont figés et les vérifications de splits/géométrie passent ;

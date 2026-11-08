@@ -751,3 +751,125 @@ run complet n'a été exécuté/validé depuis cet environnement CPU.
 
 **Arrêt après le pipeline et sa vérification courte.** Attendre la validation
 avant tout entraînement complet et avant A1/T0/T1/T2.
+
+## 2026-11-08 — Correction de compatibilité Python / Kaggle
+
+**Périmètre.** Adapter le contrat de paquetage et les contrôles de runtime à
+Python 3.11–3.13, sans modifier B0, ses configurations, l'entraînement, les
+données ou le protocole scientifique. L'utilisateur communique Python 3.13.16,
+PyTorch 2.11.0+cu130 et Tesla T4 sur Kaggle. Ce runtime distant n'a pas été
+inspecté ou exécuté depuis l'environnement local ; il reste à vérifier.
+
+### Modifications
+
+- `pyproject.toml` déclare désormais `requires-python = ">=3.11,<3.14"`.
+  Toutes les versions de dépendances restent identiques. L'extra `data` impose
+  toujours torch 2.15.0 pour la reproduction locale et ne doit pas être installé
+  sur Kaggle ; les extras `train,eda,dev` ne demandent pas de runtime Torch/CUDA.
+- Le smoke Python accepte les trois versions mineures en x64, conserve le
+  rejet de Python 3.10, 3.14 et des interpréteurs 32 bits et annonce les versions
+  acceptées dans son JSON. L'absence de PyTorch requis reste une erreur.
+- Le bootstrap PowerShell applique le même contrat, conserve le `.venv` valide
+  et recherche 3.11, puis 3.12 et 3.13 en cas de création nécessaire.
+- Aucun test antérieur n'est supprimé ou désactivé. Seize cas sont ajoutés :
+  bornes Python/x64, cohérence des métadonnées installées, arbre de dépendances
+  Kaggle sans Torch/CUDA et probe PowerShell simulant plusieurs versions et un
+  code de sortie en erreur, sans créer de venv.
+- La cellule README Kaggle utilise les extras `train,eda,dev`, contraint les
+  versions déjà installées de torch/torchvision/torchaudio/triton et des
+  distributions CUDA/NVIDIA, puis vérifie qu'elles sont inchangées. Elle prévoit
+  `pip check`, Pytest et le smoke GPU dans le notebook. Elle n'est pas exécutée
+  depuis cette machine et ne demande jamais une roue CPU ou l'extra `data`.
+
+### Compatibilité des distributions : preuves de métadonnées
+
+Les versions exactes ont été interrogées via l'API publique PyPI. Les dix
+dépendances directes épinglées, backend de construction inclus, déclarent des
+contraintes `Requires-Python` autorisant 3.11, 3.12 et 3.13.16. Des roues Linux
+CPython 3.13, abi3 ou universelles sont présentes pour chacune.
+
+| Distribution | Version | Requires-Python déclaré |
+| --- | --- | --- |
+| setuptools (backend requis) | 80.9.0 | >=3.9 |
+| PyYAML | 6.0.3 | >=3.8 |
+| Pillow | 13.0.0 | >=3.11 |
+| pytest | 9.2.0 | >=3.10 |
+| torch local | 2.15.0 | >=3.11 |
+| NumPy | 2.3.5 | >=3.11 |
+| Matplotlib | 3.10.8 | >=3.10 |
+| MLflow Skinny | 3.16.1 | >=3.10 |
+| SQLAlchemy | 2.0.57 | >=3.7 |
+| Alembic | 1.20.1 | >=3.10 |
+| torch Kaggle communiqué | 2.11.0 | >=3.10 |
+
+Sources primaires : [MLflow Skinny 3.16.1](https://pypi.org/project/mlflow-skinny/3.16.1/),
+[PyTorch 2.11.0](https://pypi.org/project/torch/2.11.0/), autres URL versionnées
+PyPI conservées dans `reports/experiments/python_compatibility.json`.
+L'[index officiel cu130](https://download.pytorch.org/whl/cu130/torch/) contient
+une roue `torch-2.11.0+cu130-cp313-cp313` manylinux x86_64 ; aucune roue torch
+n'a été téléchargée ou installée. La présence de ce fichier et les déclarations
+Python ne valident pas les kernels CUDA sur la T4.
+
+Une simulation pip avec `--dry-run --ignore-installed --python-version 3.13.16`,
+tags de roues manylinux x86_64, `--implementation cp --abi cp313` et
+`--only-binary=:all:` a réussi pour neuf dépendances directes épinglées hors
+torch, dont NumPy. **62 paquets proposés, zéro paquet Torch/CUDA**, sans
+installation. Le rapport pip et les métadonnées brutes restent dans le cache
+local ; les versions choisies et empreintes sont reprises dans le rapport textuel.
+
+**Limite explicite :** pip est exécuté par Windows/Python 3.11.9 ; les options de
+cible contrôlent les tags des roues et `Requires-Python`, mais des marqueurs de
+dépendances peuvent rester évalués selon l'hôte. Le rapport enregistre ainsi
+Windows/3.11.9 et inclut colorama. Ce contrôle est une simulation de résolution,
+pas un test natif Linux/Python 3.13, ni une validation complète de l'environnement
+Kaggle préinstallé. La résolution et les tests doivent être répétés dans Kaggle.
+
+### Résultats réellement obtenus localement
+
+| Vérification exécutée | Résultat |
+| --- | --- |
+| Installation éditable `pip install --no-deps --no-build-isolation -e .` | Réussie ; contrat des métadonnées mis à jour, aucune dépendance réinstallée |
+| Bootstrap `-SkipInstall` | Code 0 ; `.venv` 3.11 x64 conservé, aucune installation |
+| `python scripts/smoke_test.py` | Code 0, status ok ; Python 3.11.9, PyTorch 2.15.0+cpu, CUDA false |
+| `python -m pytest tests/test_compatibility.py tests/test_smoke.py -q -W error --tb=short` | **50 passed in 20.76s** |
+| `python -m pytest -q -W error --tb=short` | **172 passed, 1 skipped in 93.57s** |
+| `pip check` | `No broken requirements found.` |
+
+Le seul skip local reste le test CUDA existant de `test_models.py`. Les nouveaux
+tests sur les valeurs 3.12/3.13 sont des contrôles de politique d'acceptation et
+de métadonnées ; ils ne prétendent pas exécuter ces interpréteurs. Le test du
+probe PowerShell est spécifique Windows et sera ignoré sur Linux.
+
+Les premiers contrôles ont révélé un ancien répertoire généré et ignoré
+`resilientinspect_ai.egg-info` à la racine, dont le champ `<3.12` masquait les
+métadonnées `<3.14` correctement installées dans le `.venv`. Il a été déplacé
+sans suppression ni écrasement dans `.pytest_cache/python_compat_legacy_metadata`.
+Les tests ont ensuite validé l'accord entre `pyproject.toml` et la distribution
+installée. Le test PowerShell temporaire utilise la même politique de processus
+RemoteSigned que le bootstrap, sans changement de politique système. Aucun
+filtre d'avertissement ni contournement des échecs n'a été ajouté.
+
+L'environnement réellement exécuté reste Python 3.11.9 / PyTorch 2.15.0+cpu.
+Le rafraîchissement de métadonnées sans isolation utilise le setuptools local
+78.1.0 ; la vérification de setuptools 80.9.0 concerne sa version requise dans
+le build-system et ses métadonnées officielles. Aucun PyTorch CUDA n'est remplacé
+et aucun environnement Kaggle n'est modifié depuis cette session.
+
+### Conservation du protocole et fichiers
+
+Le relevé avant/après confirme **16 fichiers scientifiques protégés inchangés**,
+mêmes SHA256 et dates : les trois YAML, modules de données, modèle B0,
+pipeline d'entraînement et manifestes. Les **1 393 fichiers originaux** ont le
+même inventaire, les mêmes tailles et dates ; aucun contenu d'image ou masque
+officiel n'est relu pour cet audit de compatibilité. Aucun nouvel entraînement
+MVTec AD ni entraînement complet n'est lancé ; Pytest conserve ses vérifications
+sur données synthétiques temporaires.
+
+Modifiés : `pyproject.toml`, `scripts/smoke_test.py`, `scripts/bootstrap.ps1`,
+`tests/test_smoke.py` (ajouts uniquement), `README.md`, ce journal.
+Créés : `tests/test_compatibility.py`,
+`reports/experiments/python_compatibility.json`.
+
+**Arrêt après la correction de compatibilité.** Python 3.13.16, le runtime
+PyTorch 2.11.0+cu130, MLflow/SQLite et le smoke B0 sur Tesla T4 restent à vérifier
+réellement dans Kaggle avant la validation d'un entraînement complet.

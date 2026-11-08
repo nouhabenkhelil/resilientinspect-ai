@@ -7,11 +7,12 @@ name = "resilientinspect-ai"
 version = "0.0.1"
 description = "Detection d'anomalies visuelles - audit et preparation MVTec AD"
 readme = "README.md"
-requires-python = ">=3.11,<3.12"
+requires-python = ">=3.11,<3.14"
 dependencies = ["PyYAML==6.0.3", "Pillow==13.0.0"]
 
 [project.optional-dependencies]
 dev = ["pytest==9.2.0"]
+# Reproduction locale ; sur Kaggle utiliser train/eda/dev, jamais data qui impose torch.
 data = ["torch==2.15.0", "numpy==2.3.5"]
 eda = ["matplotlib==3.10.8"]
 train = ["mlflow-skinny==3.16.1", "sqlalchemy==2.0.57", "alembic==1.20.1", "matplotlib==3.10.8"]

@@ -33,6 +33,11 @@ REQUIRED_DIRECTORIES = (
 )
 
 
+def is_supported_python(version_info: tuple[int, ...], bits: int) -> bool:
+    """Contrat 3.11--3.13 x64 ; ce controle ne valide pas les bibliotheques CUDA."""
+    return version_info[:2] in ((3, 11), (3, 12), (3, 13)) and bits == 64
+
+
 def validate_dataset_config(path: Path) -> dict[str, Any]:
     """Valide la declaration de phase 0 ou 1, sans acceder au dataset."""
     import yaml
@@ -132,10 +137,11 @@ def collect_report(project_root: Path = PROJECT_ROOT) -> dict[str, Any]:
     phase: int | None = None
     pytorch_required = False
     checks["python"] = {
-        "status": "ok" if sys.version_info[:2] == (3, 11) and struct.calcsize("P") == 8 else "error",
+        "status": "ok" if is_supported_python(sys.version_info, struct.calcsize("P") * 8) else "error",
         "version": platform.python_version(),
         "executable": sys.executable,
         "bits": struct.calcsize("P") * 8,
+        "supported_versions": ["3.11", "3.12", "3.13"],
     }
     try:
         package = importlib.import_module("resilientinspect")
@@ -180,7 +186,7 @@ def collect_report(project_root: Path = PROJECT_ROOT) -> dict[str, Any]:
     checks["pytorch"]["required"] = pytorch_required
     if pytorch_required and checks["pytorch"]["status"] == "not_installed":
         checks["pytorch"] = {"status": "error", "required": True,
-                             "detail": "La preparation exige PyTorch : installer l'extra data."}
+                             "detail": "La preparation exige PyTorch ; conserver le runtime CUDA sur Kaggle. L'extra data est reserve a l'installation locale."}
     if pytorch_required:
         try:
             importlib.import_module("resilientinspect.data.dataset")

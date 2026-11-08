@@ -11,7 +11,7 @@ $projectRoot = Split-Path -Parent $PSScriptRoot
 $venvPath = Join-Path $projectRoot '.venv'
 $venvPython = Join-Path $venvPath 'Scripts\python.exe'
 
-function Test-Python311 {
+function Test-SupportedPython {
     param(
         [Parameter(Mandatory = $true)][string]$Executable,
         [string[]]$PrefixArguments = @()
@@ -24,7 +24,7 @@ function Test-Python311 {
         $probeExitCode = $LASTEXITCODE
         $details = (@($probeOutput) -join "`n").Trim()
         return [pscustomobject]@{
-            IsValid = ($probeExitCode -eq 0 -and $details -eq '3.11;64')
+            IsValid = ($probeExitCode -eq 0 -and $details -match '^3\.(11|12|13);64$')
             Details = $details
         }
     }
@@ -53,33 +53,36 @@ if (Test-Path -LiteralPath $venvPath) {
     if (-not (Test-Path -LiteralPath $venvPython -PathType Leaf)) {
         throw "An existing .venv has no Scripts\python.exe. It was preserved. Repair it or choose another workspace before retrying."
     }
-    $existingProbe = Test-Python311 -Executable $venvPython
+    $existingProbe = Test-SupportedPython -Executable $venvPython
     if (-not $existingProbe.IsValid) {
-        throw "Existing .venv must use 64-bit Python 3.11. It was preserved. Probe result: $($existingProbe.Details)"
+        throw "Existing .venv must use 64-bit Python 3.11, 3.12 or 3.13. It was preserved. Probe result: $($existingProbe.Details)"
     }
-    Write-Host 'Using the existing 64-bit Python 3.11 environment.'
+    Write-Host "Using the existing supported Python environment ($($existingProbe.Details))."
 }
 else {
     $selectedPython = $null
     $selectedPrefix = @()
 
     if ($PythonPath) {
-        $explicitProbe = Test-Python311 -Executable $PythonPath
+        $explicitProbe = Test-SupportedPython -Executable $PythonPath
         if (-not $explicitProbe.IsValid) {
-            throw "-PythonPath must identify a working 64-bit Python 3.11 interpreter. Probe result: $($explicitProbe.Details)"
+            throw "-PythonPath must identify a working 64-bit Python 3.11, 3.12 or 3.13 interpreter. Probe result: $($explicitProbe.Details)"
         }
         $selectedPython = $PythonPath
     }
     else {
         $candidates = @()
         $launcher = Get-Command py -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
-        if ($null -ne $launcher) {
-            $candidates += [pscustomobject]@{ Executable = $launcher.Source; Prefix = @('-3.11') }
-        }
-        if ($env:LOCALAPPDATA) {
-            $localPython = Join-Path $env:LOCALAPPDATA 'Programs\Python\Python311\python.exe'
-            if (Test-Path -LiteralPath $localPython -PathType Leaf) {
-                $candidates += [pscustomobject]@{ Executable = $localPython; Prefix = @() }
+        foreach ($pythonMinor in @('3.11', '3.12', '3.13')) {
+            if ($null -ne $launcher) {
+                $candidates += [pscustomobject]@{ Executable = $launcher.Source; Prefix = @("-$pythonMinor") }
+            }
+            if ($env:LOCALAPPDATA) {
+                $pythonDirectory = 'Programs\Python\Python' + $pythonMinor.Replace('.', '') + '\python.exe'
+                $localPython = Join-Path $env:LOCALAPPDATA $pythonDirectory
+                if (Test-Path -LiteralPath $localPython -PathType Leaf) {
+                    $candidates += [pscustomobject]@{ Executable = $localPython; Prefix = @() }
+                }
             }
         }
         $pathPython = Get-Command python -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
@@ -88,7 +91,7 @@ else {
         }
 
         foreach ($candidate in $candidates) {
-            $candidateProbe = Test-Python311 -Executable $candidate.Executable -PrefixArguments $candidate.Prefix
+            $candidateProbe = Test-SupportedPython -Executable $candidate.Executable -PrefixArguments $candidate.Prefix
             if ($candidateProbe.IsValid) {
                 $selectedPython = $candidate.Executable
                 $selectedPrefix = @($candidate.Prefix)
@@ -98,12 +101,12 @@ else {
     }
 
     if ($null -eq $selectedPython) {
-        throw 'No working 64-bit Python 3.11 interpreter was found. Install Python 3.11 x64, then retry with -PythonPath pointing to its python.exe.'
+        throw 'No working 64-bit Python 3.11, 3.12 or 3.13 interpreter was found. Install a supported version, then retry with -PythonPath pointing to its python.exe.'
     }
 
-    Write-Host 'Creating .venv with 64-bit Python 3.11.'
+    Write-Host 'Creating .venv with a supported 64-bit Python (3.11 to 3.13).'
     Invoke-CheckedPython -Executable $selectedPython -PythonArguments ($selectedPrefix + @('-m', 'venv', $venvPath))
-    $createdProbe = Test-Python311 -Executable $venvPython
+    $createdProbe = Test-SupportedPython -Executable $venvPython
     if (-not $createdProbe.IsValid) {
         throw 'The new .venv failed validation. It was preserved for inspection.'
     }
