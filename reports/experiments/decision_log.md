@@ -873,3 +873,107 @@ Créés : `tests/test_compatibility.py`,
 **Arrêt après la correction de compatibilité.** Python 3.13.16, le runtime
 PyTorch 2.11.0+cu130, MLflow/SQLite et le smoke B0 sur Tesla T4 restent à vérifier
 réellement dans Kaggle avant la validation d'un entraînement complet.
+## 8 novembre 2026 — module d'évaluation B0, implémentation pour revue
+
+**Statut : arrêt avant calibration réelle et avant évaluation du test officiel.**
+Demande bornée au module d'évaluation des trois B0 déjà entraînés sur Kaggle.
+Le guide a été relu depuis `resilientinspect-ai/guide_technique.docx.docx`
+(le chemin `docs/guide_technique.docx` n'existe pas dans cet état du dépôt).
+Sections 4–6, 11, 15 et 16 prises en compte ; aucune phase A1/transfert/export/API
+n'est implémentée. Aucune publication Git ou GitHub.
+
+### Choix scientifiques proposés avant accès au test
+
+Le protocole détaillé est dans
+[`b0_evaluation_protocol.md`](b0_evaluation_protocol.md), avec paramètres dans
+`configs/evaluate_ae_b0.yaml` :
+
+- carte L1 : moyenne des erreurs absolues RGB, sans lissage ni normalisation par image ;
+- score image : moyenne des `ceil(0,01 × N)` plus grandes erreurs sur N pixels valides ;
+- seuil image : quantile 95 % des scores des normales val de chaque catégorie ;
+- seuil pixel : quantile 99,5 % des erreurs de tous les pixels valides de val normale ;
+- quantiles `higher`, décisions strictement `>`, padding toujours exclu des calculs ;
+- AUROC/AP sur scores continus, Dice/IoU micro incluant les faux positifs normaux,
+  macro intercatégories et conventions explicites pour les valeurs indéfinies ;
+- confusion et F1 image au seul seuil val, aucun maximum F1/Dice/IoU recherché sur test.
+
+Le choix sans lissage constitue la proposition de baseline brute au regard du
+§5.1 du guide, qui évoque une carte lissée, et du §5.4 qui prévoit cette ablation.
+Il attend validation avec le score top-1 % et les quantiles avant toute inférence
+officielle. Les réglages d'entraînement B0 ne changent pas. Val a déjà servi à
+sélectionner le checkpoint : le réemploi pour calibrer le seuil est documenté,
+sans annoncer un taux de faux positifs futur garanti ou une validation indépendante.
+
+### Checkpoints réels inspectés, sans inférence
+
+Chargement CPU `weights_only=True`, strict, en mode eval et sans gradients.
+SHA256 des poids et manifeste contrôlés. Manifeste global inchangé :
+`13f55c7cf7c87a3e3739e24920bb0d85cc96a39a00e30d277ddfaa1832b84522`.
+
+| Catégorie | Run complet retenu | Meilleure époque enregistrée |
+| --- | --- | --- |
+| bottle | `7b8b71d28bc44868840ca50f4b16f4a1` | 19 |
+| hazelnut | `7ad19992bae44fcb9a04b5e7e15eccaf` | 18 |
+| leather | `15ee92b51d3e4ff99632422619e64c00` | 14 |
+
+Le run smoke bottle et quatre copies MLflow sont exclus, soit cinq fichiers
+`best.pt` exclus pour trois retenus. Plusieurs runs complets distincts pour la
+même catégorie bloquent la sélection ; les copies identiques sont dédupliquées.
+L'inventaire local est dans
+`reports/evaluation/b0/f515662ab4ef/checkpoint_inventory.json` et sa version
+textuelle à chemins relatifs est reprise dans le rapport de vérification.
+Ces contrôles ne mesurent aucune performance de détection.
+
+### Vérifications réellement exécutées
+
+| Commande / contrôle | Résultat |
+| --- | --- |
+| Installation de `scikit-learn==1.8.0` avec rapport pip local | Réussie ; ajouts scikit-learn, SciPy 1.17.1, joblib 1.6.0, threadpoolctl 3.8.0 ; Torch et NumPy non remplacés |
+| Installation éditable `pip install --no-deps --no-build-isolation -e .` | Code 0 ; avertissement informatif du backend sur l'installation éditable, aucune dépendance réinstallée |
+| Premier `pytest tests/test_evaluation.py -q -W error --tb=short` | 47 passed in 31.43s, avant deux contrôles complémentaires |
+| `pytest -q -W error --tb=short` final | **221 passed, 1 skipped in 72.11s** ; 49 tests d'évaluation inclus |
+| `pip check` | `No broken requirements found.` |
+| `python -W error -m resilientinspect.evaluation.evaluate_ae --stage inspect --device cpu` | Code 0, trois poids complets chargés, aucun Dataset ni inférence |
+| `git diff --check` | Code 0 |
+
+Le seul skip est le contrôle CUDA existant, faute de GPU local. Environnement
+réel : Python 3.11.9, PyTorch 2.15.0+cpu, NumPy 2.3.5. L'extra `eval` est ajouté
+sans exigence Torch ; le test existant de dépendances Kaggle est étendu à cet
+extra, sans supprimer d'assertion. Les métadonnées installées sont compatibles
+avec Python 3.13 selon ce contrôle, ce qui ne valide pas l'exécution Kaggle.
+
+Les tests d'évaluation utilisent des images et checkpoints aléatoires temporaires
+sans entraînement. Ils vérifient les calculs sur des cas connus, les ex æquo,
+les masques vides, la non-fuite, le blocage du test avant accord ou sur calibration
+périmée/modifiée, l'absence de mutation des poids/BatchNorm, l'exclusion des smoke
+et copies MLflow, ainsi que deux exécutions CPU identiques au niveau seuils,
+métriques et octets CSV/JSON/PNG. Le CLI complet calibration/évaluation est aussi
+exercé sur les trois catégories **synthétiques**, avec rapports et figures.
+La suite historique conserve ses mini-batches d'entraînement synthétiques de
+régression ; aucun entraînement MVTec AD ni entraînement complet n'est lancé.
+
+Une figure synthétique bottle/crack a été inspectée : quatre panneaux lisibles,
+géométrie entrée/masque alignée, échelle heatmap fixe [0,1]. La reconstruction
+provient d'un modèle initialisé aléatoirement et ne permet aucune conclusion
+sur les B0 entraînés. Aucun seuil ou résultat test réel n'est produit.
+
+### Conservation et sorties
+
+Comparaison avant/après : **16 fichiers scientifiques** (configurations B0,
+sources données/modèle/entraînement, manifestes) inchangés en SHA256 et date ;
+**157 fichiers des runs B0** inchangés en inventaire, SHA256 et date, base MLflow
+incluse. Les **1 393 fichiers originaux** gardent inventaire, taille et date ;
+leur contenu image/masque n'est pas relu durant cette étape.
+
+Créés : `src/evaluation/evaluate_ae.py`, `configs/evaluate_ae_b0.yaml`,
+`tests/test_evaluation.py`, `reports/experiments/b0_evaluation_protocol.md`,
+`reports/experiments/b0_evaluation_verification.json`.
+Modifiés : `src/evaluation/__init__.py`, `pyproject.toml`, `.gitignore`,
+`tests/test_compatibility.py`, `README.md`, ce journal.
+Tous les futurs rapports/figures `reports/evaluation/` restent locaux et ignorés
+par Git. Un résultat différent existant ne peut pas être écrasé.
+
+L'évaluation officielle exige le SHA256 exact du protocole validé, les seuils
+val normaux et des empreintes compatibles. Le fichier compagnon de calibration
+contrôle son intégrité. **Aucun stage calibrate/evaluate n'est exécuté sur les
+données réelles. Arrêt pour revue et validation du protocole.**

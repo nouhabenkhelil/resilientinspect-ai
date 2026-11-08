@@ -36,7 +36,7 @@ def test_kaggle_dependency_tree_does_not_request_a_torch_or_cuda_distribution():
                        platform_python_implementation="CPython", implementation_name="cpython",
                        implementation_version="3.13.16")
     pending = list(PROJECT["dependencies"])
-    for extra in ("dev", "eda", "train"):
+    for extra in ("dev", "eda", "train", "eval"):
         pending.extend(PROJECT["optional-dependencies"][extra])
     seen = set()
     while pending:

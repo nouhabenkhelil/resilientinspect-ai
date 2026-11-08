@@ -1,0 +1,208 @@
+{
+  "date": "2026-11-08",
+  "status": "implementation_only_awaiting_protocol_review",
+  "environment": {
+    "os": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.9",
+    "torch": "2.15.0+cpu",
+    "numpy": "2.3.5",
+    "scikit-learn": "1.8.0",
+    "scipy": "1.17.1",
+    "matplotlib": "3.10.8",
+    "pytest": "9.2.0",
+    "mlflow-skinny": "3.16.1"
+  },
+  "protocol": {
+    "schema_version": 1,
+    "protocol_id": "b0_l1_top01_quantiles_v1",
+    "categories": [
+      "bottle",
+      "hazelnut",
+      "leather"
+    ],
+    "anomaly_map": "rgb_mean_absolute_error",
+    "smoothing": "none",
+    "resolution": [
+      256,
+      256
+    ],
+    "padding": "exclude_valid_mask_zero",
+    "image_top_fraction": 0.01,
+    "image_threshold_quantile": 0.95,
+    "pixel_threshold_quantile": 0.995,
+    "quantile_method": "higher",
+    "decision": "strictly_greater",
+    "figures_per_defect": 1,
+    "batch_size": 4,
+    "cpu_threads": 2,
+    "seed": 42
+  },
+  "protocol_sha256": "f515662ab4ef0437194f7fdc7b57c8ea435ae6cb7e1be95c26476a91fa5d963e",
+  "source_sha256": {
+    "src/evaluation/evaluate_ae.py": "cee5cd06d05e78af208345bee3d927bde8452994fab998998970d74c2d702ce0",
+    "tests/test_evaluation.py": "9f95c35682ebd9c307b03899bda46ab32be11db9380046d16cf813594c58f916"
+  },
+  "checkpoint_inspection": {
+    "selected": {
+      "bottle": {
+        "category": "bottle",
+        "path": "artifacts/b0_runs/bottle/full_7b8b71d28bc44868840ca50f4b16f4a1/best.pt",
+        "run_id": "7b8b71d28bc44868840ca50f4b16f4a1",
+        "sha256": "b70366819fdbd9043eb78e8865ca39cebadf5cb251ff7a9c0e94817c3c0593e4",
+        "manifest_sha256": "13f55c7cf7c87a3e3739e24920bb0d85cc96a39a00e30d277ddfaa1832b84522",
+        "best_epoch": 19
+      },
+      "hazelnut": {
+        "category": "hazelnut",
+        "path": "artifacts/b0_runs/hazelnut/full_7ad19992bae44fcb9a04b5e7e15eccaf/best.pt",
+        "run_id": "7ad19992bae44fcb9a04b5e7e15eccaf",
+        "sha256": "28317915de9c191bdee13fa002996445f456f0d3de08b0b43426126efdc2178d",
+        "manifest_sha256": "13f55c7cf7c87a3e3739e24920bb0d85cc96a39a00e30d277ddfaa1832b84522",
+        "best_epoch": 18
+      },
+      "leather": {
+        "category": "leather",
+        "path": "artifacts/b0_runs/leather/full_15ee92b51d3e4ff99632422619e64c00/best.pt",
+        "run_id": "15ee92b51d3e4ff99632422619e64c00",
+        "sha256": "9de0b30085893bd24a45997cd87828c36c1c09030768327682715bcbe7403be3",
+        "manifest_sha256": "13f55c7cf7c87a3e3739e24920bb0d85cc96a39a00e30d277ddfaa1832b84522",
+        "best_epoch": 14
+      }
+    },
+    "excluded": [
+      {
+        "path": "artifacts/b0_runs/bottle/smoke_5999f03c92ef4b169e64bf31d984f6d4/best.pt",
+        "reason": "smoke"
+      },
+      {
+        "path": "artifacts/b0_runs/mlartifacts/15ee92b51d3e4ff99632422619e64c00/artifacts/best.pt",
+        "reason": "mlflow_copy"
+      },
+      {
+        "path": "artifacts/b0_runs/mlartifacts/5999f03c92ef4b169e64bf31d984f6d4/artifacts/best.pt",
+        "reason": "mlflow_copy"
+      },
+      {
+        "path": "artifacts/b0_runs/mlartifacts/7ad19992bae44fcb9a04b5e7e15eccaf/artifacts/best.pt",
+        "reason": "mlflow_copy"
+      },
+      {
+        "path": "artifacts/b0_runs/mlartifacts/7b8b71d28bc44868840ca50f4b16f4a1/artifacts/best.pt",
+        "reason": "mlflow_copy"
+      }
+    ],
+    "protocol_sha256": "f515662ab4ef0437194f7fdc7b57c8ea435ae6cb7e1be95c26476a91fa5d963e",
+    "inference_executed": false,
+    "test_executed": false
+  },
+  "new_installed_distributions": [
+    {
+      "name": "scikit-learn",
+      "version": "1.8.0"
+    },
+    {
+      "name": "joblib",
+      "version": "1.6.0"
+    },
+    {
+      "name": "scipy",
+      "version": "1.17.1"
+    },
+    {
+      "name": "threadpoolctl",
+      "version": "3.8.0"
+    }
+  ],
+  "commands_executed": [
+    {
+      "command": "python -m pip install --disable-pip-version-check --report .pytest_cache/eval_dependencies_install.json scikit-learn==1.8.0",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m pip install --no-deps --no-build-isolation -e .",
+      "exit_code": 0,
+      "note": "BuildBackendWarning editable affiche ; installation reussie, aucune dependance reinstallee."
+    },
+    {
+      "command": "python -m pytest tests/test_evaluation.py -q -W error --tb=short",
+      "exit_code": 0,
+      "passed": 47,
+      "seconds": 31.43,
+      "note": "Premier passage avant ajout de deux controles, ensuite inclus dans la suite complete."
+    },
+    {
+      "command": "python -m pytest -q -W error --tb=short",
+      "exit_code": 0,
+      "passed": 221,
+      "skipped": 1,
+      "seconds": 72.11,
+      "evaluation_tests": 49,
+      "skip_reason": "CUDA indisponible, test existant tests/test_models.py:146"
+    },
+    {
+      "command": "python -m pip check",
+      "exit_code": 0,
+      "output": "No broken requirements found."
+    },
+    {
+      "command": "python -W error -m resilientinspect.evaluation.evaluate_ae --stage inspect --device cpu",
+      "exit_code": 0,
+      "full_checkpoints_loaded": 3,
+      "inference_executed": false,
+      "test_executed": false
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0
+    }
+  ],
+  "preservation": {
+    "protected": {
+      "files": 16,
+      "unchanged": true,
+      "verification": "sha256+mtime_ns+inventory"
+    },
+    "originals": {
+      "files": 1393,
+      "unchanged": true,
+      "verification": "size+mtime_ns+inventory"
+    },
+    "run_files": {
+      "files": 157,
+      "unchanged": true,
+      "verification": "sha256+mtime_ns+inventory"
+    }
+  },
+  "synthetic_verification": {
+    "categories": [
+      "bottle",
+      "hazelnut",
+      "leather"
+    ],
+    "temporary_checkpoints": "random initialization, no evaluation-test training",
+    "official_images_read": false,
+    "repeat_cpu_equal": [
+      "thresholds",
+      "metrics",
+      "csv bytes",
+      "json bytes",
+      "png bytes"
+    ],
+    "visual_review": "Synthetic bottle/crack figure inspected: four panels readable, image/mask geometry aligned; random model reconstruction, no scientific performance conclusion."
+  },
+  "official_validation_calibration_executed": false,
+  "official_test_evaluation_executed": false,
+  "mvtec_training_executed": false,
+  "gpu_execution_verified": false,
+  "limits": [
+    "No real calibration thresholds, test metrics or real test figures produced.",
+    "Python 3.13 / PyTorch 2.11.0+cu130 / Tesla T4 not executed locally.",
+    "Existing full-suite training tests run only temporary synthetic mini-batches; no MVTec training.",
+    "Original file preservation checked by inventory, size and mtime without reading image/mask contents."
+  ],
+  "primary_references": [
+    "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.roc_auc_score.html",
+    "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.average_precision_score.html",
+    "https://pypi.org/project/scikit-learn/1.8.0/"
+  ]
+}

@@ -532,7 +532,7 @@ for distribution in distributions():
 constraints = Path("/kaggle/working/resilientinspect-runtime-constraints.txt")
 constraints.write_text("\n".join(f"{name}=={value}" for name, value in sorted(protected.items())) + "\n", encoding="utf-8")
 subprocess.run([sys.executable, "-m", "pip", "install", "--constraint", str(constraints),
-                "-e", f"{repo}[train,eda,dev]"], check=True)
+                "-e", f"{repo}[train,eda,eval,dev]"], check=True)
 assert all(version(name) == value for name, value in protected.items()), "Runtime CUDA modifie."
 assert version("torch") == torch_before
 
@@ -600,6 +600,71 @@ en 20.76 s ; bootstrap `-SkipInstall`, smoke du socle et `pip check` réussissen
 Python 3.13.16, PyTorch 2.11.0+cu130 et la T4 restent à vérifier réellement
 dans Kaggle avant tout entraînement complet.
 
+## Module d'évaluation B0 — protocole en revue
+
+`src/evaluation/evaluate_ae.py` sélectionne un checkpoint B0 complet par catégorie
+dans `artifacts/b0_runs/`, exclut smoke et doublons MLflow, vérifie les empreintes
+et charge les poids en lecture seule. Plusieurs runs complets distincts pour une
+catégorie provoquent une erreur explicite. Les configurations et splits existants
+restent inchangés. Aucun entraînement n'est ajouté.
+
+Le [protocole proposé](reports/experiments/b0_evaluation_protocol.md) et
+`configs/evaluate_ae_b0.yaml` fixent une carte L1 RGB moyenne **sans lissage**, un
+score image moyen sur les **1 %** d'erreurs valides les plus élevées, et deux
+seuils **par catégorie** : quantile **95 %** des scores image val normale et
+quantile **99,5 %** des erreurs pixel val normales. Quantiles `higher`, décision
+stricte `>`, padding exclu. Ces choix attendent validation avant usage officiel.
+La validation normale a déjà servi au choix du checkpoint ; sa réutilisation
+pour calibrer les seuils est documentée, sans prétendre à une validation indépendante.
+
+Commandes PowerShell depuis la racine, environnement PyTorch déjà installé :
+
+```powershell
+# L'extra eval n'impose aucune version de PyTorch.
+& .\.venv\Scripts\python.exe -m pip install -e ".[eval,dev]"
+& .\.venv\Scripts\python.exe -m pip check
+& .\.venv\Scripts\python.exe -m pytest tests/test_evaluation.py -q -W error --tb=short
+& .\.venv\Scripts\python.exe -m pytest -q -W error --tb=short
+# Inspection seule : aucun Dataset construit, aucune inference.
+& .\.venv\Scripts\python.exe -m resilientinspect.evaluation.evaluate_ae --stage inspect --device cpu
+```
+
+Sur Kaggle, conserver les contraintes du runtime préinstallé présentées plus
+haut et ajouter `eval` aux extras, sans installer l'extra `data`. Ce module n'a
+pas été exécuté sur Python 3.13/CUDA/T4 depuis la machine locale.
+
+**Commandes futures, à exécuter seulement après validation du protocole :**
+
+```powershell
+# Calibration : uniquement val normale, jamais test.
+& .\.venv\Scripts\python.exe -m resilientinspect.evaluation.evaluate_ae --stage calibrate --device cpu
+# Après accord sur CE YAML, conserver son empreinte exacte pour l'évaluation.
+$approvedProtocolSha = (Get-FileHash -Algorithm SHA256 -LiteralPath configs/evaluate_ae_b0.yaml).Hash.ToLowerInvariant()
+& .\.venv\Scripts\python.exe -m resilientinspect.evaluation.evaluate_ae --stage evaluate --device cpu --approved-protocol-sha256 $approvedProtocolSha
+```
+
+Les chemins sont adaptables avec `--runs-root`, `--root`, `--manifest`,
+`--output-dir`, `--protocol` ; `--device cuda` demande un vrai GPU, sans repli
+implicite. Sans empreinte approuvée et calibration compatible, le test est bloqué.
+Une calibration modifiée ou un changement de code/protocole/manifeste/checkpoint
+demande une nouvelle calibration avant toute inférence test. Aucun résultat
+différent existant n'est écrasé ; utiliser un nouveau répertoire de sortie lors
+d'un changement d'environnement ou de code.
+
+Les sorties locales sous `reports/evaluation/b0/<SHA-protocole[:12]>/` comprennent
+l'inventaire des checkpoints, les seuils/scores val, les prédictions CSV,
+métriques JSON par catégorie, tableau CSV et moyenne macro, et figures PNG
+entrée/reconstruction/heatmap/masque. Tout ce répertoire est ignoré par Git.
+Les métriques préparées sont AUROC/AP image et pixel, confusion/F1 image,
+Dice/IoU micro et descriptifs sur images anormales, avec conventions explicites
+pour les valeurs indéfinies. Aucune recherche de seuil par Dice/IoU/F1 test.
+
+L'implémentation est testée uniquement sur des images et checkpoints synthétiques
+temporaires ; les poids Kaggle réels ont seulement été inspectés et chargés.
+**Aucune calibration réelle ni évaluation du test officiel n'est exécutée à cette
+étape.** Les preuves des vérifications sont dans
+`reports/experiments/b0_evaluation_verification.json` et le journal des décisions.
+
 ## Git et critères de validation
 
 Git conserve le code, les configurations, les tests et les rapports textuels.
@@ -616,6 +681,6 @@ L'étape de préparation est prête pour revue lorsque :
 - les manifestes sont figés et les vérifications de splits/géométrie passent ;
 - les effectifs réels et les limites figurent dans le journal.
 
-Les contrôles du jeu test sont descriptifs. Aucun entraînement ni réglage des
-seuils n'utilise le test. Le run complet B0 et toute autre étape de Deep Learning
-attendent une validation explicite.
+Les contrôles du jeu test restent descriptifs jusqu'au gel du protocole.
+Aucun entraînement ni réglage des seuils n'utilise le test. L'évaluation finale
+B0 attend la validation explicite du protocole proposé ci-dessus.

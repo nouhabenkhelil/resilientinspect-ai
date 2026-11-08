@@ -1,0 +1,17 @@
+# Proposition a valider avant toute evaluation reelle du test.
+schema_version: 1
+protocol_id: b0_l1_top01_quantiles_v1
+categories: [bottle, hazelnut, leather]
+anomaly_map: rgb_mean_absolute_error
+smoothing: none
+resolution: [256, 256]
+padding: exclude_valid_mask_zero
+image_top_fraction: 0.01
+image_threshold_quantile: 0.95
+pixel_threshold_quantile: 0.995
+quantile_method: higher
+decision: strictly_greater
+figures_per_defect: 1
+batch_size: 4
+cpu_threads: 2
+seed: 42

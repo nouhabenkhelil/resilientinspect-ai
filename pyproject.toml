@@ -16,6 +16,7 @@ dev = ["pytest==9.2.0"]
 data = ["torch==2.15.0", "numpy==2.3.5"]
 eda = ["matplotlib==3.10.8"]
 train = ["mlflow-skinny==3.16.1", "sqlalchemy==2.0.57", "alembic==1.20.1", "matplotlib==3.10.8"]
+eval = ["scikit-learn==1.8.0", "matplotlib==3.10.8"]
 
 [tool.setuptools]
 package-dir = {resilientinspect = "src"}
