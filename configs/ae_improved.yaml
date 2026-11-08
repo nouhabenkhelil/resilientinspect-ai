@@ -1,0 +1,24 @@
+# A1 v1 : choix initiaux fixes avant tout test A1, sans consultation des scores test B0.
+schema_version: 1
+model:
+  name: A1
+  class: resilientinspect.models.autoencoder_improved.ImprovedAutoencoder
+  kwargs:
+    channels: [32, 64, 128, 256]
+    residual_blocks: true
+    skip_connections: true
+    skip_scale: 0.1
+  input_shape: [3, 256, 256]
+  output_activation: sigmoid
+  skip_resolutions: [32, 64]
+loss:
+  name: l1_ssim
+  l1_weight: 0.8
+  ssim_weight: 0.2
+  window_size: 11
+  sigma: 1.5
+augmentation:
+  enabled: true
+  probability: 0.5
+  brightness: 0.1
+  contrast: 0.1

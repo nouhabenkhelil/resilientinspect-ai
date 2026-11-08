@@ -977,3 +977,134 @@ L'évaluation officielle exige le SHA256 exact du protocole validé, les seuils
 val normaux et des empreintes compatibles. Le fichier compagnon de calibration
 contrôle son intégrité. **Aucun stage calibrate/evaluate n'est exécuté sur les
 données réelles. Arrêt pour revue et validation du protocole.**
+
+## 8 novembre 2026 — A1 résiduel, implémentation et smoke CPU seulement
+
+**Périmètre autorisé :** candidat A1 selon guide §5.2, intégration au pipeline
+existant, tests et petit smoke CPU. Aucun entraînement complet ni test A1
+officiel. B0 reste une référence figée. Aucun résultat, score ou exemple test B0
+n'est consulté pour choisir les composants A1 ; seul leur inventaire/SHA256 est
+calculé pour vérifier leur conservation.
+
+### Choix fixés avant entraînement complet et avant test A1
+
+Le document [`a1_protocol.md`](a1_protocol.md) et les YAML
+`configs/ae_improved.yaml`, `configs/train_ae_a1.yaml` fixent :
+
+- canaux 32/64/128/256, quatre niveaux Conv–BN–ReLU + blocs résiduels à deux
+  convolutions, latent 256×16×16 ; décodeur nearest/Conv résiduel, Sigmoid RGB ;
+- deux skips seulement à 32×32 et 64×64, projection 1×1 + tanh ×0,1, contribution
+  bornée à ±0,1 ; aucun skip à 128×128 ou chemin RGB direct ;
+- **2 754 371 paramètres**, capacité supérieure à B0 (195 107), sans preuve de
+  qualité supérieure ; le risque de reconstruction des défauts subsiste ;
+- perte **0,8 L1 + 0,2 DSSIM**, DSSIM=(1−SSIM)/2 ; fenêtre gaussienne 11×11,
+  sigma=1,5, RGB par canal, L=1, K1=0,01/K2=0,03, moments population, convolution
+  valid, calcul FP32 ; pas de MS-SSIM ou paquet supplémentaire ;
+- augmentation photométrique train/good uniquement : probabilité 0,5, luminosité
+  et contraste uniformes entre 0,9 et 1,1, clipping [0,1], padding conservé nul,
+  aucune transformation géométrique ; entrée augmentée aussi utilisée comme cible ;
+- options résidus, skips, perte et augmentation séparées pour de futures ablations
+  explicites et identifiées avant test.
+
+La stabilité SSIM locale a été vérifiée **avant le smoke réel** : oracle NumPy
+2D indépendant en FP64 (tolérance 1e−12), cas constant analytique, identité,
+images presque constantes, gradients finis et gradcheck PyTorch. Cela ne valide
+pas un gain de détection ou l'entraînement complet CUDA. Les définitions et
+sources primaires SSIM sont dans le protocole.
+
+Mêmes splits/manifestes, résolution 256×256, seed 42, batch 16, maximum 20
+époques, patience 5, min_delta 0, Adam LR=0,001, mêmes betas/eps/weight_decay,
+AMP désactivée. Val sans augmentation sélectionne le meilleur checkpoint par
+**perte composite**, avec enregistrement séparé de L1 et DSSIM. Une perte
+composite A1 n'est pas directement comparable à la L1 B0. Aucun masque test ni
+normalisation sur test. Val demeure réutilisée pour la sélection puis la future
+calibration, avec les limites déjà documentées.
+
+Le futur protocole de score/seuillage reste celui de B0 : carte L1 brute RGB,
+top-1 %, quantiles val normaux 95 % image / 99,5 % pixel, higher, décision >,
+padding exclu. Les **valeurs numériques des seuils** devront être recalibrées
+sur val normale pour A1. L'évaluation A1 n'est pas implémentée ou exécutée ici.
+
+### Intégration et protections
+
+La boucle commune `src/training/train_ae.py` gère les deux variantes sans copier
+la logique Adam, validation, early stopping, sélection ou MLflow. B0 conserve
+sa classe et sa perte. Chaque catégorie reçoit un nouveau modèle/optimiseur.
+Les checkpoints A1 embarquent l'architecture et les options scientifiques,
+configuration effective, état optimiseur, époque, seed et manifeste. Le helper
+`load_a1_checkpoint` recharge cette architecture intégrée et vérifie poids et
+échelles de skips, sans dépendre d'un YAML courant potentiellement modifié.
+Provenance et sources des nouveaux modules sont sauvegardées dans chaque run.
+
+Sortie par défaut A1 : `artifacts/a1_runs/`, avec tag MLflow variant=A1 et
+expérience commune `resilientinspect-ae`. Les sorties dans les répertoires B0
+figés sont refusées. Un A1 complet sur CPU est bloqué avant lecture d'images ;
+le smoke est limité à une époque, batch 2 et au plus deux mini-batches par split.
+La CLI accepte séparément bottle, hazelnut, leather.
+
+### Commandes exécutées et résultats réels
+
+| Vérification | Résultat |
+| --- | --- |
+| `python -m pytest tests/test_training.py -q -W error --tb=short` | **20 passed in 29.59s** : régression du pipeline B0 |
+| `python -m pytest tests/test_improved.py -q -W error --tb=short` | **49 passed, 1 skipped in 33.81s** |
+| `python -W error .pytest_cache/a1_cpu_smoke.py` | Code 0 ; lanceur local gardé appelant le pipeline A1 réel bottle/cpu/smoke ; seulement huit images bottle/train/good ouvertes |
+| `python -m pytest -q -W error --tb=short` final | **270 passed, 2 skipped in 80.74s** |
+| `python -m pip check` | `No broken requirements found.` |
+| `git diff --check` | Code 0 |
+
+Les deux skips sont CUDA : B0 existant et A1 forward/backward avec SSIM. Aucun
+filtre d'avertissements ajouté. Les tests A1 vérifient dimensions, plage Sigmoid,
+gradients encodeur/décodeur/skips, ablations indépendantes, référence SSIM,
+reproductibilité de deux smokes synthétiques, checkpoints, suivi MLflow,
+absence de mutation en val et absence d'accès aux images/masques test. Les trois
+catégories de la CLI sont contrôlées sans lancer de run complet.
+
+Smoke **réel bottle CPU**, run MLflow `a17655f1dae04138a0ee028fc96766f9`, statut
+`FINISHED`, scope smoke, meilleur checkpoint époque 1 :
+
+| Mesure partielle | Train | Val |
+| --- | --- | --- |
+| Images traitées | 4 | 4 |
+| Mini-batches | 2 | 2 |
+| Perte composite | 0.32631225883960724 | 0.32048381865024567 |
+| L1 brute | 0.30197781324386597 | 0.3340425193309784 |
+| DSSIM | 0.42365002632141113 | 0.2662489414215088 |
+
+Deux pas Adam sont vérifiés dans le checkpoint, poids modifiés par rapport à
+l'initialisation seed 42, compteurs BN à deux batches train. Rechargement du
+checkpoint et forward synthétique finis. Le garde `Image.open` du lanceur
+refuse tout chemin hors bottle/train/good, y compris test et ground_truth.
+Ces pertes de contrôle **ne sont ni des performances de détection, ni une
+comparaison B0/A1, ni un entraînement complet**.
+
+### Conservation, compatibilité et fichiers
+
+Comparaison avant/après : **157 fichiers des runs B0**, **34 fichiers de résultats
+B0** et **6 fichiers de manifestes** inchangés en inventaire, SHA256 et date.
+Les huit fichiers scientifiques B0/dataset protégés restent identiques en SHA256
+et date. Les **1 393 fichiers originaux** gardent inventaire, taille et date ;
+aucun contenu d'image/masque test officiel n'est lu.
+
+Le premier export des preuves a rencontré une incohérence de séparateurs Windows
+dans son dictionnaire de chemins ; le script d'export a été corrigé et la
+comparaison relancée. Aucun échec du modèle ou de la suite Pytest associé.
+Les preuves, empreintes figées et chemins des huit images du smoke sont dans
+`a1_implementation_verification.json`.
+
+Créés : `src/models/autoencoder_improved.py`, `src/training/losses.py`,
+`src/training/a1_config.py`, `src/data/augment.py`, `configs/ae_improved.yaml`,
+`configs/train_ae_a1.yaml`, `tests/test_improved.py`,
+`reports/experiments/a1_protocol.md`,
+`reports/experiments/a1_implementation_verification.json`.
+Modifiés : `src/training/train_ae.py`, `src/training/__init__.py`, `README.md`,
+ce journal. Les lanceurs/probes temporaires et artefacts restent ignorés par Git.
+
+Aucune dépendance installée ou remplacée. Python >=3.11,<3.14 reste déclaré ;
+runtime réellement exécuté Python 3.11.9 / PyTorch 2.15.0+cpu. Les opérations A1
+utilisent les API PyTorch existantes. La procédure Kaggle conserve Torch/CUDA
+préinstallés, sans extra `data`. **Python 3.13/PyTorch 2.11.0+cu130/Tesla T4,
+stabilité CUDA et mémoire batch16 restent à vérifier réellement.**
+
+**Arrêt pour validation après implémentation, tests et smoke CPU ; aucun
+entraînement complet A1 ou test officiel A1 lancé.**

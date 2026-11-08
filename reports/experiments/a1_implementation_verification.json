@@ -1,0 +1,289 @@
+{
+  "date": "2026-11-08",
+  "scope": "A1 implementation and smoke CPU only, awaiting user validation",
+  "environment": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "torch": "2.15.0+cpu",
+    "numpy": "2.3.5",
+    "Pillow": "13.0.0",
+    "PyYAML": "6.0.3",
+    "matplotlib": "3.10.8",
+    "mlflow-skinny": "3.16.1",
+    "pytest": "9.2.0",
+    "cuda_available": false,
+    "cuda_runtime": null
+  },
+  "new_dependencies_installed": [],
+  "frozen_files_sha256": {
+    "src/models/autoencoder_improved.py": "1ec371823884802a48f66befaade8f533875e9a1249825a39968f13f72bfbbd9",
+    "src/data/augment.py": "e94c0613469ae1f9572c370bb957b11a4985be387c6fda27dbe108d312fdf41f",
+    "src/training/losses.py": "3568eb0107589ac1ddd9e3fb7beda7b640312be5a16de40901f2123e913a7de9",
+    "src/training/a1_config.py": "b4f540ad1bef77a395655c081927c34340e75b5e8dc1eed4f453a038adb27b32",
+    "src/training/train_ae.py": "4ff4e8f3233c76c8a6681a40a363f98d62ce8ab365347fb5d8af183a86f4c2fc",
+    "configs/ae_improved.yaml": "4fb6ee12884ff5fb762b3fc0a280f2f4fb9febb4e9c52e12ddc1848dce5c3504",
+    "configs/train_ae_a1.yaml": "15ffa33f69ec395289eba61fdf8d23f4e142ac3c64b1210d1000dab11fb63b11",
+    "tests/test_improved.py": "b8d62c3f947975a29ffe08c36720d7ac049e4bfa502d80c2fa64bc9b201768f6",
+    "reports/experiments/a1_protocol.md": "7642d9dfa6d9730a89e11791d1822033b3689d688c978799def56bbb37bf6c81"
+  },
+  "architecture": {
+    "schema_version": 1,
+    "model": {
+      "name": "A1",
+      "class": "resilientinspect.models.autoencoder_improved.ImprovedAutoencoder",
+      "kwargs": {
+        "channels": [
+          32,
+          64,
+          128,
+          256
+        ],
+        "residual_blocks": true,
+        "skip_connections": true,
+        "skip_scale": 0.1
+      },
+      "input_shape": [
+        3,
+        256,
+        256
+      ],
+      "output_activation": "sigmoid",
+      "skip_resolutions": [
+        32,
+        64
+      ]
+    },
+    "loss": {
+      "name": "l1_ssim",
+      "l1_weight": 0.8,
+      "ssim_weight": 0.2,
+      "window_size": 11,
+      "sigma": 1.5
+    },
+    "augmentation": {
+      "enabled": true,
+      "probability": 0.5,
+      "brightness": 0.1,
+      "contrast": 0.1
+    }
+  },
+  "parameters": 2754371,
+  "b0_parameters_reference": 195107,
+  "training_configuration": {
+    "schema_version": 1,
+    "variant": "A1",
+    "category": "bottle",
+    "model_config": "ae_improved.yaml",
+    "dataset_config": "dataset.yaml",
+    "seed": 42,
+    "training": {
+      "batch_size": 16,
+      "max_epochs": 20,
+      "optimizer": "adam",
+      "learning_rate": 0.001,
+      "adam_betas": [
+        0.9,
+        0.999
+      ],
+      "adam_eps": 1e-08,
+      "weight_decay": 0.0,
+      "loss": "l1_ssim",
+      "mixed_precision": false,
+      "num_workers": 0,
+      "cpu_threads": 2,
+      "early_stopping": {
+        "patience": 5,
+        "min_delta": 0.0
+      }
+    },
+    "smoke": {
+      "batch_size": 2,
+      "max_epochs": 1,
+      "max_batches_per_split": 2
+    },
+    "tracking": {
+      "experiment_name": "resilientinspect-ae"
+    }
+  },
+  "future_evaluation_protocol_sha256": "f515662ab4ef0437194f7fdc7b57c8ea435ae6cb7e1be95c26476a91fa5d963e",
+  "scientific_choices_used_b0_test_results": false,
+  "commands_executed": [
+    {
+      "command": "python -m pytest tests/test_training.py -q -W error --tb=short",
+      "exit_code": 0,
+      "passed": 20,
+      "seconds": 29.59
+    },
+    {
+      "command": "python -m pytest tests/test_improved.py -q -W error --tb=short",
+      "exit_code": 0,
+      "passed": 49,
+      "skipped": 1,
+      "seconds": 33.81
+    },
+    {
+      "command": "python -W error .pytest_cache/a1_cpu_smoke.py",
+      "exit_code": 0,
+      "note": "Generated local guarded launcher calls run_training with the real frozen manifest, bottle/cpu/smoke and artifacts/a1_runs output. Image.open asserts bottle/train/good only."
+    },
+    {
+      "command": "python -m pytest -q -W error --tb=short",
+      "exit_code": 0,
+      "passed": 270,
+      "skipped": 2,
+      "seconds": 80.74,
+      "skip_reasons": [
+        "B0 CUDA unavailable",
+        "A1 CUDA/SSIM backward unavailable"
+      ]
+    },
+    {
+      "command": "python -m pip check",
+      "exit_code": 0,
+      "output": "No broken requirements found."
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0
+    }
+  ],
+  "ssim_cpu_numerical_validation": [
+    "Independent NumPy 2D Gaussian reference, FP64 absolute tolerance 1e-12",
+    "Analytical black vs white constants",
+    "Identity black, white, random and near-constant FP32",
+    "Finite backward gradients",
+    "torch.autograd.gradcheck in FP64"
+  ],
+  "synthetic_reproducibility": {
+    "repeated_a1_smokes": 2,
+    "identical_history": true,
+    "identical_checkpoint_model_tensors": true,
+    "no_originals_modified": true
+  },
+  "real_bottle_smoke": {
+    "run_id": "a17655f1dae04138a0ee028fc96766f9",
+    "run_dir": "artifacts/a1_runs/bottle/smoke_a17655f1dae04138a0ee028fc96766f9",
+    "scope": "smoke",
+    "category": "bottle",
+    "epochs_completed": 1,
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.32631225883960724,
+        "val_loss": 0.32048381865024567,
+        "train_images": 4,
+        "val_images": 4,
+        "train_batches": 2,
+        "val_batches": 2,
+        "train_l1_loss": 0.30197781324386597,
+        "train_ssim_loss": 0.42365002632141113,
+        "val_l1_loss": 0.3340425193309784,
+        "val_ssim_loss": 0.2662489414215088
+      }
+    ],
+    "best_epoch": 1,
+    "best_val_loss": 0.32048381865024567,
+    "checkpoint_sha256": "ff3d57990c179f441b4b16083e5b8fec4ef39951b57002dbdc671fdf3cb48fc2",
+    "mlflow_status": "FINISHED",
+    "selection_split": "val",
+    "test_used": false,
+    "image_paths": {
+      "train": [
+        "bottle/train/good/019.png",
+        "bottle/train/good/129.png",
+        "bottle/train/good/150.png",
+        "bottle/train/good/197.png"
+      ],
+      "val": [
+        "bottle/train/good/002.png",
+        "bottle/train/good/003.png",
+        "bottle/train/good/005.png",
+        "bottle/train/good/013.png"
+      ]
+    },
+    "optimizer_steps": 2,
+    "weights_updated": true,
+    "batchnorm_training_batches": 2,
+    "checkpoint_reload_synthetic_forward": true,
+    "interpretation": "Partial execution check only; not a full run, detection performance or comparison with B0."
+  },
+  "preservation": {
+    "artifacts/b0_runs": {
+      "files": 157,
+      "unchanged": true,
+      "method": "sha256+mtime_ns+inventory"
+    },
+    "reports/evaluation/b0": {
+      "files": 34,
+      "unchanged": true,
+      "method": "sha256+mtime_ns+inventory"
+    },
+    "data/manifests": {
+      "files": 6,
+      "unchanged": true,
+      "method": "sha256+mtime_ns+inventory"
+    },
+    "configs/ae_baseline.yaml": {
+      "files": 1,
+      "unchanged": true,
+      "method": "sha256+mtime_ns+inventory"
+    },
+    "configs/train_ae_b0.yaml": {
+      "files": 1,
+      "unchanged": true,
+      "method": "sha256+mtime_ns+inventory"
+    },
+    "configs/dataset.yaml": {
+      "files": 1,
+      "unchanged": true,
+      "method": "sha256+mtime_ns+inventory"
+    },
+    "configs/evaluate_ae_b0.yaml": {
+      "files": 1,
+      "unchanged": true,
+      "method": "sha256+mtime_ns+inventory"
+    },
+    "src/models/autoencoder.py": {
+      "files": 1,
+      "unchanged": true,
+      "method": "sha256+mtime_ns+inventory"
+    },
+    "src/data/dataset.py": {
+      "files": 1,
+      "unchanged": true,
+      "method": "sha256+mtime_ns+inventory"
+    },
+    "src/data/prepare.py": {
+      "files": 1,
+      "unchanged": true,
+      "method": "sha256+mtime_ns+inventory"
+    },
+    "src/evaluation/evaluate_ae.py": {
+      "files": 1,
+      "unchanged": true,
+      "method": "sha256+mtime_ns+inventory"
+    },
+    "data/raw/mvtec_ad": {
+      "files": 1393,
+      "unchanged": true,
+      "method": "inventory+size+mtime_ns; original test image contents not read"
+    }
+  },
+  "a1_full_training_executed": false,
+  "a1_test_evaluation_executed": false,
+  "b0_test_evaluation_executed_this_step": false,
+  "kaggle_python313_cuda_verified": false,
+  "limits": [
+    "No A1 detection metrics or thresholds calculated.",
+    "CUDA / Python 3.13 / Tesla T4 and batch16 GPU memory require actual Kaggle verification.",
+    "Limited skips do not guarantee that defects will not be copied.",
+    "Composite A1 losses must not be compared directly to B0 L1 losses.",
+    "Raw preservation checked by size+mtime+inventory without reading official test image/mask contents."
+  ],
+  "verification_export_note": "First ad hoc export encountered a Windows slash/backslash key mismatch; fixed in exporter and preservation checks rerun. No model/test-suite failure or scientific configuration change.",
+  "references": [
+    "https://eceweb.uwaterloo.ca/~z70wang/publications/ssim.html",
+    "https://www.cns.nyu.edu/~lcv/ssim/ssim_index.m",
+    "https://docs.pytorch.org/docs/2.11/generated/torch.nn.functional.interpolate.html"
+  ]
+}

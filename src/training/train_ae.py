@@ -1,4 +1,4 @@
-"""Entrainement B0 par categorie ; apprentissage train, selection val, jamais test."""
+"""Entrainement B0/A1 par categorie ; apprentissage train, selection val, jamais test."""
 
 from __future__ import annotations
 
@@ -34,8 +34,8 @@ CATEGORIES = ("bottle", "hazelnut", "leather")
 
 def load_config(path: Path) -> dict[str, Any]:
     config = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
-    if not isinstance(config, dict) or config.get("schema_version") != 1 or config.get("variant") != "B0":
-        raise ValueError("Configuration d'entrainement B0 schema_version=1 attendue.")
+    if not isinstance(config, dict) or config.get("schema_version") != 1 or config.get("variant") not in ("B0", "A1"):
+        raise ValueError("Configuration d'entrainement B0/A1 schema_version=1 attendue.")
     if config.get("category") not in CATEGORIES or type(config.get("seed")) is not int or not 0 <= config["seed"] < 2**32:
         raise ValueError("Categorie ou seed invalide.")
     schemas = {
@@ -54,8 +54,9 @@ def load_config(path: Path) -> dict[str, Any]:
             raise ValueError(f"{name} doit etre un entier positif.")
     if type(training["num_workers"]) is not int or training["num_workers"] < 0:
         raise ValueError("num_workers doit etre un entier positif ou nul.")
-    if training["optimizer"] != "adam" or training["loss"] != "l1" or training["mixed_precision"] is not False:
-        raise ValueError("Cette etape utilise Adam, L1 et mixed_precision=false.")
+    allowed_losses = ("l1",) if config["variant"] == "B0" else ("l1", "l1_ssim")
+    if training["optimizer"] != "adam" or training["loss"] not in allowed_losses or training["mixed_precision"] is not False:
+        raise ValueError("Adam, perte L1 (B0) ou L1/L1+SSIM (A1), mixed_precision=false requis.")
     for name in ("learning_rate", "adam_eps", "weight_decay"):
         value = training[name]
         if type(value) not in (int, float) or not math.isfinite(value) or value < 0 or (name != "weight_decay" and value == 0):
@@ -111,9 +112,9 @@ def resolve_device(requested: str) -> torch.device:
 
 
 def build_loaders(manifest: Path, root: Path, category: str, training: dict[str, Any],
-                  seed: int, device: torch.device) -> dict[str, DataLoader]:
+                  seed: int, device: torch.device, augmentation: dict[str, Any] | None = None) -> dict[str, DataLoader]:
     if category not in CATEGORIES:
-        raise ValueError("Categorie B0 inconnue.")
+        raise ValueError("Categorie inconnue.")
     frozen_path = Path(manifest).with_name("preparation.json")
     frozen = json.loads(frozen_path.read_text(encoding="utf-8"))
     if frozen["manifest_sha256"].get(Path(manifest).name) != _sha256(Path(manifest)):
@@ -123,6 +124,9 @@ def build_loaders(manifest: Path, root: Path, category: str, training: dict[str,
         dataset = MVTecDataset(manifest, root, split=split, categories=[category], verify_hashes=True)
         if any(row["label"] != "0" or row["source_split"] != "train" or row["mask_path"] for row in dataset.rows):
             raise ValueError("Train/val exigent uniquement des normaux issus du train officiel.")
+        if augmentation is not None and split == "train":
+            from resilientinspect.data.augment import TrainAugmentedDataset
+            dataset = TrainAugmentedDataset(dataset, augmentation, seed)
         loaders[split] = DataLoader(
             dataset, batch_size=training["batch_size"], shuffle=split == "train", drop_last=False,
             num_workers=training["num_workers"], pin_memory=device.type == "cuda",
@@ -150,10 +154,12 @@ class EarlyStopping:
 
 
 def run_epoch(model: nn.Module, loader: DataLoader, device: torch.device,
-              optimizer: torch.optim.Optimizer | None = None, max_batches: int | None = None) -> dict[str, Any]:
+              optimizer: torch.optim.Optimizer | None = None, max_batches: int | None = None,
+              criterion: nn.Module | None = None) -> dict[str, Any]:
     training = optimizer is not None
     model.train(training)
     total, count, batches, paths = 0.0, 0, 0, []
+    component_totals = {}
     iterator = islice(loader, max_batches) if max_batches is not None else iter(loader)
     with torch.set_grad_enabled(training):
         for batch in iterator:
@@ -163,7 +169,8 @@ def run_epoch(model: nn.Module, loader: DataLoader, device: torch.device,
             if training:
                 optimizer.zero_grad(set_to_none=True)
             reconstruction = model(images)
-            loss = nn.functional.l1_loss(reconstruction, images, reduction="mean")
+            components = criterion.components(reconstruction, images) if criterion is not None else {}
+            loss = components["loss"] if criterion is not None else nn.functional.l1_loss(reconstruction, images, reduction="mean")
             if not torch.isfinite(loss):
                 raise ValueError("Perte non finie ; run interrompu sans selection invalide.")
             if training:
@@ -174,12 +181,16 @@ def run_epoch(model: nn.Module, loader: DataLoader, device: torch.device,
                 optimizer.step()
             size = images.shape[0]
             total += float(loss.detach()) * size
+            for name, value in components.items():
+                if name != "loss":
+                    component_totals[name] = component_totals.get(name, 0.0) + float(value.detach()) * size
             count += size
             batches += 1
             paths.extend(batch["image_path"])
     if not count:
         raise ValueError("Aucun mini-batch disponible.")
-    return {"loss": total / count, "images": count, "batches": batches, "image_paths": paths}
+    return {"loss": total / count, "images": count, "batches": batches, "image_paths": paths,
+            **{name: value / count for name, value in component_totals.items()}}
 
 
 def save_best_checkpoint(path: Path, model: nn.Module, optimizer: torch.optim.Optimizer,
@@ -195,7 +206,8 @@ def _write_json(path: Path, data: dict[str, Any]) -> None:
     path.write_text(json.dumps(data, indent=2, ensure_ascii=False, allow_nan=False) + "\n", encoding="utf-8")
 
 
-def _plot_history(history: list[dict[str, Any]], path: Path, category: str, scope: str, run_id: str) -> None:
+def _plot_history(history: list[dict[str, Any]], path: Path, category: str, scope: str, run_id: str,
+                  variant: str = "B0", loss_name: str = "L1") -> None:
     os.environ.setdefault("MPLCONFIGDIR", str(path.parent / ".matplotlib"))
     from matplotlib.backends.backend_agg import FigureCanvasAgg
     from matplotlib.figure import Figure
@@ -204,8 +216,8 @@ def _plot_history(history: list[dict[str, Any]], path: Path, category: str, scop
     axis = figure.subplots()
     for split in ("train", "val"):
         axis.plot([row["epoch"] for row in history], [row[f"{split}_loss"] for row in history],
-                  marker="o", label=f"{split} L1")
-    axis.set(title=f"B0 | {category} | {scope} | {run_id[:8]}", xlabel="Epoque", ylabel="L1 moyenne")
+                  marker="o", label=f"{split} {loss_name}")
+    axis.set(title=f"{variant} | {category} | {scope} | {run_id[:8]}", xlabel="Epoque", ylabel=f"{loss_name} moyenne")
     axis.legend()
     axis.grid(alpha=0.2)
     figure.savefig(path, dpi=140)
@@ -214,11 +226,15 @@ def _plot_history(history: list[dict[str, Any]], path: Path, category: str, scop
 
 def run_training(config_path: Path, *, root: Path, manifest: Path, output_dir: Path,
                  category: str | None = None, device: str = "auto", smoke: bool = False) -> dict[str, Any]:
-    """Nouvelle instance B0 et nouvel Adam par appel ; aucun resume implicite."""
+    """Nouvelle instance B0/A1 et nouvel Adam par appel ; aucun resume implicite."""
     config_path = Path(config_path).resolve()
     config = load_config(config_path)
+    variant = config["variant"]
     category = config["category"] if category is None else category
     root, manifest, output_dir = Path(root).resolve(), Path(manifest).resolve(), Path(output_dir).resolve()
+    project = Path(__file__).resolve().parents[2]
+    if any(output_dir.is_relative_to(project / protected) for protected in ("artifacts/b0_runs", "reports/evaluation/b0")):
+        raise ValueError("Sorties interdites dans les poids ou resultats B0 figes.")
     if not root.is_dir():
         raise ValueError("Racine du dataset absente.")
     for destination in (output_dir, output_dir / "mlflow.db", output_dir / "mlartifacts"):
@@ -230,11 +246,16 @@ def run_training(config_path: Path, *, root: Path, manifest: Path, output_dir: P
     validate_preparation_settings(dataset_config)
     model_config_path = (config_path.parent / config["model_config"]).resolve()
     model_config = yaml.safe_load(model_config_path.read_text(encoding="utf-8"))
-    if (model_config["model"]["name"] != "B0" or model_config["model"]["kwargs"]["channels"] != [16, 32, 64, 128]
+    if variant == "B0" and (model_config["model"]["name"] != "B0" or model_config["model"]["kwargs"]["channels"] != [16, 32, 64, 128]
             or model_config["loss"]["name"] != "l1" or model_config["loss"]["kwargs"] != {"reduction": "mean"}):
         raise ValueError("Architecture B0 et perte L1 validees requises.")
+    if variant == "A1":
+        from .a1_config import validate_a1_config
+        validate_a1_config(model_config, config["training"]["loss"])
     seed_everything(config["seed"], config["training"]["cpu_threads"])
     target_device = resolve_device(device)
+    if variant == "A1" and target_device.type == "cpu" and not smoke:
+        raise ValueError("A1 complet reserve a CUDA ; utiliser --smoke pour la verification CPU.")
     effective = deepcopy(config)
     effective["category"] = category
     effective["scope"] = "smoke" if smoke else "full"
@@ -245,8 +266,17 @@ def run_training(config_path: Path, *, root: Path, manifest: Path, output_dir: P
         training.update(batch_size=config["smoke"]["batch_size"], max_epochs=1, num_workers=0)
         max_batches = config["smoke"]["max_batches_per_split"]
     effective["max_batches_per_split"] = max_batches
-    loaders = build_loaders(manifest, root, category, training, config["seed"], target_device)
-    model = ConvAutoencoder(**model_config["model"]["kwargs"]).to(target_device)
+    augmentation, criterion = None, None
+    if variant == "A1":
+        from resilientinspect.models.autoencoder_improved import ImprovedAutoencoder
+        from .losses import ReconstructionLoss
+        effective["architecture"] = deepcopy(model_config)
+        augmentation = model_config["augmentation"]
+        criterion = ReconstructionLoss(**model_config["loss"]).to(target_device)
+        model = ImprovedAutoencoder(**model_config["model"]["kwargs"]).to(target_device)
+    else:
+        model = ConvAutoencoder(**model_config["model"]["kwargs"]).to(target_device)
+    loaders = build_loaders(manifest, root, category, training, config["seed"], target_device, augmentation=augmentation)
     optimizer = torch.optim.Adam(model.parameters(), lr=training["learning_rate"], betas=tuple(training["adam_betas"]),
                                  eps=training["adam_eps"], weight_decay=training["weight_decay"])
     stopper = EarlyStopping(**training["early_stopping"])
@@ -260,19 +290,22 @@ def run_training(config_path: Path, *, root: Path, manifest: Path, output_dir: P
     experiment_id = experiment.experiment_id if experiment else client.create_experiment(
         experiment_name, artifact_location=(output_dir / "mlartifacts").as_uri())
     scope = effective["scope"]
-    run_name = f"B0-{category}-{scope}-seed{config['seed']}"
+    run_name = f"{variant}-{category}-{scope}-seed{config['seed']}"
     git = subprocess.run(["git", "rev-parse", "HEAD"], cwd=Path(__file__).resolve().parents[2],
                          capture_output=True, text=True, check=False)
     git_sha = git.stdout.strip() if git.returncode == 0 else "unavailable"
     source_paths = [config_path, model_config_path, dataset_config_path, Path(__file__),
                     Path(__file__).parents[2] / "pyproject.toml", Path(__file__).parents[1] / "models/autoencoder.py",
                     *(Path(__file__).parents[1] / "data" / name for name in ("dataset.py", "prepare.py", "audit.py"))]
+    if variant == "A1":
+        source_paths.extend([Path(__file__).with_name("losses.py"), Path(__file__).with_name("a1_config.py"),
+                             Path(__file__).parents[1] / "models/autoencoder_improved.py", Path(__file__).parents[1] / "data/augment.py"])
     dirty = subprocess.run(["git", "status", "--porcelain"], cwd=Path(__file__).resolve().parents[2],
                            capture_output=True, text=True, check=False)
     provenance = {"manifest_sha256": _sha256(manifest), "manifest_path": str(manifest), "dataset_root": str(root), "git_sha": git_sha,
                   "git_dirty": bool(dirty.stdout.strip()) if dirty.returncode == 0 else None,
                   "source_sha256": {str(path): _sha256(path) for path in source_paths}}
-    tags = {"mlflow.runName": run_name, "variant": "B0", "category": category,
+    tags = {"mlflow.runName": run_name, "variant": variant, "category": category,
             "scope": scope, "seed": str(config["seed"]), "dataset_version": provenance["manifest_sha256"],
             "git_sha": git_sha, "selection_split": "val", "test_used": "false"}
     mlrun = client.create_run(experiment_id, tags=tags)
@@ -297,9 +330,10 @@ def run_training(config_path: Path, *, root: Path, manifest: Path, output_dir: P
                        "packages": {name: version(name) for name in ("Pillow", "PyYAML", "matplotlib", "sqlalchemy", "alembic")}}
         _write_json(run_dir / "environment.json", environment)
         _write_json(run_dir / "provenance.json", provenance)
-        params = {"variant": "B0", "category": category, "scope": scope, "seed": config["seed"],
+        loss_name = "L1_mean" if variant == "B0" else training["loss"]
+        params = {"variant": variant, "category": category, "scope": scope, "seed": config["seed"],
                   "batch_size": training["batch_size"], "max_epochs": training["max_epochs"],
-                  "learning_rate": training["learning_rate"], "optimizer": "Adam", "loss": "L1_mean",
+                  "learning_rate": training["learning_rate"], "optimizer": "Adam", "loss": loss_name,
                   "adam_betas": str(training["adam_betas"]), "adam_eps": training["adam_eps"],
                   "weight_decay": training["weight_decay"], "patience": stopper.patience, "min_delta": stopper.min_delta,
                   "mixed_precision": False, "num_workers": training["num_workers"], "device": str(target_device),
@@ -307,20 +341,33 @@ def run_training(config_path: Path, *, root: Path, manifest: Path, output_dir: P
                   "parameters": sum(p.numel() for p in model.parameters()), "max_batches_per_split": str(max_batches),
                   "train_available": len(loaders["train"].dataset), "val_available": len(loaders["val"].dataset),
                   "torch_version": str(torch.__version__), "manifest_sha256": provenance["manifest_sha256"]}
+        if variant == "A1":
+            params.update({f"architecture.{name}": value for name, value in model_config["model"]["kwargs"].items()})
+            params.update({f"loss.{name}": value for name, value in model_config["loss"].items()})
+            params.update({f"augmentation.{name}": value for name, value in model_config["augmentation"].items()})
         for name, value in params.items():
             client.log_param(run_id, name, value)
         with (run_dir / "history.csv").open("w", newline="", encoding="utf-8") as stream:
             fields = ["epoch", "train_loss", "val_loss", "train_images", "val_images", "train_batches", "val_batches"]
+            if variant == "A1":
+                component_names = ["l1_loss"] + (["ssim_loss"] if training["loss"] == "l1_ssim" else [])
+                fields.extend(f"{split}_{name}" for split in ("train", "val") for name in component_names)
             writer = csv.DictWriter(stream, fieldnames=fields, lineterminator="\n")
             writer.writeheader()
             for epoch in range(1, training["max_epochs"] + 1):
-                train = run_epoch(model, loaders["train"], target_device, optimizer, max_batches)
-                validation = run_epoch(model, loaders["val"], target_device, max_batches=max_batches)
+                if hasattr(loaders["train"].dataset, "set_epoch"):
+                    loaders["train"].dataset.set_epoch(epoch)
+                kwargs = {"criterion": criterion} if criterion is not None else {}
+                train = run_epoch(model, loaders["train"], target_device, optimizer, max_batches, **kwargs)
+                validation = run_epoch(model, loaders["val"], target_device, max_batches=max_batches, **kwargs)
                 for split, result in (("train", train), ("val", validation)):
                     seen[split].update(result["image_paths"])
                 row = {"epoch": epoch, "train_loss": train["loss"], "val_loss": validation["loss"],
                        "train_images": train["images"], "val_images": validation["images"],
                        "train_batches": train["batches"], "val_batches": validation["batches"]}
+                if variant == "A1":
+                    row.update({f"{split}_{name}": result[name] for split, result in (("train", train), ("val", validation))
+                                for name in component_names})
                 history.append(row)
                 writer.writerow(row)
                 stream.flush()
@@ -329,20 +376,21 @@ def run_training(config_path: Path, *, root: Path, manifest: Path, output_dir: P
                 if validation["loss"] < best_loss:
                     best_loss, best_epoch = validation["loss"], epoch
                     save_best_checkpoint(run_dir / "best.pt", model, optimizer, epoch=epoch, val_loss=best_loss,
-                                         metadata={"variant": "B0", "category": category, "scope": scope,
+                                         metadata={"variant": variant, "category": category, "scope": scope,
                                                    "seed": config["seed"], "effective_config": effective,
+                                                   **({"architecture": deepcopy(model_config)} if variant == "A1" else {}),
                                                    "manifest_sha256": provenance["manifest_sha256"]})
                 print(json.dumps({"category": category, "scope": scope, **row}), flush=True)
                 if stopper.update(validation["loss"]):
                     break
         summary = {"status": "completed", "run_id": run_id, "run_dir": str(run_dir), "tracking_uri": tracking_uri,
-                   "category": category, "scope": scope, "epochs_completed": len(history),
+                   "category": category, "variant": variant, "scope": scope, "epochs_completed": len(history),
                    "best_epoch": best_epoch, "best_val_loss": best_loss, "selection_split": "val", "test_used": False,
                    "stopped_early": stopper.bad_epochs >= stopper.patience, "history": history,
                    "checkpoint_sha256": _sha256(run_dir / "best.pt"), **provenance}
         _write_json(run_dir / "summary.json", summary)
         _write_json(run_dir / "data_usage.json", {split: sorted(paths) for split, paths in seen.items()})
-        _plot_history(history, run_dir / "loss_curves.png", category, scope, run_id)
+        _plot_history(history, run_dir / "loss_curves.png", category, scope, run_id, variant=variant, loss_name=loss_name)
         client.log_metric(run_id, "best_val_loss", best_loss, step=best_epoch)
         client.log_param(run_id, "best_epoch", best_epoch)
         for artifact in run_dir.iterdir():
@@ -366,11 +414,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--manifest", type=Path, default=Path("data/manifests/manifest.csv"))
     parser.add_argument("--category", choices=CATEGORIES, default=None)
     parser.add_argument("--device", default="auto", help="cpu, cuda, cuda:N ou auto")
-    parser.add_argument("--output-dir", type=Path, default=Path("artifacts/training"))
+    parser.add_argument("--output-dir", type=Path, default=None, help="Defaut : artifacts/training (B0), artifacts/a1_runs (A1)")
     parser.add_argument("--smoke", action="store_true", help="1 epoque, batch size 2, au plus 2 batches par split")
     args = parser.parse_args(argv)
     try:
-        result = run_training(args.config, root=args.root, manifest=args.manifest, output_dir=args.output_dir,
+        output = args.output_dir or Path("artifacts/a1_runs" if load_config(args.config)["variant"] == "A1" else "artifacts/training")
+        result = run_training(args.config, root=args.root, manifest=args.manifest, output_dir=output,
                               category=args.category, device=args.device, smoke=args.smoke)
     except (OSError, ValueError, KeyError, RuntimeError, ImportError) as exc:
         print(f"Entrainement impossible : {exc}", file=sys.stderr)

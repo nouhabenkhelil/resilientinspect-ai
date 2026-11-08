@@ -665,6 +665,89 @@ temporaires ; les poids Kaggle réels ont seulement été inspectés et chargés
 étape.** Les preuves des vérifications sont dans
 `reports/experiments/b0_evaluation_verification.json` et le journal des décisions.
 
+## A1 résiduel — implémentation et smoke uniquement
+
+Le candidat A1 est défini dans `configs/ae_improved.yaml` et
+`configs/train_ae_a1.yaml`, avec un
+[protocole figé avant test](reports/experiments/a1_protocol.md).
+Encodeur/décodeur résiduels, canaux 32/64/128/256, latent 256×16×16,
+**2 754 371 paramètres**, sortie Sigmoid. Deux skips seulement à 32×32 et 64×64,
+projection 1×1 + tanh avec contribution bornée à ±0,1 ; aucun chemin RGB direct.
+Cette limitation ne garantit pas qu'un défaut ne sera pas reconstruit.
+
+La perte initiale est **0,8 L1 + 0,2 (1−SSIM)/2** : SSIM mono-échelle par canal
+RGB, gaussienne 11×11 sigma=1,5, L=1, convolution valid. Sa validation numérique
+CPU utilise une référence NumPy indépendante, des cas analytiques, des images
+presque constantes et gradcheck ; elle ne démontre aucun gain de détection.
+Les composantes L1/DSSIM et leur somme sont journalisées séparément.
+
+Sur **train/good seulement**, probabilité 0,5 de faibles variations de luminosité
+et contraste (facteurs 0,9 à 1,1), sans transformation géométrique. Tirages
+reproductibles par seed/époque/index ; l'entrée augmentée est aussi la cible.
+Val reste inchangée. Pas de statistique calculée sur test, pas de nouvelle
+normalisation. Architecture, perte et augmentation peuvent être ablatées
+indépendamment dans des copies de configuration ; une perte L1 seule exige
+`name: l1`, poids 1/0 et `training.loss: l1` cohérents.
+
+La boucle `src/training/train_ae.py` est commune à B0/A1. Les splits, résolution
+256×256, seed 42, batch 16, maximum 20 époques, patience 5, Adam/LR 0,001 et
+AMP désactivée restent identiques à B0. La sélection A1 utilise la **perte
+composite val non augmentée**. Ne pas comparer sa valeur directement à la seule
+L1 de B0. Aucun composant A1 n'est choisi d'après les scores du test B0.
+
+Commandes PowerShell locales de reproduction (dépendances existantes inchangées) :
+
+```powershell
+& .\.venv\Scripts\python.exe -m pytest tests/test_improved.py -q -W error --tb=short
+& .\.venv\Scripts\python.exe -m pytest -q -W error --tb=short
+& .\.venv\Scripts\python.exe -m pip check
+# Smoke seulement : batch 2, une epoque, au plus deux batches train et val.
+& .\.venv\Scripts\python.exe -m resilientinspect.training.train_ae --config configs/train_ae_a1.yaml --category bottle --device cpu --output-dir artifacts/a1_runs --smoke
+```
+
+Les sorties A1 sont séparées sous `artifacts/a1_runs/` et ignorées par Git.
+Toute sortie dans les répertoires de poids/résultats B0 figés est refusée.
+Les checkpoints embarquent l'architecture et les options loss/augmentation ;
+`resilientinspect.training.a1_config.load_a1_checkpoint(path, device)` restaure
+strictement cette architecture sauvegardée. MLflow utilise l'expérience commune
+`resilientinspect-ae`, avec tag `variant=A1`, artefacts et code source hachés.
+
+Kaggle, **après validation**, préparer un run indépendant par catégorie ; exemple
+sans installation ni remplacement de PyTorch :
+
+```python
+import subprocess
+import sys
+from pathlib import Path
+import torch
+
+repo = Path("/kaggle/working/resilientinspect-ai")
+assert (3, 11) <= sys.version_info[:2] < (3, 14)
+assert torch.cuda.is_available(), "Activer le GPU ; pas de repli CPU."
+category = "bottle"  # puis hazelnut et leather, chaque appel cree un nouveau modele
+command = [sys.executable, "-m", "resilientinspect.training.train_ae",
+           "--config", str(repo / "configs/train_ae_a1.yaml"),
+           "--root", "/kaggle/input/VOTRE_DATASET/mvtec_ad",
+           "--manifest", "/kaggle/input/VOS_MANIFESTES/manifest.csv",
+           "--category", category, "--device", "cuda",
+           "--output-dir", "/kaggle/working/a1_runs"]
+subprocess.run(command + ["--smoke"], cwd=repo, check=True)
+# Apres validation du smoke GPU, lancer un run complet par categorie :
+# subprocess.run(command, cwd=repo, check=True)
+```
+
+Aucun paquet supplémentaire pour A1 : conserver la procédure d'installation
+avec contraintes du runtime Kaggle présentée plus haut, extras `train,eda,eval,dev`,
+jamais `data`. L'exécution Python 3.13/CUDA/T4 et la mémoire à batch 16 restent à
+vérifier réellement. Un run A1 complet sur CPU est bloqué avant lecture d'images.
+
+L'étape présente inclut seulement les tests et un smoke réel bottle CPU. Les
+preuves, pertes de vérification et empreintes figurent dans
+`reports/experiments/a1_implementation_verification.json` et le journal. Aucun
+test A1 officiel n'est évalué et aucune amélioration sur B0 n'est annoncée.
+La future comparaison gardera le même protocole de score/seuillage B0, avec des
+seuils numériques recalibrés exclusivement sur val normale de chaque A1.
+
 ## Git et critères de validation
 
 Git conserve le code, les configurations, les tests et les rapports textuels.
