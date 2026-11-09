@@ -748,6 +748,31 @@ test A1 officiel n'est évalué et aucune amélioration sur B0 n'est annoncée.
 La future comparaison gardera le même protocole de score/seuillage B0, avec des
 seuils numériques recalibrés exclusivement sur val normale de chaque A1.
 
+## Évaluation A1 — implémentation prête pour revue
+
+Le [protocole A1](reports/experiments/a1_evaluation_protocol.md) réutilise
+directement `configs/evaluate_ae_b0.yaml` et les calculs scientifiques B0,
+avec chargement strict des checkpoints A1 et seuils numériques recalculés
+sur leur propre validation normale. Les trois checkpoints complets locaux
+sont inspectés sur CPU ; les smoke et copies MLflow sont exclus.
+
+```powershell
+& .\.venv\Scripts\python.exe -m resilientinspect.evaluation.evaluate_a1 --stage inspect --device cpu
+# Après revue uniquement :
+& .\.venv\Scripts\python.exe -m resilientinspect.evaluation.evaluate_a1 --stage calibrate --device cpu
+& .\.venv\Scripts\python.exe -m resilientinspect.evaluation.evaluate_a1 --stage evaluate --device cpu --approved-protocol-sha256 "SHA256_EXPLICITEMENT_VALIDE"
+```
+
+Le jeton de la dernière commande est un exemple invalide ; le test exige le SHA
+complet explicitement approuvé. Les calibrations des trois catégories doivent
+être présentes et compatibles avant tout accès test. Sorties immuables sous
+`reports/evaluation/a1/`, sans modification de B0. Le tableau préparatoire
+`reports/evaluation/a1/comparison/comparison.csv` contient les résultats B0
+existants et A1 en attente. Aucune calibration réelle ni évaluation officielle
+A1 n'est lancée dans cette étape. Les
+[preuves de vérification](reports/experiments/a1_evaluation_verification.json)
+consignent les tests synthétiques et l'inspection.
+
 ## Git et critères de validation
 
 Git conserve le code, les configurations, les tests et les rapports textuels.
