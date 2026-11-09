@@ -73,6 +73,7 @@ events.out.tfevents.*
 # Figures EDA : contiennent des images derivees du dataset, usage local seulement
 /reports/eda/visual/
 /reports/evaluation/
+/reports/transfer/
 ~$*.docx
 
 # Autoriser seulement les repertoires et marqueurs vides du squelette

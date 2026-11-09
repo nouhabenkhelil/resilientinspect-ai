@@ -1,0 +1,457 @@
+{
+  "date": "2026-11-09",
+  "timezone": "Africa/Lagos",
+  "status": "implementation_tested_awaiting_review",
+  "official_full_training_executed": false,
+  "official_test_executed": false,
+  "official_images_opened": false,
+  "b0_a1_retrained": false,
+  "guide": {
+    "path": "resilientinspect-ai/guide_technique.docx.docx",
+    "sections_read": [
+      "4.3",
+      "5.3",
+      "5.5",
+      "5.6"
+    ],
+    "sha256": "e859160de14566fe8d67c9d37d089d2c8cb74a1573867e61bdc9f70c53d4142f"
+  },
+  "environment": {
+    "python": "3.11.9",
+    "os": "Windows-10-10.0.26200-SP0",
+    "torch": "2.15.0+cpu",
+    "cuda_available": false,
+    "torchvision": "0.29.2+cpu",
+    "numpy": "2.3.5",
+    "scikit-learn": "1.8.0",
+    "matplotlib": "3.10.8",
+    "mlflow-skinny": "3.16.1",
+    "pytest": "9.2.0"
+  },
+  "dependency_change": {
+    "added": "torchvision==0.29.2+cpu",
+    "torch_replaced": false,
+    "install_mode": "--no-deps from official CPU index",
+    "kaggle_policy": "keep preinstalled torch/torchvision CUDA pair; pin runtime constraints; no data/transfer extras"
+  },
+  "files_created": [
+    "src/data/synthetic.py",
+    "src/models/transfer.py",
+    "src/training/train_transfer.py",
+    "src/training/smoke_transfer.py",
+    "src/evaluation/gradcam.py",
+    "src/evaluation/evaluate_transfer.py",
+    "configs/synthetic_transfer.yaml",
+    "configs/train_t0.yaml",
+    "configs/train_t1.yaml",
+    "configs/train_t2.yaml",
+    "configs/evaluate_transfer.yaml",
+    "tests/test_synthetic.py",
+    "tests/test_transfer_model.py",
+    "tests/test_gradcam.py",
+    "tests/test_transfer_training.py",
+    "tests/test_transfer_evaluation.py",
+    "reports/experiments/transfer_protocol.md",
+    "reports/experiments/transfer_implementation_verification.json"
+  ],
+  "files_modified": [
+    "README.md",
+    "pyproject.toml",
+    ".gitignore"
+  ],
+  "source_sha256": {
+    "src/data/synthetic.py": "12919e781572e08c0389969be355a2dac04c52d7878ff1cb997536e7a0eaa619",
+    "src/models/transfer.py": "4d883d0533d3b5e54e0002de3da739164c526a2fba4a1fb06a7255eb27ab18ee",
+    "src/training/train_transfer.py": "d96470884ffc186939b1f6d628955c5cce5dcf42f20eb5a6c98e084e85b0cefe",
+    "src/training/smoke_transfer.py": "2dda73e54a17d649d9fc4b64e9c95de676c7eea795eb9694ca504fc48d4a215b",
+    "src/evaluation/gradcam.py": "57880281159f434131270f09baf11b1f9b030e9fd2c8f6b2dd3122ae302cd0cd",
+    "src/evaluation/evaluate_transfer.py": "ee05bad6bd8058553114fd5305f525af91c37f3087666b6d8d322dde082889b7",
+    "configs/synthetic_transfer.yaml": "b9657e3d55c2c94b7bfdbc8f8b11e9972171f0cfff355e427df99ffe4b670f19",
+    "configs/train_t0.yaml": "708568363722a7dc2b2c5e2cfc327d4bcb3085cc7c8ca485b1fb852039ac9267",
+    "configs/train_t1.yaml": "9444aaeb9fc52af00cefe616fb6e3ae60707ed1421bf3c73d39b54137cb15233",
+    "configs/train_t2.yaml": "495c0a2055dfc7a3a0eee2ffef772d7d1f775751670cd52fcf5db9ad66a75936",
+    "configs/evaluate_transfer.yaml": "6422dedbba1b6366cea3e3f4b617742ea1b87c3db3119e534545a78f7ce0ae56",
+    "tests/test_synthetic.py": "ebdf2da336eab3222b439eab150c9926c87d80f696a5f05db4f5cce09a9e0c4c",
+    "tests/test_transfer_model.py": "99f1d59c35f61344d08840fe9e085e0f13f53527b4ffb4245370da9f203a3687",
+    "tests/test_gradcam.py": "d306d193e033712a0cae074c1a59d6e0753b3fc0ea841684a637288ff7abf872",
+    "tests/test_transfer_training.py": "5ae27b9bfcfcbcda0b94f6ece43aff728c007a4bb998dbb5ecb95990845e9ab9",
+    "tests/test_transfer_evaluation.py": "1ea5434d0b19f81aead25a64f601292300057fb87941e5eabb4874becb5de094",
+    "reports/experiments/transfer_protocol.md": "e254d5baf91332654a5075308eaefdae8ce48eca232d7b4760d5eb4c1fe506cd",
+    "README.md": "16d25030fd2fc87ad0a0d64595a999f0ce6acbe2435df2e87d2195ef8afef2fb",
+    "pyproject.toml": "b7253ba29c910ca0962356c25eda01b06b9ae6b35b90b674374bc9a39cf75091",
+    ".gitignore": "c02f0371c2c74141bb25da3df1293b5f7cc1566852f00f1d384166e6fbf2e938"
+  },
+  "architecture": {
+    "backbone": "torchvision.models.efficientnet_b0",
+    "head": "Dropout(0.2) -> Linear(1280,1)",
+    "output": "one anomaly logit",
+    "total_parameters": 4008829,
+    "trainable_parameters": {
+      "T0": 4008829,
+      "T1": 1281,
+      "T2": 3157021
+    },
+    "t2_unfrozen_feature_stages": [
+      6,
+      7,
+      8
+    ],
+    "gradcam_target": "features.8.0",
+    "gradcam_is_segmentation": false
+  },
+  "imagenet": {
+    "enum": "EfficientNet_B0_Weights.IMAGENET1K_V1",
+    "url": "https://download.pytorch.org/models/efficientnet_b0_rwightman-7f5810bc.pth",
+    "sha256": "7f5810bc96def8f7552d5b7e68d53c4786f81167d28291b21c0d90e1fca14934",
+    "bytes": 21444401,
+    "local_path": "artifacts\\transfer_weights\\efficientnet_b0_rwightman-7f5810bc.pth"
+  },
+  "protocol": {
+    "image_size": [
+      256,
+      256
+    ],
+    "seed": 42,
+    "extension_seeds": [
+      43,
+      44
+    ],
+    "batch_size": 16,
+    "max_epochs": 20,
+    "patience": 5,
+    "head_lr": 0.001,
+    "t0_backbone_lr": 0.001,
+    "t2_backbone_lr": 0.0001,
+    "loss": "BCEWithLogitsLoss",
+    "calibration": "normal validation-synthetic score quantile .95, higher, strictly >",
+    "evaluation_protocol_sha256": "6422dedbba1b6366cea3e3f4b617742ea1b87c3db3119e534545a78f7ce0ae56"
+  },
+  "tests": {
+    "command": ".venv/Scripts/python.exe -m pytest -q -W error --tb=short",
+    "exit_code": 0,
+    "passed": 462,
+    "skipped": 2,
+    "skip_reason": "preexisting B0/A1 CUDA tests unavailable on local CPU",
+    "new_transfer_cases_passed": 119,
+    "seconds": 131.11,
+    "full_log": "reports\\transfer\\verification\\full_tests.txt",
+    "full_log_sha256": "bcb9b9e10eeeb976ae8b9918df521e663a4dc24b56d35cded4a08ecf0ec3c907",
+    "pip_check": "No broken requirements found.",
+    "git_diff_check": "passed"
+  },
+  "smoke": {
+    "report_path": "reports\\transfer\\smoke_verification.json",
+    "report_sha256": "87b80fa1e0995a22ac5bfafb507c3b300938e68d60ed27134fd4df6e0f744c64",
+    "scope": "synthetic_cpu_smoke_only",
+    "seed": 42,
+    "batch_size": 2,
+    "max_epochs": 1,
+    "max_batches_per_split": 2,
+    "results": [
+      {
+        "variant": "T0",
+        "run_id": "69e86ae7e3524811adcf90cb20ba7e26",
+        "run_dir": "C:\\Users\\nouhe\\resilientinspect-ai\\artifacts\\transfer_runs\\T0\\bottle\\seed42\\smoke_69e86ae7e3524811adcf90cb20ba7e26",
+        "scope": "smoke",
+        "epochs_completed": 1,
+        "history": [
+          {
+            "epoch": 1,
+            "train_loss": 0.6607252657413483,
+            "train_accuracy": 0.5,
+            "train_auroc": 0.6666666666666667,
+            "train_ap": 0.5,
+            "train_f1": 0.0,
+            "train_images": 4,
+            "train_batches": 2,
+            "train_tn": 2,
+            "train_tp": 0,
+            "train_fp": 1,
+            "train_fn": 1,
+            "val_loss": 0.6947083473205566,
+            "val_accuracy": 0.5,
+            "val_auroc": 0.5,
+            "val_ap": 0.5,
+            "val_f1": 0.6666666666666666,
+            "val_images": 4,
+            "val_batches": 2,
+            "val_tn": 0,
+            "val_tp": 2,
+            "val_fp": 2,
+            "val_fn": 0
+          }
+        ],
+        "validation_metrics": {
+          "split": "val_synthetic",
+          "loss": 0.6947083473205566,
+          "images": 4,
+          "accuracy": 0.5,
+          "auroc": 0.5,
+          "ap": 0.5,
+          "undefined_reason": null,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 2,
+          "tn": 2,
+          "threshold": 0.5279169082641602,
+          "positive_class": 1,
+          "anomaly_fraction": 0.5
+        },
+        "trainable_parameters": 4008829,
+        "checkpoint_sha256": "b7da1eec53a94e7cdf5dffcd00fec719570e174c17f1a79fb9506116d566388b",
+        "synthetic_plan_sha256": "2f369f3d08901e4adad3dd2ad9b527cde81d03466bcefbf5c4a4700fe1ac45b9",
+        "weight_provenance": {
+          "source": "random",
+          "seed": 42
+        },
+        "gradcam": {
+          "target_layer": "features.8.0",
+          "shape": [
+            2,
+            1,
+            256,
+            256
+          ],
+          "finite": true,
+          "weights_and_buffers_preserved": true,
+          "path": "C:\\Users\\nouhe\\resilientinspect-ai\\artifacts\\transfer_runs\\T0\\bottle\\seed42\\smoke_69e86ae7e3524811adcf90cb20ba7e26\\gradcam_synthetic.png",
+          "sample_ids": [
+            "f9fd9465d9911ac2020a74341baf5588528eb1545a4cd411af54ef3b8f7ca7a8:normal",
+            "f9fd9465d9911ac2020a74341baf5588528eb1545a4cd411af54ef3b8f7ca7a8:synthetic"
+          ]
+        },
+        "local_smoke_seconds": 22.7074762000002
+      },
+      {
+        "variant": "T1",
+        "run_id": "7e95e594bb6d465590d6c26ee0650455",
+        "run_dir": "C:\\Users\\nouhe\\resilientinspect-ai\\artifacts\\transfer_runs\\T1\\bottle\\seed42\\smoke_7e95e594bb6d465590d6c26ee0650455",
+        "scope": "smoke",
+        "epochs_completed": 1,
+        "history": [
+          {
+            "epoch": 1,
+            "train_loss": 0.6984862685203552,
+            "train_accuracy": 0.75,
+            "train_auroc": 0.6666666666666667,
+            "train_ap": 0.5,
+            "train_f1": 0.6666666666666666,
+            "train_images": 4,
+            "train_batches": 2,
+            "train_tn": 2,
+            "train_tp": 1,
+            "train_fp": 1,
+            "train_fn": 0,
+            "val_loss": 0.7014535963535309,
+            "val_accuracy": 0.5,
+            "val_auroc": 0.25,
+            "val_ap": 0.5,
+            "val_f1": 0.0,
+            "val_images": 4,
+            "val_batches": 2,
+            "val_tn": 2,
+            "val_tp": 0,
+            "val_fp": 0,
+            "val_fn": 2
+          }
+        ],
+        "validation_metrics": {
+          "split": "val_synthetic",
+          "loss": 0.7014535963535309,
+          "images": 4,
+          "accuracy": 0.5,
+          "auroc": 0.25,
+          "ap": 0.5,
+          "undefined_reason": null,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 2,
+          "tn": 2,
+          "threshold": 0.4517767131328583,
+          "positive_class": 1,
+          "anomaly_fraction": 0.5
+        },
+        "trainable_parameters": 1281,
+        "checkpoint_sha256": "2a85606a00f0e546fa2ef7615e5f8653850e0d6b17bc6844a584b68da4214f00",
+        "synthetic_plan_sha256": "2f369f3d08901e4adad3dd2ad9b527cde81d03466bcefbf5c4a4700fe1ac45b9",
+        "weight_provenance": {
+          "source": "imagenet",
+          "enum": "EfficientNet_B0_Weights.IMAGENET1K_V1",
+          "url": "https://download.pytorch.org/models/efficientnet_b0_rwightman-7f5810bc.pth",
+          "sha256": "7f5810bc96def8f7552d5b7e68d53c4786f81167d28291b21c0d90e1fca14934",
+          "local_path": "C:\\Users\\nouhe\\resilientinspect-ai\\artifacts\\transfer_weights\\efficientnet_b0_rwightman-7f5810bc.pth",
+          "checksum_prefix_verified": true
+        },
+        "gradcam": {
+          "target_layer": "features.8.0",
+          "shape": [
+            2,
+            1,
+            256,
+            256
+          ],
+          "finite": true,
+          "weights_and_buffers_preserved": true,
+          "path": "C:\\Users\\nouhe\\resilientinspect-ai\\artifacts\\transfer_runs\\T1\\bottle\\seed42\\smoke_7e95e594bb6d465590d6c26ee0650455\\gradcam_synthetic.png",
+          "sample_ids": [
+            "f9fd9465d9911ac2020a74341baf5588528eb1545a4cd411af54ef3b8f7ca7a8:normal",
+            "f9fd9465d9911ac2020a74341baf5588528eb1545a4cd411af54ef3b8f7ca7a8:synthetic"
+          ]
+        },
+        "local_smoke_seconds": 7.139914200000021
+      },
+      {
+        "variant": "T2",
+        "run_id": "3aebac34074349aca6905920cf8c73cd",
+        "run_dir": "C:\\Users\\nouhe\\resilientinspect-ai\\artifacts\\transfer_runs\\T2\\bottle\\seed42\\smoke_3aebac34074349aca6905920cf8c73cd",
+        "scope": "smoke",
+        "epochs_completed": 1,
+        "history": [
+          {
+            "epoch": 1,
+            "train_loss": 0.6427748799324036,
+            "train_accuracy": 0.75,
+            "train_auroc": 0.6666666666666667,
+            "train_ap": 0.5,
+            "train_f1": 0.0,
+            "train_images": 4,
+            "train_batches": 2,
+            "train_tn": 3,
+            "train_tp": 0,
+            "train_fp": 0,
+            "train_fn": 1,
+            "val_loss": 0.7013759613037109,
+            "val_accuracy": 0.5,
+            "val_auroc": 0.0,
+            "val_ap": 0.41666666666666663,
+            "val_f1": 0.0,
+            "val_images": 4,
+            "val_batches": 2,
+            "val_tn": 2,
+            "val_tp": 0,
+            "val_fp": 0,
+            "val_fn": 2
+          }
+        ],
+        "validation_metrics": {
+          "split": "val_synthetic",
+          "loss": 0.7013759613037109,
+          "images": 4,
+          "accuracy": 0.5,
+          "auroc": 0.0,
+          "ap": 0.41666666666666663,
+          "undefined_reason": null,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 2,
+          "tn": 2,
+          "threshold": 0.48556628823280334,
+          "positive_class": 1,
+          "anomaly_fraction": 0.5
+        },
+        "trainable_parameters": 3157021,
+        "checkpoint_sha256": "d792a5815262ea7574ec1cd8f82729ef8ca4f87237aad53b7a029eac16390919",
+        "synthetic_plan_sha256": "2f369f3d08901e4adad3dd2ad9b527cde81d03466bcefbf5c4a4700fe1ac45b9",
+        "weight_provenance": {
+          "source": "imagenet",
+          "enum": "EfficientNet_B0_Weights.IMAGENET1K_V1",
+          "url": "https://download.pytorch.org/models/efficientnet_b0_rwightman-7f5810bc.pth",
+          "sha256": "7f5810bc96def8f7552d5b7e68d53c4786f81167d28291b21c0d90e1fca14934",
+          "local_path": "C:\\Users\\nouhe\\resilientinspect-ai\\artifacts\\transfer_weights\\efficientnet_b0_rwightman-7f5810bc.pth",
+          "checksum_prefix_verified": true
+        },
+        "gradcam": {
+          "target_layer": "features.8.0",
+          "shape": [
+            2,
+            1,
+            256,
+            256
+          ],
+          "finite": true,
+          "weights_and_buffers_preserved": true,
+          "path": "C:\\Users\\nouhe\\resilientinspect-ai\\artifacts\\transfer_runs\\T2\\bottle\\seed42\\smoke_3aebac34074349aca6905920cf8c73cd\\gradcam_synthetic.png",
+          "sample_ids": [
+            "f9fd9465d9911ac2020a74341baf5588528eb1545a4cd411af54ef3b8f7ca7a8:normal",
+            "f9fd9465d9911ac2020a74341baf5588528eb1545a4cd411af54ef3b8f7ca7a8:synthetic"
+          ]
+        },
+        "local_smoke_seconds": 8.156257399999959
+      }
+    ],
+    "checkpoint_checks": {
+      "smoke_checkpoint_checks": [
+        {
+          "variant": "T0",
+          "run_id": "69e86ae7e3524811adcf90cb20ba7e26",
+          "mlflow_status": "FINISHED",
+          "optimizer_steps": 2,
+          "changed_state_entries": 360,
+          "head_changed": true,
+          "frozen_stages_preserved": true,
+          "all_weights_finite": true,
+          "only_train_val_sources": true
+        },
+        {
+          "variant": "T1",
+          "run_id": "7e95e594bb6d465590d6c26ee0650455",
+          "mlflow_status": "FINISHED",
+          "optimizer_steps": 2,
+          "changed_state_entries": 2,
+          "head_changed": true,
+          "frozen_stages_preserved": true,
+          "all_weights_finite": true,
+          "only_train_val_sources": true
+        },
+        {
+          "variant": "T2",
+          "run_id": "3aebac34074349aca6905920cf8c73cd",
+          "mlflow_status": "FINISHED",
+          "optimizer_steps": 2,
+          "changed_state_entries": 118,
+          "head_changed": true,
+          "frozen_stages_preserved": true,
+          "all_weights_finite": true,
+          "only_train_val_sources": true
+        }
+      ],
+      "same_consumed_source_paths_all_variants": true,
+      "same_synthetic_plan_all_variants": true,
+      "official_test_executed": false
+    },
+    "image_open_guard": "temporary fabricated train/good sources only; no official image/mask opened",
+    "visual_qa": "Grad-CAM panel figure and ROC/PR/score/confusion diagnostics inspected; attribution and synthetic support distinctly labelled"
+  },
+  "preservation": {
+    "preexisting_files": 506,
+    "unchanged_sha256_size_mtime": true,
+    "modified_or_missing": [],
+    "groups": {
+      "artifacts/b0_runs": 157,
+      "artifacts/a1_runs": 236,
+      "reports/evaluation/b0": 34,
+      "reports/evaluation/a1": 46,
+      "configs": 6,
+      "src": 21,
+      "data/manifests": 6
+    },
+    "protected_inventory_unchanged": true,
+    "guide_sha256": "e859160de14566fe8d67c9d37d089d2c8cb74a1573867e61bdc9f70c53d4142f"
+  },
+  "limitations": [
+    "Smoke metrics describe fabricated fixtures only, not industrial anomaly detection.",
+    "No T4 full training, real evaluation, latency p50/p95 or inference-memory benchmark executed.",
+    "Black Grad-CAM maps are allowed when positive-logit contributions vanish; no localization claim.",
+    "Validation supports both checkpoint selection and threshold calibration; no independent performance estimate."
+  ],
+  "preexisting_untracked_files_left_untouched": [
+    "notebooks/resilientinspect-a1-training.ipynb",
+    "reports/experiments/a1_evaluation_verification.json",
+    "tests/test_a1_checkpoints.py",
+    "tests/test_compare_b0_a1.py",
+    "tests/test_evaluation_a1.py"
+  ]
+}

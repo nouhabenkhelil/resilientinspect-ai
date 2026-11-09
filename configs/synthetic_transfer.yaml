@@ -1,0 +1,9 @@
+# Plan de recettes commun aux trois variantes, sans images ni statistiques test.
+schema_version: 1
+image_size: [256, 256]
+copies_per_source: 1
+patch_fraction: [0.1, 0.3]
+min_effect: 0.15
+normalization:
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]

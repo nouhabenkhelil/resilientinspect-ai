@@ -773,6 +773,35 @@ A1 n'est lancée dans cette étape. Les
 [preuves de vérification](reports/experiments/a1_evaluation_verification.json)
 consignent les tests synthétiques et l'inspection.
 
+## Phase 3 — Transfer Learning T0/T1/T2
+
+Le [protocole de transfert](reports/experiments/transfer_protocol.md) décrit
+EfficientNet-B0 binaire, les configurations `train_t0.yaml`, `train_t1.yaml`,
+`train_t2.yaml`, les paires synthétiques communes et le budget GPU prévu.
+T0 entraîne tout depuis zéro ; T1 entraîne la tête sur le backbone ImageNet
+gelé ; T2 entraîne la tête et les stages 6–8, avec LR différenciés.
+
+Les sources restent strictement disjointes entre train/good et val/good, selon
+les manifestes existants. Un plan JSON déterministe fixe les mêmes exemples
+pour les trois variantes. Normalisation ImageNet commune, letterbox 256×256,
+seuil calibré sur normaux de validation synthétique uniquement.
+Grad-CAM cible `features.8.0` et explique le logit ; aucune segmentation pixel
+n'en est déduite. MLflow utilise l'expérience `resilientinspect-transfer`.
+
+```powershell
+& .\.venv\Scripts\python.exe -m pytest -q -W error --tb=short
+# Images fabriquees en temporaire, trois variantes, poids ImageNet hors ligne :
+& .\.venv\Scripts\python.exe -m resilientinspect.training.smoke_transfer --imagenet-weights artifacts/transfer_weights/efficientnet_b0_rwightman-7f5810bc.pth
+```
+
+Les commandes Kaggle indépendantes par variante/catégorie et la préparation du
+plan commun figurent dans le protocole. Conserver le couple PyTorch
+CUDA/torchvision préinstallé ; les extras `data` et `transfer` sont réservés à
+la reproduction locale. La future évaluation réelle exige un run `full`, une
+calibration compatible et le SHA du protocole explicitement approuvé.
+Cette étape s'arrête après tests et smoke CPU, sans entraînement complet ni
+évaluation officielle, et sans modifier B0/A1.
+
 ## Git et critères de validation
 
 Git conserve le code, les configurations, les tests et les rapports textuels.

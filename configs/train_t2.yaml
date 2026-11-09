@@ -1,0 +1,33 @@
+schema_version: 1
+variant: T2
+categories: [bottle, hazelnut, leather]
+seed: 42
+model:
+  name: efficientnet_b0
+  head_dropout: 0.2
+  unfreeze_stages: [6, 7, 8]
+  weights: IMAGENET1K_V1
+synthetic_config: synthetic_transfer.yaml
+training:
+  batch_size: 16
+  max_epochs: 20
+  optimizer: adam
+  head_lr: 0.001
+  backbone_lr: 0.0001
+  weight_decay: 0.0
+  loss: bce_with_logits
+  mixed_precision: false
+  num_workers: 0
+  cpu_threads: 2
+  early_stopping: {patience: 5, min_delta: 0.0}
+calibration:
+  method: normal_quantile
+  quantile: 0.95
+  quantile_method: higher
+  decision: strictly_greater
+smoke:
+  batch_size: 2
+  max_epochs: 1
+  max_batches_per_split: 2
+tracking:
+  experiment_name: resilientinspect-transfer
