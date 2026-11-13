@@ -1,0 +1,15 @@
+name: mlflow-evaluation-test
+project_dir: mlflow-agent
+setup_script: tests/scripts/setup_agent_eval.py
+judges:
+  - tests/judges/dataset_created.py
+  - tests/judges/scorer_registered.py
+  - tests/judges/evaluation_run_created.py
+  - tests/judges/agent_trace_logged.py
+  - tests/judges/skill_usage.py
+skills:
+  - mlflow-evaluation
+  - mlflow-trace-instrumentation
+prompt: "Evaluate the output quality of my agent. Do not ask for input."
+environment:
+  MLFLOW_SERVER_ENABLE_CUSTOM_SCORERS: "true"

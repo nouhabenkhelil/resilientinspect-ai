@@ -1,0 +1,72 @@
+{
+  "audit_date": "2026-11-11",
+  "pdf": "C:\\Users\\nouhe\\resilientinspect-ai\\reports\\milestones\\midterm\\Rapport_MiParcours_TrackX_ResilientInspectAI.pdf",
+  "pdf_sha256": "7ebe7c8b1c0928eb975e580d6d5e9df506c91d9c0a930d95a5002245f1f0ce05",
+  "pages": 5,
+  "page_format": "A4",
+  "latex_errors_or_overflows": [],
+  "exact_metrics_verified": 56,
+  "gabarit_sections_reviewed": [
+    "1",
+    "2.1",
+    "2.2",
+    "2.3",
+    "2.4",
+    "component_progress",
+    "3",
+    "4",
+    "5_Gantt_RACI",
+    "annexes"
+  ],
+  "geometry": [
+    {
+      "page": 1,
+      "words": 471,
+      "within_page_margins": true
+    },
+    {
+      "page": 2,
+      "words": 683,
+      "within_page_margins": true
+    },
+    {
+      "page": 3,
+      "words": 546,
+      "within_page_margins": true
+    },
+    {
+      "page": 4,
+      "words": 571,
+      "within_page_margins": true
+    },
+    {
+      "page": 5,
+      "words": 193,
+      "within_page_margins": true
+    }
+  ],
+  "real_visual_proofs": 3,
+  "copied_figures_match_originals": true,
+  "protected_preexisting_files": 699,
+  "all_protected_sha256_size_mtime_unchanged": true,
+  "training_or_official_evaluation_executed": false,
+  "project_tests_rerun": false,
+  "names_and_emails_confirmed_by_user": true,
+  "remaining_placeholders": [
+    "official track code",
+    "group identifier",
+    "individual roles",
+    "RACI assignments",
+    "final presentation date"
+  ],
+  "missing_evidence": [
+    "A1 MLflow screenshot",
+    "transfer/test screenshot",
+    "full T0/T1/T2 experiments and real-test metrics"
+  ],
+  "scientific_source_files": {
+    "rapport_miparcours.tex": "1ef1fe4e1831dba4878ee00f6b9488e69c93bc3d28aaf47ba04c260bf5a5c47b",
+    "audit\\metrics_exact.csv": "f95653baebbe65671a5d2d096297481fe483eae74599aad2e20eeeb246ae72e3",
+    "audit\\figure_sources.json": "bb78d9b5ec9dd438634d14e87cfa30f39a3b0f178eb39e8be9c247411295f238"
+  }
+}

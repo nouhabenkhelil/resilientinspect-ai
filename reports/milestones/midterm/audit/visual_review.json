@@ -1,0 +1,29 @@
+{
+  "audit_date": "2026-11-11",
+  "pdf_sha256": "7ebe7c8b1c0928eb975e580d6d5e9df506c91d9c0a930d95a5002245f1f0ce05",
+  "pages_reviewed": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "page_images": {
+    "final-page-1.png": "5f4e255fb786c09779a5714be8bf4946c97a302a1c3cf58c2e651a863d0fe365",
+    "final-page-2.png": "dddfc72ddc638a9969c7e0cc6eb2efa324a7532f08854034c5e9dffa6ddf1133",
+    "final-page-3.png": "3d923a6cf0fb4815a9455741329644e80e580cfefb55d2e7c0d13354dc5ac557",
+    "final-page-4.png": "d7054b878da5bc0f86c9b3df2958ec2fa92715cacb3a0e4d772aa991c86e82f2",
+    "final-page-5.png": "3b33c159b7ef363a661b7c4c6611b2e7cafff0c75700542f52e23856bd32a4ea"
+  },
+  "result": "clean",
+  "checks": [
+    "all required sections visible",
+    "five pages including annexes",
+    "readable tables and figures",
+    "no clipped text or overlapping elements",
+    "correct MLflow B0-only screenshot legend",
+    "two members and unconfirmed RACI placeholders",
+    "all three visual proofs genuine; source rasters unchanged"
+  ],
+  "review_method": "manual inspection of rendered page PNGs; independent scientific review"
+}

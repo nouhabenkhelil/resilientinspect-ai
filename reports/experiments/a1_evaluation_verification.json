@@ -1,0 +1,190 @@
+{
+  "date": "2026-11-09",
+  "timezone": "Africa/Lagos",
+  "status": "implementation_tested_awaiting_explicit_protocol_review",
+  "official_training_executed": false,
+  "official_calibration_executed": false,
+  "official_test_executed": false,
+  "environment": {
+    "os": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.9",
+    "device": "cpu",
+    "torch": "2.15.0+cpu",
+    "numpy": "2.3.5",
+    "scikit_learn": "1.8.0",
+    "cuda_runtime": null,
+    "pytest": "9.2.0",
+    "matplotlib": "3.10.8",
+    "Pillow": "13.0.0",
+    "PyYAML": "6.0.3"
+  },
+  "protocol": {
+    "schema_version": 1,
+    "protocol_id": "b0_l1_top01_quantiles_v1",
+    "categories": [
+      "bottle",
+      "hazelnut",
+      "leather"
+    ],
+    "anomaly_map": "rgb_mean_absolute_error",
+    "smoothing": "none",
+    "resolution": [
+      256,
+      256
+    ],
+    "padding": "exclude_valid_mask_zero",
+    "image_top_fraction": 0.01,
+    "image_threshold_quantile": 0.95,
+    "pixel_threshold_quantile": 0.995,
+    "quantile_method": "higher",
+    "decision": "strictly_greater",
+    "figures_per_defect": 1,
+    "batch_size": 4,
+    "cpu_threads": 2,
+    "seed": 42
+  },
+  "protocol_path": "configs/evaluate_ae_b0.yaml",
+  "protocol_sha256": "f515662ab4ef0437194f7fdc7b57c8ea435ae6cb7e1be95c26476a91fa5d963e",
+  "source_sha256": {
+    "src/evaluation/evaluate_a1.py": "380fba2cb432a855ffe192b32cd0d5df47d70b654b86c4767af15acd86e4aee7",
+    "src/evaluation/a1_checkpoints.py": "63e6810e4b1695300806dbe9d886c61d93836665d10c943af77ec02b56dcce42",
+    "src/evaluation/compare_b0_a1.py": "0250874839ba28cf1c8ca65723a1fbe020caa1689e93c2e23aa8e3cf40e405e2",
+    "tests/test_evaluation_a1.py": "dacbf01b0f665a2032d4d5dee5acb9c1380556ecb8a73b5c02410d0c8c518eba",
+    "tests/test_a1_checkpoints.py": "27eb1a6f067bd82ec013cee453713c5100c25ac0910bcba72a8d9c2774dc6069",
+    "tests/test_compare_b0_a1.py": "6f12f068e2b0f68b1e4baa2040827825b8b4edb6eb847750803084f952d87308",
+    "src/evaluation/evaluate_ae.py": "cee5cd06d05e78af208345bee3d927bde8452994fab998998970d74c2d702ce0",
+    "src/training/a1_config.py": "b4f540ad1bef77a395655c081927c34340e75b5e8dc1eed4f453a038adb27b32",
+    "configs/evaluate_ae_b0.yaml": "f515662ab4ef0437194f7fdc7b57c8ea435ae6cb7e1be95c26476a91fa5d963e",
+    "reports/experiments/a1_evaluation_protocol.md": "abb964549da1ef3f9597cd87381dc6c955ded37a93ea9bf979f53d4c1f221219",
+    "README.md": "4d7da64acef80ca56334be64931568b2b42ffbaa6ff5d5d548df43ec2e043e35"
+  },
+  "checkpoint_inspection": {
+    "selected": {
+      "bottle": {
+        "category": "bottle",
+        "path": "C:\\Users\\nouhe\\resilientinspect-ai\\artifacts\\a1_runs\\bottle\\full_03f6c284b0164105bf364181695ce3b5\\best.pt",
+        "run_id": "03f6c284b0164105bf364181695ce3b5",
+        "sha256": "a6741c693306601ea41ad21675bd194f4a7d8f77ea7342f78ce10098c7efe71d",
+        "manifest_sha256": "13f55c7cf7c87a3e3739e24920bb0d85cc96a39a00e30d277ddfaa1832b84522",
+        "best_epoch": 15
+      },
+      "hazelnut": {
+        "category": "hazelnut",
+        "path": "C:\\Users\\nouhe\\resilientinspect-ai\\artifacts\\a1_runs\\hazelnut\\full_0966957370a14cdda9d65a15e54cbaa5\\best.pt",
+        "run_id": "0966957370a14cdda9d65a15e54cbaa5",
+        "sha256": "e3d75856bc044ac8f6ae728b4ac1e44994b4514e48cc4435b8b708698cd293e4",
+        "manifest_sha256": "13f55c7cf7c87a3e3739e24920bb0d85cc96a39a00e30d277ddfaa1832b84522",
+        "best_epoch": 17
+      },
+      "leather": {
+        "category": "leather",
+        "path": "C:\\Users\\nouhe\\resilientinspect-ai\\artifacts\\a1_runs\\leather\\full_41e6a12c4b4942b6b7d6dc9e1ea3720a\\best.pt",
+        "run_id": "41e6a12c4b4942b6b7d6dc9e1ea3720a",
+        "sha256": "2c236a97a07b9c0b3243e9354ae6941b4a121fb908753098d1e2bdec0df40c50",
+        "manifest_sha256": "13f55c7cf7c87a3e3739e24920bb0d85cc96a39a00e30d277ddfaa1832b84522",
+        "best_epoch": 18
+      }
+    },
+    "exclusions_by_reason": {
+      "smoke": 2,
+      "mlflow_copy": 5
+    },
+    "parameters_per_model": {
+      "bottle": 2754371,
+      "hazelnut": 2754371,
+      "leather": 2754371
+    },
+    "best_epoch": {
+      "bottle": 15,
+      "hazelnut": 17,
+      "leather": 18
+    },
+    "epochs_completed": {
+      "bottle": 20,
+      "hazelnut": 20,
+      "leather": 20
+    },
+    "inventory_path": "reports\\evaluation\\a1\\f515662ab4ef\\checkpoint_inventory.json",
+    "inventory_sha256": "24c701d1ebe986895f5627d3ecd1e52f066dcd52d9c4087d8b79d4101985a101",
+    "guard": {
+      "stage": "inspect",
+      "exit_code": 0,
+      "dataset_construction_blocked": true,
+      "image_open_blocked": true,
+      "inference_blocked": true,
+      "test_executed": false,
+      "calibration_executed": false
+    }
+  },
+  "validation": {
+    "command": ".venv/Scripts/python.exe -m pytest -q -W error --tb=short",
+    "exit_code": 0,
+    "passed": 343,
+    "skipped": 2,
+    "skip_reasons": [
+      "CUDA indisponible: B0 forward/backward",
+      "CUDA indisponible: A1/SSIM forward/backward"
+    ],
+    "seconds": 98.35,
+    "new_a1_comparison_synthetic_cases_passed": 73,
+    "all_training_or_inference_in_tests": "temporary_synthetic_fixtures_only",
+    "pip_check": "No broken requirements found.",
+    "git_diff_check": "passed",
+    "synthetic_figure_visual_qa": {
+      "panels": 5,
+      "size": [
+        1800,
+        408
+      ],
+      "result": "labels, fixed heatmap scale and masked padding visually verified"
+    },
+    "test_log_path": "reports\\evaluation\\a1\\test_results.txt",
+    "test_log_sha256": "51a8bc0db4045338575eca57674b5890b46f8cd2471354c9c5cf275cef59f680"
+  },
+  "preservation": {
+    "sha256_checked_files": 451,
+    "modified_or_missing": [],
+    "groups": {
+      "artifacts/b0_runs": {
+        "preexisting_files": 157,
+        "unchanged": true
+      },
+      "artifacts/a1_runs": {
+        "preexisting_files": 236,
+        "unchanged": true
+      },
+      "reports/evaluation/b0": {
+        "preexisting_files": 34,
+        "unchanged": true
+      },
+      "configs": {
+        "preexisting_files": 6,
+        "unchanged": true
+      },
+      "src": {
+        "preexisting_files": 18,
+        "unchanged": true
+      }
+    },
+    "frozen_manifest_sha256": "13f55c7cf7c87a3e3739e24920bb0d85cc96a39a00e30d277ddfaa1832b84522"
+  },
+  "comparison": {
+    "path": "reports\\evaluation\\a1\\comparison\\comparison.json",
+    "sha256": "7389320fcaf710e22e293f2c62115b3647f8e3dc66ca2a62fb8a73514d79055f",
+    "rows": 6,
+    "a1_status": {
+      "bottle": "pending",
+      "hazelnut": "pending",
+      "leather": "pending"
+    },
+    "sources_read_only": true
+  },
+  "limits": [
+    "Aucune calibration normale r?elle ni ?valuation officielle A1 ? cette ?tape.",
+    "Aucun gain B0/A1 mesur?; lignes A1 pending.",
+    "Reproductibilit? v?rifi?e sur un environnement CPU identique; CUDA/T4 non v?rifi?."
+  ],
+  "preexisting_user_files_left_untouched": [
+    "notebooks/resilientinspect-a1-training.ipynb"
+  ]
+}

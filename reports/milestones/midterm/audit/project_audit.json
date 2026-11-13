@@ -1,0 +1,54 @@
+{
+  "audit_date": "2026-11-11",
+  "identity_confirmed_by_user": true,
+  "names": [
+    "Nouha Ben Khelil",
+    "Nouha Briki"
+  ],
+  "emails": [
+    "nouhebenkhelil@gmail.com",
+    "brikinouha2@gmail.com"
+  ],
+  "unconfirmed": [
+    "group number",
+    "official track code",
+    "individual roles",
+    "RACI assignments",
+    "final presentation date"
+  ],
+  "evaluations": {
+    "B0": "3 real categories",
+    "A1": "3 real categories"
+  },
+  "transfer": "3 CPU smoke, zero local full",
+  "figures": {
+    "mlflow_b0_capture.png": {
+      "source": "capture_mlflow/6_runs_mlflow.png",
+      "sha256": "ed9c3c714c37afdee1e59320479472904655dd546ccd942864fcd3494886dbbe",
+      "dimensions": [
+        1458,
+        966
+      ],
+      "copied_without_pixel_changes": true
+    },
+    "b0_bottle_learning_curve.png": {
+      "source": "artifacts/b0_runs/bottle/full_7b8b71d28bc44868840ca50f4b16f4a1/loss_curves.png",
+      "sha256": "91a155af705cde8652ee75a26b2e88b0dd72c562a8f5df671e7c7ffde4dc68c6",
+      "dimensions": [
+        980,
+        630
+      ],
+      "copied_without_pixel_changes": true
+    },
+    "b0_hazelnut_crack_000.png": {
+      "source": "reports/evaluation/b0/f515662ab4ef/hazelnut/figures/crack_000.png",
+      "sha256": "084f9a3e2246755ae7e00643e6fa8905e5f12d740b893926f07157f0ea96457a",
+      "dimensions": [
+        1440,
+        408
+      ],
+      "copied_without_pixel_changes": true
+    }
+  },
+  "protected_files_count": 699
+}
