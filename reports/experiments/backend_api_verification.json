@@ -1,0 +1,513 @@
+{
+  "verification_date": "2026-11-17",
+  "tests": {
+    "api": 46,
+    "full_suite_passed": 558,
+    "full_suite_skipped": 2,
+    "skipped_reason": "Existing B0/A1 CUDA tests on CPU host",
+    "warnings_as_errors": true
+  },
+  "pip_check": "passed",
+  "git_diff_check": "passed",
+  "http_dependencies": {
+    "fastapi": "0.162.2",
+    "starlette": "1.10.0",
+    "uvicorn": "0.54.0",
+    "pydantic": "2.14.3",
+    "python-multipart": "0.0.34",
+    "httpx2": "2.16.2"
+  },
+  "protected_files": {
+    "count": 970,
+    "sha256_size_mtime_unchanged": true,
+    "removed_files": [],
+    "additional_files_observed": [
+      "reports\\transfer\\evaluation\\T2\\bottle\\seed42\\f07a9ca4bd16\\6422dedbba1b\\metrics.json",
+      "reports\\transfer\\evaluation\\T2\\bottle\\seed42\\f07a9ca4bd16\\6422dedbba1b\\predictions.csv",
+      "reports\\transfer\\evaluation\\T2\\hazelnut\\seed42\\0dbbeeb75a17\\6422dedbba1b\\metrics.json",
+      "reports\\transfer\\evaluation\\T2\\hazelnut\\seed42\\0dbbeeb75a17\\6422dedbba1b\\predictions.csv",
+      "reports\\transfer\\evaluation\\T2\\leather\\seed42\\8c450b7450a2\\6422dedbba1b\\metrics.json",
+      "reports\\transfer\\evaluation\\T2\\leather\\seed42\\8c450b7450a2\\6422dedbba1b\\predictions.csv"
+    ],
+    "additional_files_origin": "Unverified; API has no result-writing code",
+    "baseline_sha256": "f48588c65f0a0530800640633f9db65eb23f99a4ff4da117109ba1e16b6e1190"
+  },
+  "source_sha256": {
+    "backend\\__init__.py": "d5d8b0bc0a1650012be801597b5db721087e6d400333bc4985536c429a62cc72",
+    "backend\\app\\__init__.py": "361b4798b7716038e49cb8572caa599057247079f8ac90c49d6878054f145e1c",
+    "backend\\app\\config.py": "80b6075a12e37b479320640154b8155888dec9ca1b101ebef9bf6824dcf124cc",
+    "backend\\app\\errors.py": "495ce2516f24eeedcc69a42c5c78fa02c7ad1207b28559e71ff1569ddeb63af2",
+    "backend\\app\\imaging.py": "6b607b9f66c830fd1f0e1eb4dff72fb666ba25a8e3dac32d9b81eff302be0d53",
+    "backend\\app\\inference.py": "6ce603bbd20e757860ccdd574e16ed374ea39bdd7873cd796f5e65e29d585413",
+    "backend\\app\\main.py": "e3b95ed9582d111861303c2168de49307b7e14f80dea3760b477f50600376867",
+    "backend\\app\\middleware.py": "6867b85832efa4cb67832f828d81b12bbf0369e5ffee1796b232572a7b69812f",
+    "backend\\app\\models.py": "769cdf4c04f976ed657bf2e6aa6cab448d5457b3bca13d9e8251cd2a238a54fc",
+    "backend\\app\\schemas.py": "2b572fb93cdba5739b8437ec0e272062eb731fce93395b5ec6589df5b9b84d95",
+    "tests/test_backend_api.py": "a144855b0e6bee66edc5d7c1cdd783f464476ed150e38c8781d4748d7eefa636"
+  },
+  "checkpoint_integration": {
+    "device": "cpu",
+    "synthetic_image_size": [
+      89,
+      173
+    ],
+    "health": {
+      "status": "ok",
+      "version": "0.1.0",
+      "device": "cpu",
+      "ready_models": 15,
+      "expected_models": 15,
+      "request_id": "5cb3b6c1-f5a8-4fb3-aa93-dc3b9d6bdc31"
+    },
+    "requests": [
+      {
+        "endpoint": "/predict",
+        "http_status": 200,
+        "category": "bottle",
+        "model": "B0",
+        "version": "b70366819fdbd9043eb78e8865ca39cebadf5cb251ff7a9c0e94817c3c0593e4",
+        "anomaly_score": 0.33840733678383234,
+        "threshold": 0.20367741357625985,
+        "decision": "anomaly",
+        "inference_time_ms": 79.08080000197515,
+        "request_id": "ff859f14-cb9e-4208-a3d6-d721df91ffad"
+      },
+      {
+        "endpoint": "/predict/visualize",
+        "http_status": 200,
+        "category": "bottle",
+        "model": "B0",
+        "version": "b70366819fdbd9043eb78e8865ca39cebadf5cb251ff7a9c0e94817c3c0593e4",
+        "anomaly_score": 0.33840733678383234,
+        "threshold": 0.20367741357625985,
+        "decision": "anomaly",
+        "inference_time_ms": 20.542900005239062,
+        "request_id": "cbdce9bb-c393-47f4-bd32-41e1033972be",
+        "visualization_kind": "reconstruction_error"
+      },
+      {
+        "endpoint": "/predict",
+        "http_status": 200,
+        "category": "hazelnut",
+        "model": "B0",
+        "version": "28317915de9c191bdee13fa002996445f456f0d3de08b0b43426126efdc2178d",
+        "anomaly_score": 0.3032373903242089,
+        "threshold": 0.11635668613243758,
+        "decision": "anomaly",
+        "inference_time_ms": 21.77730000403244,
+        "request_id": "d3317891-309e-476c-9572-7c35128111da"
+      },
+      {
+        "endpoint": "/predict/visualize",
+        "http_status": 200,
+        "category": "hazelnut",
+        "model": "B0",
+        "version": "28317915de9c191bdee13fa002996445f456f0d3de08b0b43426126efdc2178d",
+        "anomaly_score": 0.3032373903242089,
+        "threshold": 0.11635668613243758,
+        "decision": "anomaly",
+        "inference_time_ms": 17.870800002128817,
+        "request_id": "a6c96610-3ffa-4337-b66a-e321166dae82",
+        "visualization_kind": "reconstruction_error"
+      },
+      {
+        "endpoint": "/predict",
+        "http_status": 200,
+        "category": "leather",
+        "model": "B0",
+        "version": "9de0b30085893bd24a45997cd87828c36c1c09030768327682715bcbe7403be3",
+        "anomaly_score": 0.45636454683083755,
+        "threshold": 0.08330504659835886,
+        "decision": "anomaly",
+        "inference_time_ms": 26.51490000425838,
+        "request_id": "07bdda0a-9349-4e11-925e-a44d4ce40c33"
+      },
+      {
+        "endpoint": "/predict/visualize",
+        "http_status": 200,
+        "category": "leather",
+        "model": "B0",
+        "version": "9de0b30085893bd24a45997cd87828c36c1c09030768327682715bcbe7403be3",
+        "anomaly_score": 0.45636454683083755,
+        "threshold": 0.08330504659835886,
+        "decision": "anomaly",
+        "inference_time_ms": 21.782400013762526,
+        "request_id": "e15d3a30-10a0-4200-8f0d-6db89ba335e2",
+        "visualization_kind": "reconstruction_error"
+      },
+      {
+        "endpoint": "/predict",
+        "http_status": 200,
+        "category": "bottle",
+        "model": "A1",
+        "version": "a6741c693306601ea41ad21675bd194f4a7d8f77ea7342f78ce10098c7efe71d",
+        "anomaly_score": 0.340425278219951,
+        "threshold": 0.14375584244319214,
+        "decision": "anomaly",
+        "inference_time_ms": 105.93160000280477,
+        "request_id": "3270ed78-dea6-43f6-b570-1da2401f4b51"
+      },
+      {
+        "endpoint": "/predict/visualize",
+        "http_status": 200,
+        "category": "bottle",
+        "model": "A1",
+        "version": "a6741c693306601ea41ad21675bd194f4a7d8f77ea7342f78ce10098c7efe71d",
+        "anomaly_score": 0.340425278219951,
+        "threshold": 0.14375584244319214,
+        "decision": "anomaly",
+        "inference_time_ms": 92.65560000494588,
+        "request_id": "b75fe11d-6cca-47a6-b9f0-a8bdb1600906",
+        "visualization_kind": "reconstruction_error"
+      },
+      {
+        "endpoint": "/predict",
+        "http_status": 200,
+        "category": "hazelnut",
+        "model": "A1",
+        "version": "e3d75856bc044ac8f6ae728b4ac1e44994b4514e48cc4435b8b708698cd293e4",
+        "anomaly_score": 0.5315508230550755,
+        "threshold": 0.2761151554835279,
+        "decision": "anomaly",
+        "inference_time_ms": 97.69110000343062,
+        "request_id": "9d42d144-a66e-4ffd-967f-d45d546dbcbc"
+      },
+      {
+        "endpoint": "/predict/visualize",
+        "http_status": 200,
+        "category": "hazelnut",
+        "model": "A1",
+        "version": "e3d75856bc044ac8f6ae728b4ac1e44994b4514e48cc4435b8b708698cd293e4",
+        "anomaly_score": 0.5315508230550755,
+        "threshold": 0.2761151554835279,
+        "decision": "anomaly",
+        "inference_time_ms": 101.01720000966452,
+        "request_id": "6e497a40-b9a2-40db-9bc8-64e6171acf4a",
+        "visualization_kind": "reconstruction_error"
+      },
+      {
+        "endpoint": "/predict",
+        "http_status": 200,
+        "category": "leather",
+        "model": "A1",
+        "version": "2c236a97a07b9c0b3243e9354ae6941b4a121fb908753098d1e2bdec0df40c50",
+        "anomaly_score": 0.4457466016859698,
+        "threshold": 0.0804537685201844,
+        "decision": "anomaly",
+        "inference_time_ms": 90.27770000102464,
+        "request_id": "f5c58d17-4644-4155-9a3e-bf06b33cf49d"
+      },
+      {
+        "endpoint": "/predict/visualize",
+        "http_status": 200,
+        "category": "leather",
+        "model": "A1",
+        "version": "2c236a97a07b9c0b3243e9354ae6941b4a121fb908753098d1e2bdec0df40c50",
+        "anomaly_score": 0.4457466016859698,
+        "threshold": 0.0804537685201844,
+        "decision": "anomaly",
+        "inference_time_ms": 103.13940000196453,
+        "request_id": "6b3efcf9-682c-4c91-9e0e-73736a33e397",
+        "visualization_kind": "reconstruction_error"
+      },
+      {
+        "endpoint": "/predict",
+        "http_status": 200,
+        "category": "bottle",
+        "model": "T0",
+        "version": "83b4a9794523bd533bdb05415de4945ee8864863a61dcd531934bb714b26db96",
+        "anomaly_score": 1.0,
+        "threshold": 0.020550070330500603,
+        "decision": "anomaly",
+        "inference_time_ms": 92.46659999189433,
+        "request_id": "fc688c28-f0de-40a2-841e-9db4f0cbb81b"
+      },
+      {
+        "endpoint": "/predict/visualize",
+        "http_status": 200,
+        "category": "bottle",
+        "model": "T0",
+        "version": "83b4a9794523bd533bdb05415de4945ee8864863a61dcd531934bb714b26db96",
+        "anomaly_score": 1.0,
+        "threshold": 0.020550070330500603,
+        "decision": "anomaly",
+        "inference_time_ms": 184.03289999696426,
+        "request_id": "20341790-1d07-4895-a632-2a6ae16a8772",
+        "visualization_kind": "gradcam"
+      },
+      {
+        "endpoint": "/predict",
+        "http_status": 200,
+        "category": "hazelnut",
+        "model": "T0",
+        "version": "7f31b37da53f0944695bc1682d4a97f9bd5859544619118cf852dc7094f2d025",
+        "anomaly_score": 1.0,
+        "threshold": 0.0032944073900580406,
+        "decision": "anomaly",
+        "inference_time_ms": 60.52249998901971,
+        "request_id": "fccd5293-d4f7-403c-8b6a-1fe8eece4fb7"
+      },
+      {
+        "endpoint": "/predict/visualize",
+        "http_status": 200,
+        "category": "hazelnut",
+        "model": "T0",
+        "version": "7f31b37da53f0944695bc1682d4a97f9bd5859544619118cf852dc7094f2d025",
+        "anomaly_score": 1.0,
+        "threshold": 0.0032944073900580406,
+        "decision": "anomaly",
+        "inference_time_ms": 139.72360000479966,
+        "request_id": "384640d2-96b1-4426-8a0b-2189799847fc",
+        "visualization_kind": "gradcam"
+      },
+      {
+        "endpoint": "/predict",
+        "http_status": 200,
+        "category": "leather",
+        "model": "T0",
+        "version": "8c9571eed0ff5eff4b84a32c968e8e0b4c142fe07b091285451bda7eb556591c",
+        "anomaly_score": 1.0,
+        "threshold": 0.0007329359068535268,
+        "decision": "anomaly",
+        "inference_time_ms": 69.82889999926556,
+        "request_id": "5d36bfb7-dc25-4289-916d-5b6f4c9f69f9"
+      },
+      {
+        "endpoint": "/predict/visualize",
+        "http_status": 200,
+        "category": "leather",
+        "model": "T0",
+        "version": "8c9571eed0ff5eff4b84a32c968e8e0b4c142fe07b091285451bda7eb556591c",
+        "anomaly_score": 1.0,
+        "threshold": 0.0007329359068535268,
+        "decision": "anomaly",
+        "inference_time_ms": 143.1595999893034,
+        "request_id": "313c81ea-0e0d-4a00-b313-5d58ab2aa32e",
+        "visualization_kind": "gradcam"
+      },
+      {
+        "endpoint": "/predict",
+        "http_status": 200,
+        "category": "bottle",
+        "model": "T1",
+        "version": "e7ce1dbb2aaee94a8a1e2ad9705f8e7da6b909abd2273416dff44d24d2d94347",
+        "anomaly_score": 0.17436014115810394,
+        "threshold": 0.14108403027057648,
+        "decision": "anomaly",
+        "inference_time_ms": 64.34989999979734,
+        "request_id": "a0eca03b-9f58-4695-9bc8-492ff97cd3fe"
+      },
+      {
+        "endpoint": "/predict/visualize",
+        "http_status": 200,
+        "category": "bottle",
+        "model": "T1",
+        "version": "e7ce1dbb2aaee94a8a1e2ad9705f8e7da6b909abd2273416dff44d24d2d94347",
+        "anomaly_score": 0.17436014115810394,
+        "threshold": 0.14108403027057648,
+        "decision": "anomaly",
+        "inference_time_ms": 184.11729999934323,
+        "request_id": "87c5cf16-43e6-42bf-8208-6d687af6c2da",
+        "visualization_kind": "gradcam"
+      },
+      {
+        "endpoint": "/predict",
+        "http_status": 200,
+        "category": "hazelnut",
+        "model": "T1",
+        "version": "f0c64a57d2fb8d53f9e6ef06cb0a9e3b7044cf7c2d79c76c7e61138c70348c19",
+        "anomaly_score": 0.5878961086273193,
+        "threshold": 0.2466665357351303,
+        "decision": "anomaly",
+        "inference_time_ms": 68.17579999915324,
+        "request_id": "78ff6bb1-702e-42e8-9714-d5d375ca3d35"
+      },
+      {
+        "endpoint": "/predict/visualize",
+        "http_status": 200,
+        "category": "hazelnut",
+        "model": "T1",
+        "version": "f0c64a57d2fb8d53f9e6ef06cb0a9e3b7044cf7c2d79c76c7e61138c70348c19",
+        "anomaly_score": 0.5878961086273193,
+        "threshold": 0.2466665357351303,
+        "decision": "anomaly",
+        "inference_time_ms": 194.3121000076644,
+        "request_id": "34050d0f-da65-4e16-9541-48c5fcf7e2b7",
+        "visualization_kind": "gradcam"
+      },
+      {
+        "endpoint": "/predict",
+        "http_status": 200,
+        "category": "leather",
+        "model": "T1",
+        "version": "c2d0e6c9d3432a49dde75d658347cc5cb10dbb1e3e9b4059f10b941af2d7b2d6",
+        "anomaly_score": 0.11888276040554047,
+        "threshold": 0.01378712896257639,
+        "decision": "anomaly",
+        "inference_time_ms": 67.78640000266023,
+        "request_id": "8a012041-4f71-4359-a887-557e0df8eaa5"
+      },
+      {
+        "endpoint": "/predict/visualize",
+        "http_status": 200,
+        "category": "leather",
+        "model": "T1",
+        "version": "c2d0e6c9d3432a49dde75d658347cc5cb10dbb1e3e9b4059f10b941af2d7b2d6",
+        "anomaly_score": 0.11888276040554047,
+        "threshold": 0.01378712896257639,
+        "decision": "anomaly",
+        "inference_time_ms": 147.93809999537189,
+        "request_id": "c3b1efbe-fbad-4a39-8e21-a436ab2b6602",
+        "visualization_kind": "gradcam"
+      },
+      {
+        "endpoint": "/predict",
+        "http_status": 200,
+        "category": "bottle",
+        "model": "T2",
+        "version": "f07a9ca4bd16ada6d5c1bd6840ff90b8bc5e89fb29d86d362ddc51ca575c308d",
+        "anomaly_score": 0.9746360778808594,
+        "threshold": 0.00017796678002923727,
+        "decision": "anomaly",
+        "inference_time_ms": 66.37749999936204,
+        "request_id": "d8e171a2-92f5-4cd7-9aee-bc445d4334ed"
+      },
+      {
+        "endpoint": "/predict/visualize",
+        "http_status": 200,
+        "category": "bottle",
+        "model": "T2",
+        "version": "f07a9ca4bd16ada6d5c1bd6840ff90b8bc5e89fb29d86d362ddc51ca575c308d",
+        "anomaly_score": 0.9746360778808594,
+        "threshold": 0.00017796678002923727,
+        "decision": "anomaly",
+        "inference_time_ms": 143.22319999337196,
+        "request_id": "cec1043e-03d4-4418-a44e-2af3db5b67d6",
+        "visualization_kind": "gradcam"
+      },
+      {
+        "endpoint": "/predict",
+        "http_status": 200,
+        "category": "hazelnut",
+        "model": "T2",
+        "version": "0dbbeeb75a174073560bfc7625aa9afae7f1e825340717cd06e38732ea87e57e",
+        "anomaly_score": 0.981265127658844,
+        "threshold": 0.0010021653724834323,
+        "decision": "anomaly",
+        "inference_time_ms": 51.8175000033807,
+        "request_id": "8a96b900-75c4-4fb0-a23d-4306b711c75e"
+      },
+      {
+        "endpoint": "/predict/visualize",
+        "http_status": 200,
+        "category": "hazelnut",
+        "model": "T2",
+        "version": "0dbbeeb75a174073560bfc7625aa9afae7f1e825340717cd06e38732ea87e57e",
+        "anomaly_score": 0.981265127658844,
+        "threshold": 0.0010021653724834323,
+        "decision": "anomaly",
+        "inference_time_ms": 144.63710000563879,
+        "request_id": "2854f2e4-0bea-4636-9ca2-788f6736620e",
+        "visualization_kind": "gradcam"
+      },
+      {
+        "endpoint": "/predict",
+        "http_status": 200,
+        "category": "leather",
+        "model": "T2",
+        "version": "8c450b7450a21e0fbb7fcd6928639cfb6dd49369b7b89f3626b5686f1a600889",
+        "anomaly_score": 0.07765284180641174,
+        "threshold": 0.0006882469169795513,
+        "decision": "anomaly",
+        "inference_time_ms": 62.92920000851154,
+        "request_id": "6e265955-bf68-4a2c-8b92-b512430e2551"
+      },
+      {
+        "endpoint": "/predict/visualize",
+        "http_status": 200,
+        "category": "leather",
+        "model": "T2",
+        "version": "8c450b7450a21e0fbb7fcd6928639cfb6dd49369b7b89f3626b5686f1a600889",
+        "anomaly_score": 0.07765284180641174,
+        "threshold": 0.0006882469169795513,
+        "decision": "anomaly",
+        "inference_time_ms": 144.67909999075346,
+        "request_id": "b07be4a9-ce89-4517-8ec1-dfa689ca2f60",
+        "visualization_kind": "gradcam"
+      }
+    ],
+    "all_15_models_verified": true,
+    "both_prediction_endpoints_verified": true,
+    "direct_scientific_score_comparison": "exact equality for each request",
+    "model_states_preserved": true,
+    "official_dataset_read_guard": "builtins.open and io.open forbid data/raw",
+    "official_dataset_opened": false,
+    "recalibration_executed": false,
+    "serving_environment": {
+      "python": "3.11.9",
+      "device": "cpu",
+      "torch": "2.15.0+cpu",
+      "numpy": "2.3.5",
+      "scikit_learn": "1.8.0",
+      "cuda_runtime": null,
+      "torchvision": "0.29.2+cpu",
+      "pillow": "13.0.0",
+      "platform": "Windows-10-10.0.26200-SP0",
+      "machine": "AMD64",
+      "cpu_threads": 2,
+      "deterministic_algorithms": true,
+      "float32_matmul_precision": "highest",
+      "mixed_precision": false
+    }
+  },
+  "uvicorn_http_smoke": {
+    "ready_models": 15,
+    "checks": [
+      {
+        "method": "GET",
+        "path": "/health",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/model/metadata",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/docs",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/openapi.json",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/predict",
+        "model": "B0",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/predict/visualize",
+        "model": "B0",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/predict",
+        "model": "T1",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/predict/visualize",
+        "model": "T1",
+        "status": 200
+      }
+    ],
+    "server_stopped_after_verification": true
+  }
+}
