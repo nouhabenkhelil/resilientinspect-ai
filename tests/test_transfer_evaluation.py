@@ -81,9 +81,23 @@ def synthetic_run(tmp_path_factory):
     environment = {"python": sys.version.split()[0], "torch": str(torch.__version__), "numpy": np.__version__,
                    "torchvision": version("torchvision"), "scikit_learn": version("scikit-learn"), "device": "cpu"}
     write_json(run / "environment.json", environment)
-    recipes = [row for row in plan["recipes"] if row["split"] == "val" and row["category"] == "bottle"]
-    scores = [{"sample_id": row["sample_id"], "image_path": row["image_path"], "split": "val",
-               "label": row["label"], "score": 0.2 if row["label"] == 0 else 0.8} for row in recipes]
+    dataset = synthetic.SyntheticAnomalyDataset(manifest, root, category="bottle", split="val",
+                                               config=config, seed=42, plan=plan)
+    loader = ev.DataLoader(dataset, batch_size=4, shuffle=False, num_workers=0)
+    scores = train_transfer.run_epoch(model, loader, CPU)["predictions"]
+    threshold = float(np.quantile([row["score"] for row in scores if row["label"] == 0], 0.95, method="higher"))
+    source_paths = [PROJECT / "configs/train_t0.yaml", PROJECT / "configs/synthetic_transfer.yaml",
+                    Path(train_transfer.__file__), Path(transfer.__file__), Path(synthetic.__file__),
+                    PROJECT / "src/data/dataset.py", PROJECT / "src/data/prepare.py", PROJECT / "src/data/audit.py",
+                    PROJECT / "src/training/train_ae.py", Path(ev.shared.__file__), PROJECT / "pyproject.toml"]
+    (run / "source").mkdir()
+    source_hashes = {}
+    for path in source_paths:
+        (run / "source" / path.name).write_bytes(path.read_bytes())
+        source_hashes["/kaggle/working/project/" + path.name] = ev._sha256(path)
+    write_json(run / "provenance.json", {"source_sha256": source_hashes, "manifest_sha256": digest,
+                                         "synthetic_plan_sha256": plan_digest,
+                                         "weight_provenance": model.weight_provenance})
     calibration = {"variant": "T0", "category": "bottle", "seed": 42, "scope": "full",
                    "calibration_split": "val_synthetic", "normal_only": True, "method": "normal_quantile",
                    "quantile": 0.95, "quantile_method": "higher", "decision": "strictly_greater",
@@ -95,7 +109,7 @@ def synthetic_run(tmp_path_factory):
                    "shared_evaluation_code_sha256": ev._sha256(Path(ev.shared.__file__)),
                    "dataset_code_sha256": ev._sha256(PROJECT / "src/data/dataset.py"),
                    "normalization": config["normalization"], "image_size": [256, 256], "environment": environment,
-                   "validation_scores": scores, "image_threshold": 0.2,
+                   "validation_scores": scores, "image_threshold": threshold,
                    "validation_normal_images": len(scores) // 2, "validation_images": len(scores)}
     write_json(run / "calibration.json", calibration)
     calibration_digest = ev._sha256(run / "calibration.json")
@@ -105,7 +119,7 @@ def synthetic_run(tmp_path_factory):
                                      "test_used": False, "selection_split": "val_synthetic",
                                      "checkpoint_sha256": ev._sha256(run / "best.pt"),
                                      "manifest_sha256": digest, "synthetic_plan_sha256": plan_digest,
-                                     "calibration_sha256": calibration_digest})
+                                     "calibration_sha256": calibration_digest, "source_sha256": source_hashes})
     return temporary, root, manifest, run
 
 
@@ -166,11 +180,12 @@ def test_unapproved_test_refused_before_any_run_manifest_or_dataset_access(tmp_p
 def test_inspection_only_loads_metadata_and_weights(synthetic_run, monkeypatch, capsys):
     def forbidden(*args, **kwargs): raise AssertionError("Inspect ne doit construire Dataset ou faire inference")
     monkeypatch.setattr(ev, "MVTecDataset", forbidden)
+    monkeypatch.setattr(synthetic, "SyntheticAnomalyDataset", forbidden)
     monkeypatch.setattr(Image, "open", forbidden)
     monkeypatch.setattr(transfer.TransferClassifier, "forward", forbidden)
     metadata = ev.inspect_run(synthetic_run[3], synthetic_run[2])
     assert metadata["inference_executed"] is metadata["test_executed"] is False
-    assert metadata["image_threshold"] == 0.2
+    assert metadata["image_threshold"] == ev._json(synthetic_run[3] / "calibration.json")["image_threshold"]
     assert ev.main(["--stage", "inspect", "--run-dir", str(synthetic_run[3]),
                     "--manifest", str(synthetic_run[2])]) == 0
     capsys.readouterr()
@@ -259,7 +274,7 @@ def test_approved_evaluation_on_fake_dataset_never_opens_masks_and_is_reproducib
     original_open = Image.open
     def guarded_open(path, *args, **kwargs):
         relative = Path(path).relative_to(root).as_posix()
-        assert relative.startswith("bottle/test/") and "/ground_truth/" not in relative
+        assert relative.startswith(("bottle/train/good/", "bottle/test/")) and "/ground_truth/" not in relative
         opened.append(relative)
         return original_open(path, *args, **kwargs)
     monkeypatch.setattr(Image, "open", guarded_open)
@@ -268,10 +283,221 @@ def test_approved_evaluation_on_fake_dataset_never_opens_masks_and_is_reproducib
         reports.append(ev.evaluate_run(run, protocol_path=PROTOCOL, approved_sha256=ev._sha256(PROTOCOL),
                                        manifest=manifest, root=root, output=tmp_path / suffix, device=CPU))
     assert reports[0] == reports[1]
-    assert len(opened) == 4 and len(set(opened)) == 2
+    assert len(opened) == 12 and len(set(opened)) == 4
     assert reports[0]["images"] == 2 and reports[0]["split"] == "test_real_mvtec"
     assert reports[0]["pixel_metrics_computed"] is False and reports[0]["gradcam_is_segmentation"] is False
     assert not {"dice", "iou", "pixel_auroc", "pixel_ap"} & set(reports[0]["metrics"])
     for name in ("predictions.csv", "metrics.json"):
         assert (tmp_path / "first" / name).read_bytes() == (tmp_path / "second" / name).read_bytes()
     assert before == (snapshot(root), snapshot(manifest.parent), snapshot(run))
+
+
+def set_training_environment(run, **changes):
+    environment = ev._json(run / "environment.json")
+    environment.update(changes)
+    write_json(run / "environment.json", environment)
+    calibration = ev._json(run / "calibration.json")
+    calibration["environment"] = environment
+    rewrite_calibration(run, calibration)
+    return environment
+
+
+def test_portable_environment_preserves_kaggle_metadata_and_requires_parity(synthetic_run, copied_run, monkeypatch):
+    training = set_training_environment(copied_run, python="3.13.16", torch="2.11.0+cu130", numpy="2.1.3",
+                                        torchvision="0.26.0+cu130", device="cuda", gpu_name="Tesla T4")
+    before = snapshot(copied_run)
+    metadata = ev.inspect_run(copied_run, synthetic_run[2])
+    assert metadata["training_environment"] == training
+    assert metadata["evaluation_environment"]["device"] == "cpu"
+    assert metadata["environment_changes"]["torch"]["training"] == "2.11.0+cu130"
+    assert metadata["strict_weights_compatible"] and not metadata["compatibility_validated"]
+    report = ev.validate_run(copied_run, manifest=synthetic_run[2], root=synthetic_run[1])
+    assert report["compatibility_validated"] and report["status"] == "passed"
+    assert report["training_environment"] == training
+    assert report["score_tolerance_failures"] == report["decision_changes"] == 0
+    assert report["test_executed"] is False
+    assert before == snapshot(copied_run)
+
+
+@pytest.mark.parametrize("library,value", [("python", "4.0.0"), ("torch", "3.0.0"), ("numpy", "1.26.4"),
+                                           ("torchvision", "1.0.0"), ("scikit_learn", "2.0.0"), ("torch", "unknown")])
+def test_major_or_untraceable_environment_refused(synthetic_run, copied_run, monkeypatch, library, value):
+    set_training_environment(copied_run, **{library: value})
+    def forbidden(*args, **kwargs): raise AssertionError("Dataset ouvert avant compatibilite")
+    monkeypatch.setattr(synthetic, "SyntheticAnomalyDataset", forbidden)
+    with pytest.raises(ValueError, match="majeure|Version"):
+        ev.validate_run(copied_run, manifest=synthetic_run[2], root=synthetic_run[1])
+
+
+def test_validation_opens_only_archived_validation_sources(synthetic_run, monkeypatch):
+    _, root, manifest, run = synthetic_run
+    before = snapshot(root), snapshot(run), snapshot(manifest.parent)
+    allowed = {row["image_path"] for row in ev._json(run / "calibration.json")["validation_scores"]}
+    opened = []
+    original_open = Path.open
+    def guarded_open(path, *args, **kwargs):
+        resolved = path.resolve()
+        if resolved.is_relative_to(root.resolve()):
+            relative = resolved.relative_to(root.resolve()).as_posix()
+            assert relative in allowed and "/train/good/" in relative
+            opened.append(relative)
+        return original_open(path, *args, **kwargs)
+    def forbidden(*args, **kwargs): raise AssertionError("Dataset test construit pendant validate")
+    with monkeypatch.context() as guarded:
+        guarded.setattr(Path, "open", guarded_open)
+        guarded.setattr(ev, "MVTecDataset", forbidden)
+        report = ev.validate_run(run, manifest=manifest, root=root)
+    assert report["compatibility_validated"] and not report["test_executed"]
+    assert set(opened) == allowed
+    assert len(report["validation_scores"]) == len(allowed) * 2
+    assert before == (snapshot(root), snapshot(run), snapshot(manifest.parent))
+
+
+def mock_validation_predictions(monkeypatch, run, mutation):
+    rows = deepcopy(ev._json(run / "calibration.json")["validation_scores"])
+    threshold = ev._json(run / "calibration.json")["image_threshold"]
+    selected = next(row for row in rows if row["label"] == 0 and row["score"] == threshold)
+    mutation(rows, selected, threshold)
+    monkeypatch.setattr(train_transfer, "run_epoch", lambda *args, **kwargs: {"predictions": rows})
+
+
+@pytest.mark.parametrize("delta,passed,failures,unjustified", [
+    (5e-6, True, 0, 0), (2e-5, False, 0, 1), (1e-3, False, 1, 1),
+])
+def test_score_parity_and_decision_boundary_policy(synthetic_run, monkeypatch, delta, passed, failures, unjustified):
+    run = synthetic_run[3]
+    mock_validation_predictions(monkeypatch, run, lambda rows, selected, threshold: selected.update(score=threshold + delta))
+    report = ev.validate_run(run, manifest=synthetic_run[2], root=synthetic_run[1])
+    assert report["compatibility_validated"] is passed
+    assert report["score_tolerance_failures"] == failures
+    assert report["decision_changes"] == 1
+    assert report["unjustified_decision_changes"] == unjustified
+    changed = next(row for row in report["validation_scores"] if row["decision_changed"])
+    assert changed["archived_decision"] == 0 and changed["cpu_decision"] == 1
+    assert report["image_threshold"] == ev._json(run / "calibration.json")["image_threshold"]
+
+
+def test_relative_tolerance_is_applied_to_archived_score(synthetic_run, monkeypatch):
+    run = synthetic_run[3]
+    mock_validation_predictions(monkeypatch, run, lambda rows, selected, threshold: selected.update(score=threshold - 2e-5))
+    report = ev.validate_run(run, manifest=synthetic_run[2], root=synthetic_run[1])
+    assert report["compatibility_validated"] and report["decision_changes"] == 0
+    assert report["max_absolute_error"] > ev.PARITY_POLICY["atol"]
+
+
+@pytest.mark.parametrize("mutation", [
+    lambda rows, selected, threshold: rows.pop(),
+    lambda rows, selected, threshold: rows.__setitem__(0, rows[-1]),
+    lambda rows, selected, threshold: selected.update(split="test"),
+    lambda rows, selected, threshold: selected.update(image_path="bottle/test/good/000.png"),
+    lambda rows, selected, threshold: selected.update(label=1),
+])
+def test_parity_rejects_incomplete_or_misaligned_samples(synthetic_run, monkeypatch, mutation):
+    mock_validation_predictions(monkeypatch, synthetic_run[3], mutation)
+    with pytest.raises(ValueError, match="Couverture|Identite"):
+        ev.validate_run(synthetic_run[3], manifest=synthetic_run[2], root=synthetic_run[1])
+
+
+def test_failed_parity_blocks_approved_evaluation_before_test_dataset(synthetic_run, tmp_path, monkeypatch):
+    mock_validation_predictions(monkeypatch, synthetic_run[3],
+                                lambda rows, selected, threshold: selected.update(score=threshold + 0.01))
+    def forbidden(*args, **kwargs): raise AssertionError("Test ouvert malgre echec de parite")
+    monkeypatch.setattr(ev, "MVTecDataset", forbidden)
+    with pytest.raises(ValueError, match="Parite numerique refusee"):
+        ev.evaluate_run(synthetic_run[3], protocol_path=PROTOCOL, approved_sha256=ev._sha256(PROTOCOL),
+                        manifest=synthetic_run[2], root=synthetic_run[1], output=tmp_path / "out", device=CPU)
+    assert not (tmp_path / "out").exists()
+
+
+@pytest.mark.parametrize("passed", [True, False])
+def test_validation_cli_saves_report_and_returns_status(synthetic_run, tmp_path, monkeypatch, capsys, passed):
+    if not passed:
+        mock_validation_predictions(monkeypatch, synthetic_run[3],
+                                    lambda rows, selected, threshold: selected.update(score=threshold + 0.01))
+    result = ev.main(["--stage", "validate", "--run-dir", str(synthetic_run[3]),
+                      "--manifest", str(synthetic_run[2]), "--root", str(synthetic_run[1]),
+                      "--output-dir", str(tmp_path / "reports"), "--device", "cpu"])
+    assert result == (0 if passed else 1)
+    message = json.loads(capsys.readouterr().out)
+    report_path = Path(message["output"])
+    assert ev._sha256(report_path) == message["sha256"]
+    report = ev._json(report_path)
+    assert report["compatibility_validated"] is passed
+    assert report["test_executed"] is False
+
+
+def test_modified_checkpoint_refused_before_deserialization(synthetic_run, copied_run, monkeypatch):
+    path = copied_run / "best.pt"
+    path.write_bytes(path.read_bytes() + b"tampered")
+    def forbidden(*args, **kwargs): raise AssertionError("Deserialisation avant SHA256")
+    monkeypatch.setattr(torch, "load", forbidden)
+    with pytest.raises(ValueError, match="Checkpoint modifie"):
+        ev.inspect_run(copied_run, synthetic_run[2])
+
+
+@pytest.mark.parametrize("mutation", ["dtype", "shape", "missing_key", "extra_key", "nan"])
+def test_incompatible_weights_rejected_even_with_consistent_hashes(synthetic_run, copied_run, mutation):
+    payload = torch.load(copied_run / "best.pt", map_location="cpu", weights_only=True)
+    state = payload["model_state_dict"]
+    name = "classifier.1.weight"
+    if mutation == "dtype": state[name] = state[name].double()
+    elif mutation == "shape": state[name] = state[name][:, :1]
+    elif mutation == "missing_key": del state[name]
+    elif mutation == "extra_key": state["unknown"] = torch.zeros(1)
+    else: state[name][0, 0] = float("nan")
+    torch.save(payload, copied_run / "best.pt")
+    digest = ev._sha256(copied_run / "best.pt")
+    summary = ev._json(copied_run / "summary.json")
+    summary["checkpoint_sha256"] = digest
+    write_json(copied_run / "summary.json", summary)
+    calibration = ev._json(copied_run / "calibration.json")
+    calibration["checkpoint_sha256"] = digest
+    rewrite_calibration(copied_run, calibration)
+    with pytest.raises((ValueError, RuntimeError)):
+        ev.inspect_run(copied_run, synthetic_run[2])
+
+
+@pytest.mark.parametrize("name", ["train_t0.yaml", "synthetic_transfer.yaml", "train_transfer.py", "transfer.py",
+                                 "synthetic.py", "dataset.py", "prepare.py", "audit.py", "train_ae.py",
+                                 "evaluate_ae.py", "pyproject.toml"])
+def test_every_archived_training_source_hash_remains_strict(synthetic_run, copied_run, name):
+    path = copied_run / "source" / name
+    path.write_bytes(path.read_bytes() + b"\n")
+    with pytest.raises(ValueError, match="Source ou configuration"):
+        ev.inspect_run(copied_run, synthetic_run[2])
+
+
+def test_archived_source_inventory_cannot_be_omitted(synthetic_run, copied_run):
+    provenance = ev._json(copied_run / "provenance.json")
+    provenance["source_sha256"].pop(next(iter(provenance["source_sha256"])))
+    write_json(copied_run / "provenance.json", provenance)
+    with pytest.raises(ValueError, match="Inventaire"):
+        ev.inspect_run(copied_run, synthetic_run[2])
+
+
+@pytest.mark.parametrize("relative", ["configs/train_t0.yaml", "configs/synthetic_transfer.yaml", "src/data/prepare.py",
+                                     "src/data/audit.py", "src/training/train_ae.py", "pyproject.toml"])
+def test_local_source_and_config_hashes_remain_strict(synthetic_run, monkeypatch, relative):
+    original_hash = ev._sha256
+    changed_path = PROJECT / relative
+    def changed_hash(path):
+        return "0" * 64 if Path(path) == changed_path else original_hash(path)
+    monkeypatch.setattr(ev, "_sha256", changed_hash)
+    with pytest.raises(ValueError, match="Source ou configuration"):
+        ev.inspect_run(synthetic_run[3], synthetic_run[2])
+
+
+@pytest.mark.parametrize("name", ["effective_config.yaml", "synthetic_plan.json"])
+def test_modified_plan_or_effective_config_is_refused(synthetic_run, copied_run, name):
+    path = copied_run / name
+    path.write_bytes(path.read_bytes() + b"\n")
+    with pytest.raises(ValueError, match="Calibration|Plan synthetique"):
+        ev.inspect_run(copied_run, synthetic_run[2])
+
+
+def test_non_cpu_validation_refused_before_any_artifact_access(monkeypatch, tmp_path):
+    def forbidden(*args, **kwargs): raise AssertionError("Acces au run malgre device incompatible")
+    monkeypatch.setattr(ev, "inspect_run", forbidden)
+    with pytest.raises(ValueError, match="CPU"):
+        ev.validate_run(tmp_path / "missing", manifest=tmp_path / "missing.csv", root=tmp_path,
+                        device=torch.device("cuda"))
