@@ -13,13 +13,18 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "format": "prettier --write .",
-    "test:integration": "node scripts/check-api.mjs"
+    "test:integration": "node scripts/check-api.mjs",
+    "test:browser": "node scripts/browser-qa.mjs"
   },
   "dependencies": {
+    "lucide-react": "^1.76.0",
+    "motion": "^14.14.0",
     "react": "19.3.1",
-    "react-dom": "19.3.1"
+    "react-dom": "19.3.1",
+    "recharts": "^3.11.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.1",
     "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "16.3.3",
     "@testing-library/user-event": "14.6.12",

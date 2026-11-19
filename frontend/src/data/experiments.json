@@ -1,0 +1,928 @@
+{
+  "schema_version": 1,
+  "categories": [
+    "bottle",
+    "hazelnut",
+    "leather"
+  ],
+  "models": [
+    "B0",
+    "A1",
+    "T0",
+    "T1",
+    "T2"
+  ],
+  "records": [
+    {
+      "model": "B0",
+      "category": "bottle",
+      "seed": 42,
+      "images": 83,
+      "split": "test",
+      "evaluation_date": null,
+      "protocol_sha256": "f515662ab4ef0437194f7fdc7b57c8ea435ae6cb7e1be95c26476a91fa5d963e",
+      "threshold": 0.20367741357625985,
+      "image": {
+        "precision": 0.9696969696969697,
+        "recall": 0.5079365079365079,
+        "fpr": 0.05,
+        "accuracy": 0.6144578313253012,
+        "f1": 0.6666666666666666,
+        "auroc": 0.711111111111111,
+        "ap": 0.9083742437626401
+      },
+      "confusion": {
+        "tp": 32,
+        "tn": 19,
+        "fp": 1,
+        "fn": 31
+      },
+      "pixel": {
+        "auroc": 0.7524252739997918,
+        "ap": 0.14552464697702774,
+        "dice": 0.07864995275731841,
+        "iou": 0.04093473381916456
+      },
+      "source": "reports/evaluation/b0/f515662ab4ef/bottle/metrics.json",
+      "synthetic_validation": null,
+      "parameters": {
+        "total": 195107,
+        "trainable": 195107,
+        "source": "reports/experiments/b0_architecture_smoke.json"
+      }
+    },
+    {
+      "model": "B0",
+      "category": "hazelnut",
+      "seed": 42,
+      "images": 110,
+      "split": "test",
+      "evaluation_date": null,
+      "protocol_sha256": "f515662ab4ef0437194f7fdc7b57c8ea435ae6cb7e1be95c26476a91fa5d963e",
+      "threshold": 0.11635668613243758,
+      "image": {
+        "precision": 1.0,
+        "recall": 0.5857142857142857,
+        "fpr": 0.0,
+        "accuracy": 0.7363636363636363,
+        "f1": 0.7387387387387387,
+        "auroc": 0.9317857142857143,
+        "ap": 0.9622706873152496
+      },
+      "confusion": {
+        "tp": 41,
+        "tn": 40,
+        "fp": 0,
+        "fn": 29
+      },
+      "pixel": {
+        "auroc": 0.9341740761964867,
+        "ap": 0.5054197137876925,
+        "dice": 0.504390485859768,
+        "iou": 0.3372474439959166
+      },
+      "source": "reports/evaluation/b0/f515662ab4ef/hazelnut/metrics.json",
+      "synthetic_validation": null,
+      "parameters": {
+        "total": 195107,
+        "trainable": 195107,
+        "source": "reports/experiments/b0_architecture_smoke.json"
+      }
+    },
+    {
+      "model": "B0",
+      "category": "leather",
+      "seed": 42,
+      "images": 124,
+      "split": "test",
+      "evaluation_date": null,
+      "protocol_sha256": "f515662ab4ef0437194f7fdc7b57c8ea435ae6cb7e1be95c26476a91fa5d963e",
+      "threshold": 0.08330504659835886,
+      "image": {
+        "precision": 0.7398373983739838,
+        "recall": 0.9891304347826086,
+        "fpr": 1.0,
+        "accuracy": 0.7338709677419355,
+        "f1": 0.8465116279069768,
+        "auroc": 0.7479619565217392,
+        "ap": 0.9142280025396583
+      },
+      "confusion": {
+        "tp": 91,
+        "tn": 0,
+        "fp": 32,
+        "fn": 1
+      },
+      "pixel": {
+        "auroc": 0.8329733750269519,
+        "ap": 0.2013103350338791,
+        "dice": 0.13959787852455577,
+        "iou": 0.07503640041747736
+      },
+      "source": "reports/evaluation/b0/f515662ab4ef/leather/metrics.json",
+      "synthetic_validation": null,
+      "parameters": {
+        "total": 195107,
+        "trainable": 195107,
+        "source": "reports/experiments/b0_architecture_smoke.json"
+      }
+    },
+    {
+      "model": "A1",
+      "category": "bottle",
+      "seed": 42,
+      "images": 83,
+      "split": "test",
+      "evaluation_date": null,
+      "protocol_sha256": "f515662ab4ef0437194f7fdc7b57c8ea435ae6cb7e1be95c26476a91fa5d963e",
+      "threshold": 0.14375584244319214,
+      "image": {
+        "precision": 1.0,
+        "recall": 0.6031746031746031,
+        "fpr": 0.0,
+        "accuracy": 0.6987951807228916,
+        "f1": 0.7524752475247525,
+        "auroc": 0.8071428571428572,
+        "ap": 0.9430503235681029
+      },
+      "confusion": {
+        "tp": 38,
+        "tn": 20,
+        "fp": 0,
+        "fn": 25
+      },
+      "pixel": {
+        "auroc": 0.7700283377669875,
+        "ap": 0.18706906073361584,
+        "dice": 0.09403809497307751,
+        "iou": 0.04933891633670883
+      },
+      "source": "reports/evaluation/a1/f515662ab4ef/bottle/metrics.json",
+      "synthetic_validation": null,
+      "parameters": {
+        "total": 2754371,
+        "trainable": null,
+        "source": "reports/experiments/a1_implementation_verification.json"
+      }
+    },
+    {
+      "model": "A1",
+      "category": "hazelnut",
+      "seed": 42,
+      "images": 110,
+      "split": "test",
+      "evaluation_date": null,
+      "protocol_sha256": "f515662ab4ef0437194f7fdc7b57c8ea435ae6cb7e1be95c26476a91fa5d963e",
+      "threshold": 0.2761151554835279,
+      "image": {
+        "precision": 1.0,
+        "recall": 0.15714285714285714,
+        "fpr": 0.0,
+        "accuracy": 0.4636363636363636,
+        "f1": 0.2716049382716049,
+        "auroc": 0.9375,
+        "ap": 0.9647752847372622
+      },
+      "confusion": {
+        "tp": 11,
+        "tn": 40,
+        "fp": 0,
+        "fn": 59
+      },
+      "pixel": {
+        "auroc": 0.9136788453977694,
+        "ap": 0.49894390034626174,
+        "dice": 0.264750512266711,
+        "iou": 0.1525720158042217
+      },
+      "source": "reports/evaluation/a1/f515662ab4ef/hazelnut/metrics.json",
+      "synthetic_validation": null,
+      "parameters": {
+        "total": 2754371,
+        "trainable": null,
+        "source": "reports/experiments/a1_implementation_verification.json"
+      }
+    },
+    {
+      "model": "A1",
+      "category": "leather",
+      "seed": 42,
+      "images": 124,
+      "split": "test",
+      "evaluation_date": null,
+      "protocol_sha256": "f515662ab4ef0437194f7fdc7b57c8ea435ae6cb7e1be95c26476a91fa5d963e",
+      "threshold": 0.0804537685201844,
+      "image": {
+        "precision": 0.7010309278350515,
+        "recall": 0.7391304347826086,
+        "fpr": 0.90625,
+        "accuracy": 0.5725806451612904,
+        "f1": 0.7195767195767195,
+        "auroc": 0.6243206521739131,
+        "ap": 0.8722523808559657
+      },
+      "confusion": {
+        "tp": 68,
+        "tn": 3,
+        "fp": 29,
+        "fn": 24
+      },
+      "pixel": {
+        "auroc": 0.7474264505125233,
+        "ap": 0.12004666234065733,
+        "dice": 0.07410377524762946,
+        "iou": 0.03847755361645077
+      },
+      "source": "reports/evaluation/a1/f515662ab4ef/leather/metrics.json",
+      "synthetic_validation": null,
+      "parameters": {
+        "total": 2754371,
+        "trainable": null,
+        "source": "reports/experiments/a1_implementation_verification.json"
+      }
+    },
+    {
+      "model": "T0",
+      "category": "bottle",
+      "seed": 42,
+      "images": 83,
+      "split": "test_real_mvtec",
+      "evaluation_date": null,
+      "protocol_sha256": "6422dedbba1b6366cea3e3f4b617742ea1b87c3db3119e534545a78f7ce0ae56",
+      "threshold": 0.020550070330500603,
+      "image": {
+        "precision": 0.9655172413793104,
+        "recall": 0.4444444444444444,
+        "fpr": 0.05,
+        "accuracy": 0.5662650602409639,
+        "f1": 0.6086956521739131,
+        "auroc": 0.7293650793650792,
+        "ap": 0.8735348904696214
+      },
+      "confusion": {
+        "tp": 28,
+        "tn": 19,
+        "fp": 1,
+        "fn": 35
+      },
+      "pixel": null,
+      "source": "reports/transfer/evaluation/T0/bottle/seed42/83b4a9794523/6422dedbba1b/metrics.json",
+      "synthetic_validation": {
+        "precision": 0.9333333333333333,
+        "recall": 1.0,
+        "fpr": 0.07142857142857142,
+        "accuracy": 0.9642857142857143,
+        "f1": 0.9655172413793104,
+        "auroc": 1.0,
+        "ap": 1.0000000000000007,
+        "images": 84,
+        "confusion": {
+          "tp": 42,
+          "tn": 39,
+          "fp": 3,
+          "fn": 0
+        }
+      },
+      "parameters": {
+        "total": 4008829,
+        "trainable": 4008829,
+        "source": "artifacts/transfer_runs/T0/bottle/seed42/full_5653285316dc489badc96d0178688a1f/summary.json"
+      }
+    },
+    {
+      "model": "T0",
+      "category": "hazelnut",
+      "seed": 42,
+      "images": 110,
+      "split": "test_real_mvtec",
+      "evaluation_date": null,
+      "protocol_sha256": "6422dedbba1b6366cea3e3f4b617742ea1b87c3db3119e534545a78f7ce0ae56",
+      "threshold": 0.0032944073900580406,
+      "image": {
+        "precision": 1.0,
+        "recall": 0.6285714285714286,
+        "fpr": 0.0,
+        "accuracy": 0.7636363636363637,
+        "f1": 0.7719298245614035,
+        "auroc": 0.9553571428571429,
+        "ap": 0.9772762516249857
+      },
+      "confusion": {
+        "tp": 44,
+        "tn": 40,
+        "fp": 0,
+        "fn": 26
+      },
+      "pixel": null,
+      "source": "reports/transfer/evaluation/T0/hazelnut/seed42/7f31b37da53f/6422dedbba1b/metrics.json",
+      "synthetic_validation": {
+        "precision": 0.9634146341463414,
+        "recall": 1.0,
+        "fpr": 0.0379746835443038,
+        "accuracy": 0.9810126582278481,
+        "f1": 0.9813664596273292,
+        "auroc": 1.0,
+        "ap": 0.9999999999999987,
+        "images": 158,
+        "confusion": {
+          "tp": 79,
+          "tn": 76,
+          "fp": 3,
+          "fn": 0
+        }
+      },
+      "parameters": {
+        "total": 4008829,
+        "trainable": 4008829,
+        "source": "artifacts/transfer_runs/T0/hazelnut/seed42/full_4d027c3ae4524798b2914df49689f3ef/summary.json"
+      }
+    },
+    {
+      "model": "T0",
+      "category": "leather",
+      "seed": 42,
+      "images": 124,
+      "split": "test_real_mvtec",
+      "evaluation_date": null,
+      "protocol_sha256": "6422dedbba1b6366cea3e3f4b617742ea1b87c3db3119e534545a78f7ce0ae56",
+      "threshold": 0.0007329359068535268,
+      "image": {
+        "precision": 1.0,
+        "recall": 0.4673913043478261,
+        "fpr": 0.0,
+        "accuracy": 0.6048387096774194,
+        "f1": 0.6370370370370371,
+        "auroc": 0.8203125,
+        "ap": 0.944586725656092
+      },
+      "confusion": {
+        "tp": 43,
+        "tn": 32,
+        "fp": 0,
+        "fn": 49
+      },
+      "pixel": null,
+      "source": "reports/transfer/evaluation/T0/leather/seed42/8c9571eed0ff/6422dedbba1b/metrics.json",
+      "synthetic_validation": {
+        "precision": 0.9607843137254902,
+        "recall": 1.0,
+        "fpr": 0.04081632653061224,
+        "accuracy": 0.9795918367346939,
+        "f1": 0.98,
+        "auroc": 1.0,
+        "ap": 1.0000000000000007,
+        "images": 98,
+        "confusion": {
+          "tp": 49,
+          "tn": 47,
+          "fp": 2,
+          "fn": 0
+        }
+      },
+      "parameters": {
+        "total": 4008829,
+        "trainable": 4008829,
+        "source": "artifacts/transfer_runs/T0/leather/seed42/full_61fd90e9606848af93c96fdbd8d9e000/summary.json"
+      }
+    },
+    {
+      "model": "T1",
+      "category": "bottle",
+      "seed": 42,
+      "images": 83,
+      "split": "test_real_mvtec",
+      "evaluation_date": null,
+      "protocol_sha256": "6422dedbba1b6366cea3e3f4b617742ea1b87c3db3119e534545a78f7ce0ae56",
+      "threshold": 0.14108403027057648,
+      "image": {
+        "precision": 1.0,
+        "recall": 0.9206349206349206,
+        "fpr": 0.0,
+        "accuracy": 0.9397590361445783,
+        "f1": 0.9586776859504132,
+        "auroc": 0.9674603174603175,
+        "ap": 0.9911053988150089
+      },
+      "confusion": {
+        "tp": 58,
+        "tn": 20,
+        "fp": 0,
+        "fn": 5
+      },
+      "pixel": null,
+      "source": "reports/transfer/evaluation/T1/bottle/seed42/e7ce1dbb2aae/6422dedbba1b/metrics.json",
+      "synthetic_validation": {
+        "precision": 0.9333333333333333,
+        "recall": 1.0,
+        "fpr": 0.07142857142857142,
+        "accuracy": 0.9642857142857143,
+        "f1": 0.9655172413793104,
+        "auroc": 1.0,
+        "ap": 1.0000000000000007,
+        "images": 84,
+        "confusion": {
+          "tp": 42,
+          "tn": 39,
+          "fp": 3,
+          "fn": 0
+        }
+      },
+      "parameters": {
+        "total": 4008829,
+        "trainable": 1281,
+        "source": "artifacts/transfer_runs/T1/bottle/seed42/full_49327e70ea3840a5be06655510ba5752/summary.json"
+      }
+    },
+    {
+      "model": "T1",
+      "category": "hazelnut",
+      "seed": 42,
+      "images": 110,
+      "split": "test_real_mvtec",
+      "evaluation_date": null,
+      "protocol_sha256": "6422dedbba1b6366cea3e3f4b617742ea1b87c3db3119e534545a78f7ce0ae56",
+      "threshold": 0.2466665357351303,
+      "image": {
+        "precision": 0.9803921568627451,
+        "recall": 0.7142857142857143,
+        "fpr": 0.025,
+        "accuracy": 0.8090909090909091,
+        "f1": 0.8264462809917356,
+        "auroc": 0.9232142857142857,
+        "ap": 0.9591259444367868
+      },
+      "confusion": {
+        "tp": 50,
+        "tn": 39,
+        "fp": 1,
+        "fn": 20
+      },
+      "pixel": null,
+      "source": "reports/transfer/evaluation/T1/hazelnut/seed42/f0c64a57d2fb/6422dedbba1b/metrics.json",
+      "synthetic_validation": {
+        "precision": 0.9512195121951219,
+        "recall": 0.9873417721518988,
+        "fpr": 0.05063291139240506,
+        "accuracy": 0.9683544303797469,
+        "f1": 0.968944099378882,
+        "auroc": 0.9982374619452011,
+        "ap": 0.9982232671334087,
+        "images": 158,
+        "confusion": {
+          "tp": 78,
+          "tn": 75,
+          "fp": 4,
+          "fn": 1
+        }
+      },
+      "parameters": {
+        "total": 4008829,
+        "trainable": 1281,
+        "source": "artifacts/transfer_runs/T1/hazelnut/seed42/full_b2f6fc7e315049fe9236a3326e972b04/summary.json"
+      }
+    },
+    {
+      "model": "T1",
+      "category": "leather",
+      "seed": 42,
+      "images": 124,
+      "split": "test_real_mvtec",
+      "evaluation_date": null,
+      "protocol_sha256": "6422dedbba1b6366cea3e3f4b617742ea1b87c3db3119e534545a78f7ce0ae56",
+      "threshold": 0.01378712896257639,
+      "image": {
+        "precision": 0.9387755102040817,
+        "recall": 1.0,
+        "fpr": 0.1875,
+        "accuracy": 0.9516129032258065,
+        "f1": 0.968421052631579,
+        "auroc": 0.998641304347826,
+        "ap": 0.9995471014492756
+      },
+      "confusion": {
+        "tp": 92,
+        "tn": 26,
+        "fp": 6,
+        "fn": 0
+      },
+      "pixel": null,
+      "source": "reports/transfer/evaluation/T1/leather/seed42/c2d0e6c9d343/6422dedbba1b/metrics.json",
+      "synthetic_validation": {
+        "precision": 0.9423076923076923,
+        "recall": 1.0,
+        "fpr": 0.061224489795918366,
+        "accuracy": 0.9693877551020408,
+        "f1": 0.9702970297029703,
+        "auroc": 1.0,
+        "ap": 1.0000000000000007,
+        "images": 98,
+        "confusion": {
+          "tp": 49,
+          "tn": 46,
+          "fp": 3,
+          "fn": 0
+        }
+      },
+      "parameters": {
+        "total": 4008829,
+        "trainable": 1281,
+        "source": "artifacts/transfer_runs/T1/leather/seed42/full_4e4db05ac2264401a3e09d9f129b4fc9/summary.json"
+      }
+    },
+    {
+      "model": "T2",
+      "category": "bottle",
+      "seed": 42,
+      "images": 83,
+      "split": "test_real_mvtec",
+      "evaluation_date": null,
+      "protocol_sha256": "6422dedbba1b6366cea3e3f4b617742ea1b87c3db3119e534545a78f7ce0ae56",
+      "threshold": 0.00017796678002923727,
+      "image": {
+        "precision": 0.9264705882352942,
+        "recall": 1.0,
+        "fpr": 0.25,
+        "accuracy": 0.9397590361445783,
+        "f1": 0.9618320610687023,
+        "auroc": 1.0,
+        "ap": 0.9999999999999998
+      },
+      "confusion": {
+        "tp": 63,
+        "tn": 15,
+        "fp": 5,
+        "fn": 0
+      },
+      "pixel": null,
+      "source": "reports/transfer/evaluation/T2/bottle/seed42/f07a9ca4bd16/6422dedbba1b/metrics.json",
+      "synthetic_validation": {
+        "precision": 0.9333333333333333,
+        "recall": 1.0,
+        "fpr": 0.07142857142857142,
+        "accuracy": 0.9642857142857143,
+        "f1": 0.9655172413793104,
+        "auroc": 1.0,
+        "ap": 1.0000000000000004,
+        "images": 84,
+        "confusion": {
+          "tp": 42,
+          "tn": 39,
+          "fp": 3,
+          "fn": 0
+        }
+      },
+      "parameters": {
+        "total": 4008829,
+        "trainable": 3157021,
+        "source": "artifacts/transfer_runs/T2/bottle/seed42/full_d23b0eaa9b3a481bb448633b285e94a3/summary.json"
+      }
+    },
+    {
+      "model": "T2",
+      "category": "hazelnut",
+      "seed": 42,
+      "images": 110,
+      "split": "test_real_mvtec",
+      "evaluation_date": null,
+      "protocol_sha256": "6422dedbba1b6366cea3e3f4b617742ea1b87c3db3119e534545a78f7ce0ae56",
+      "threshold": 0.0010021653724834323,
+      "image": {
+        "precision": 0.9710144927536232,
+        "recall": 0.9571428571428572,
+        "fpr": 0.05,
+        "accuracy": 0.9545454545454546,
+        "f1": 0.9640287769784173,
+        "auroc": 0.9889285714285714,
+        "ap": 0.9946221688442451
+      },
+      "confusion": {
+        "tp": 67,
+        "tn": 38,
+        "fp": 2,
+        "fn": 3
+      },
+      "pixel": null,
+      "source": "reports/transfer/evaluation/T2/hazelnut/seed42/0dbbeeb75a17/6422dedbba1b/metrics.json",
+      "synthetic_validation": {
+        "precision": 0.9518072289156626,
+        "recall": 1.0,
+        "fpr": 0.05063291139240506,
+        "accuracy": 0.9746835443037974,
+        "f1": 0.9753086419753086,
+        "auroc": 1.0,
+        "ap": 0.9999999999999986,
+        "images": 158,
+        "confusion": {
+          "tp": 79,
+          "tn": 75,
+          "fp": 4,
+          "fn": 0
+        }
+      },
+      "parameters": {
+        "total": 4008829,
+        "trainable": 3157021,
+        "source": "artifacts/transfer_runs/T2/hazelnut/seed42/full_c4092b01491247548bfc0113bf52537e/summary.json"
+      }
+    },
+    {
+      "model": "T2",
+      "category": "leather",
+      "seed": 42,
+      "images": 124,
+      "split": "test_real_mvtec",
+      "evaluation_date": null,
+      "protocol_sha256": "6422dedbba1b6366cea3e3f4b617742ea1b87c3db3119e534545a78f7ce0ae56",
+      "threshold": 0.0006882469169795513,
+      "image": {
+        "precision": 0.8932038834951457,
+        "recall": 1.0,
+        "fpr": 0.34375,
+        "accuracy": 0.9112903225806451,
+        "f1": 0.9435897435897436,
+        "auroc": 0.9962635869565217,
+        "ap": 0.9987250139924296
+      },
+      "confusion": {
+        "tp": 92,
+        "tn": 21,
+        "fp": 11,
+        "fn": 0
+      },
+      "pixel": null,
+      "source": "reports/transfer/evaluation/T2/leather/seed42/8c450b7450a2/6422dedbba1b/metrics.json",
+      "synthetic_validation": {
+        "precision": 0.9423076923076923,
+        "recall": 1.0,
+        "fpr": 0.061224489795918366,
+        "accuracy": 0.9693877551020408,
+        "f1": 0.9702970297029703,
+        "auroc": 1.0,
+        "ap": 1.0000000000000007,
+        "images": 98,
+        "confusion": {
+          "tp": 49,
+          "tn": 46,
+          "fp": 3,
+          "fn": 0
+        }
+      },
+      "parameters": {
+        "total": 4008829,
+        "trainable": 3157021,
+        "source": "artifacts/transfer_runs/T2/leather/seed42/full_461328ee0bbf42a19fed8a2093094b34/summary.json"
+      }
+    }
+  ],
+  "macro": [
+    {
+      "model": "B0",
+      "categories": 3,
+      "image": {
+        "auroc": 0.7969529273061883,
+        "ap": 0.9282909778725159,
+        "f1": 0.7506390111041273,
+        "precision": 0.9031781226903178,
+        "recall": 0.6942604094778009,
+        "fpr": 0.35000000000000003,
+        "accuracy": 0.6948974784769577
+      }
+    },
+    {
+      "model": "A1",
+      "categories": 3,
+      "image": {
+        "auroc": 0.78965450310559,
+        "ap": 0.926692663053777,
+        "f1": 0.5812189684576924,
+        "precision": 0.9003436426116839,
+        "recall": 0.4998159650333563,
+        "fpr": 0.3020833333333333,
+        "accuracy": 0.5783373965068486
+      }
+    },
+    {
+      "model": "T0",
+      "categories": 3,
+      "image": {
+        "auroc": 0.8350115740740741,
+        "ap": 0.931799289250233,
+        "f1": 0.6725541712574512,
+        "precision": 0.9885057471264368,
+        "recall": 0.5134690591212331,
+        "fpr": 0.016666666666666666,
+        "accuracy": 0.6449133778515823
+      }
+    },
+    {
+      "model": "T1",
+      "categories": 3,
+      "image": {
+        "auroc": 0.9631053025074764,
+        "ap": 0.9832594815670238,
+        "f1": 0.9178483398579093,
+        "precision": 0.9730558890222757,
+        "recall": 0.8783068783068783,
+        "fpr": 0.07083333333333333,
+        "accuracy": 0.9001542828204313
+      }
+    },
+    {
+      "model": "T2",
+      "categories": 3,
+      "image": {
+        "auroc": 0.9950640527950311,
+        "ap": 0.9977823942788916,
+        "f1": 0.9564835272122877,
+        "precision": 0.930229654828021,
+        "recall": 0.9857142857142858,
+        "fpr": 0.21458333333333335,
+        "accuracy": 0.935198271090226
+      }
+    }
+  ],
+  "sources": [
+    {
+      "path": "reports/evaluation/b0/f515662ab4ef/bottle/metrics.json",
+      "sha256": "abbf3de2086b403ee7c1f9ef3ef1299681dc1ae68dd53788fe58ab1c5ec2a352",
+      "modified_utc": "2026-11-08T19:16:39.692186+00:00",
+      "purpose": "official_test_metrics"
+    },
+    {
+      "path": "reports/experiments/b0_architecture_smoke.json",
+      "sha256": "065601f9ecaba921ca46b2affda0c612ee4e0e1ca508bdd11ae465396de335af",
+      "modified_utc": "2026-11-09T08:26:57.249631+00:00",
+      "purpose": "architecture_parameter_count_only_not_performance"
+    },
+    {
+      "path": "reports/evaluation/b0/f515662ab4ef/hazelnut/metrics.json",
+      "sha256": "bdc370d8ead018007e5da1b8456c8bd82440c7f16a08c59e85c556dad44a5c58",
+      "modified_utc": "2026-11-08T19:16:55.808242+00:00",
+      "purpose": "official_test_metrics"
+    },
+    {
+      "path": "reports/evaluation/b0/f515662ab4ef/leather/metrics.json",
+      "sha256": "d5a080d4c501976b0f68dbc242349d616747d3d28faa3feb534c871f1948d1a8",
+      "modified_utc": "2026-11-08T19:17:15.391397+00:00",
+      "purpose": "official_test_metrics"
+    },
+    {
+      "path": "reports/evaluation/a1/f515662ab4ef/bottle/metrics.json",
+      "sha256": "35d8428a2ded75eae97561778eb8e820d580eec86fada33e2f1fc2dc5541f122",
+      "modified_utc": "2026-11-09T09:58:31.320898+00:00",
+      "purpose": "official_test_metrics"
+    },
+    {
+      "path": "reports/experiments/a1_implementation_verification.json",
+      "sha256": "f757b21825dd84d2f9aa0f58753610677126a6ea66bd63f59351cf0ed9b7cb26",
+      "modified_utc": "2026-11-08T19:48:24.353037+00:00",
+      "purpose": "architecture_parameter_count_only_not_performance"
+    },
+    {
+      "path": "reports/evaluation/a1/f515662ab4ef/hazelnut/metrics.json",
+      "sha256": "354c067d60c7acdf3fc19b5a6ff8e1dd0f9f6c09220ae2134467f74f9233f8f5",
+      "modified_utc": "2026-11-09T09:58:57.177833+00:00",
+      "purpose": "official_test_metrics"
+    },
+    {
+      "path": "reports/evaluation/a1/f515662ab4ef/leather/metrics.json",
+      "sha256": "55e8e2e0818b9b2362556c1e73d50c576c49000ad47f7e3f1f6f4ee8f59ef0f9",
+      "modified_utc": "2026-11-09T09:59:28.280017+00:00",
+      "purpose": "official_test_metrics"
+    },
+    {
+      "path": "reports/transfer/evaluation/T0/bottle/seed42/83b4a9794523/6422dedbba1b/metrics.json",
+      "sha256": "c81c89a362d4d70167d0da1ed0fa18719011956ac6aa487a507b919baa7cad6b",
+      "modified_utc": "2026-11-17T10:21:33.631562+00:00",
+      "purpose": "official_test_metrics"
+    },
+    {
+      "path": "artifacts/transfer_runs/T0/bottle/seed42/full_5653285316dc489badc96d0178688a1f/summary.json",
+      "sha256": "ca6cc8a8830af8ab2352a4ae0a27b1b82000e2bc03d81c80d6761906c0d6e5e9",
+      "modified_utc": "2026-11-13T21:50:30+00:00",
+      "purpose": "architecture_parameter_counts"
+    },
+    {
+      "path": "reports/transfer/evaluation/T0/hazelnut/seed42/7f31b37da53f/6422dedbba1b/metrics.json",
+      "sha256": "b762bea6a14f4a8dd07330ed500cc4819362bbea2afce21c842f50b315c07d10",
+      "modified_utc": "2026-11-17T10:22:10.756417+00:00",
+      "purpose": "official_test_metrics"
+    },
+    {
+      "path": "artifacts/transfer_runs/T0/hazelnut/seed42/full_4d027c3ae4524798b2914df49689f3ef/summary.json",
+      "sha256": "fbdc460a23d522b488b29488396763f8e7427018fee90286b2ee1b0bf4dab363",
+      "modified_utc": "2026-11-13T21:58:42+00:00",
+      "purpose": "architecture_parameter_counts"
+    },
+    {
+      "path": "reports/transfer/evaluation/T0/leather/seed42/8c9571eed0ff/6422dedbba1b/metrics.json",
+      "sha256": "abf9d7b8ac855d54511e58872f67bffb02dfd1280bc6b46b1857d5ce50399271",
+      "modified_utc": "2026-11-17T10:22:42.165627+00:00",
+      "purpose": "official_test_metrics"
+    },
+    {
+      "path": "artifacts/transfer_runs/T0/leather/seed42/full_61fd90e9606848af93c96fdbd8d9e000/summary.json",
+      "sha256": "b043a362ff659bb1476da1bf6f54974b9e267b81b3805f48145be8f42e1a3cfc",
+      "modified_utc": "2026-11-13T22:05:34+00:00",
+      "purpose": "architecture_parameter_counts"
+    },
+    {
+      "path": "reports/transfer/evaluation/T1/bottle/seed42/e7ce1dbb2aae/6422dedbba1b/metrics.json",
+      "sha256": "3608cde2f6a7d92f0cf2badf8fdd0005dd46fca0b6b2f618ab8306885cce6128",
+      "modified_utc": "2026-11-17T10:23:06.939128+00:00",
+      "purpose": "official_test_metrics"
+    },
+    {
+      "path": "artifacts/transfer_runs/T1/bottle/seed42/full_49327e70ea3840a5be06655510ba5752/summary.json",
+      "sha256": "0d07ea94e25dba80c1a71ccfefda303809363379b8ef6784cf01fb9ac99b7402",
+      "modified_utc": "2026-11-13T22:11:58+00:00",
+      "purpose": "architecture_parameter_counts"
+    },
+    {
+      "path": "reports/transfer/evaluation/T1/hazelnut/seed42/f0c64a57d2fb/6422dedbba1b/metrics.json",
+      "sha256": "1eff5affc3de9f9c22f852a13e74292f6f563430f5cd3d1307fb101fcf39c448",
+      "modified_utc": "2026-11-17T10:23:42.990427+00:00",
+      "purpose": "official_test_metrics"
+    },
+    {
+      "path": "artifacts/transfer_runs/T1/hazelnut/seed42/full_b2f6fc7e315049fe9236a3326e972b04/summary.json",
+      "sha256": "d7ba30c9951d74a3f5241beb52257a94e7503e94323c63710127e18cfc2138e2",
+      "modified_utc": "2026-11-13T22:28:26+00:00",
+      "purpose": "architecture_parameter_counts"
+    },
+    {
+      "path": "reports/transfer/evaluation/T1/leather/seed42/c2d0e6c9d343/6422dedbba1b/metrics.json",
+      "sha256": "4d620ce6b93683d0d233c50f46fec0dbd98518922761ec30c6eb70190b620bb7",
+      "modified_utc": "2026-11-17T10:24:13.293366+00:00",
+      "purpose": "official_test_metrics"
+    },
+    {
+      "path": "artifacts/transfer_runs/T1/leather/seed42/full_4e4db05ac2264401a3e09d9f129b4fc9/summary.json",
+      "sha256": "cafd42bdd5787b6f6f633c220145a11ec49702888e4b710e246053916cda7583",
+      "modified_utc": "2026-11-13T22:37:58+00:00",
+      "purpose": "architecture_parameter_counts"
+    },
+    {
+      "path": "reports/transfer/evaluation/T2/bottle/seed42/f07a9ca4bd16/6422dedbba1b/metrics.json",
+      "sha256": "6d3c8d616c8660e503375fe8ee5e9a02ab5d11d3ef00ccab3ef5fbf558f34a52",
+      "modified_utc": "2026-11-17T10:24:37.739616+00:00",
+      "purpose": "official_test_metrics"
+    },
+    {
+      "path": "artifacts/transfer_runs/T2/bottle/seed42/full_d23b0eaa9b3a481bb448633b285e94a3/summary.json",
+      "sha256": "d143045fe0cf93eddf233ee06ffc32ae544a5c7c597b9be47ef7ce7db9cece83",
+      "modified_utc": "2026-11-13T22:44:36+00:00",
+      "purpose": "architecture_parameter_counts"
+    },
+    {
+      "path": "reports/transfer/evaluation/T2/hazelnut/seed42/0dbbeeb75a17/6422dedbba1b/metrics.json",
+      "sha256": "a38591d5f3750be06c51bc2941a5d1810c1aab4b028fd07fa399a944489b7df5",
+      "modified_utc": "2026-11-17T10:25:15.333782+00:00",
+      "purpose": "official_test_metrics"
+    },
+    {
+      "path": "artifacts/transfer_runs/T2/hazelnut/seed42/full_c4092b01491247548bfc0113bf52537e/summary.json",
+      "sha256": "a9d77d8f03fa805bd36726e795ec39d58def0b338b0ce5386b5ba32feae11042",
+      "modified_utc": "2026-11-13T22:59:56+00:00",
+      "purpose": "architecture_parameter_counts"
+    },
+    {
+      "path": "reports/transfer/evaluation/T2/leather/seed42/8c450b7450a2/6422dedbba1b/metrics.json",
+      "sha256": "2fefa75d1bdb17d2d4fe9f0959c17e2149a7548aafc9707448e79958f9bbfb14",
+      "modified_utc": "2026-11-17T10:25:47.240812+00:00",
+      "purpose": "official_test_metrics"
+    },
+    {
+      "path": "artifacts/transfer_runs/T2/leather/seed42/full_461328ee0bbf42a19fed8a2093094b34/summary.json",
+      "sha256": "29df077c63941c5041ae444ff7b41d5cdc4a7de434e2f6a8a8b52e3f1e3c0495",
+      "modified_utc": "2026-11-13T23:07:02+00:00",
+      "purpose": "architecture_parameter_counts"
+    },
+    {
+      "path": "reports/experiments/b0_a1_diagnostic.md",
+      "sha256": "e0d27246fe792cae87a67611e001efb50c77fe8865e6031d93681895d27d9909",
+      "modified_utc": "2026-11-13T15:56:54.134723+00:00",
+      "purpose": "post_hoc_diagnostic_context_only",
+      "document_date": "2026-11-13"
+    }
+  ],
+  "conditions": {
+    "seed": 42,
+    "input_size": [
+      256,
+      256
+    ],
+    "decision": "score > threshold",
+    "macro": "Unweighted arithmetic mean over the three categories; no score pooling",
+    "derived": "Precision, recall, FPR and accuracy from archived confusion counts; synthetic metrics from archived validation scores at the fixed threshold",
+    "dates": "Evaluation dates absent in source JSON are null; modified_utc describes file metadata only"
+  },
+  "limitations": [
+    "Trois catégories étudiées, seed 42.",
+    "Anomalies synthétiques pour l'apprentissage et la validation Transfer Learning.",
+    "Le test réel a déjà été consulté ; absence de validation indépendante après sélection du modèle.",
+    "Grad-CAM est une attribution relative, pas une segmentation.",
+    "Métriques pixel et segmentation uniquement pour B0/A1 ; aucun score AE/sigmoid fusionné.",
+    "Les paramètres A1 entraînables ne sont pas chiffrés dans les sources retenues."
+  ]
+}

@@ -1,0 +1,3 @@
+# Local browser captures can contain user/dataset images. Never publish them.
+screenshots/
+playwright-artifacts/

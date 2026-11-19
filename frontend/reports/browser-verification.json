@@ -1,0 +1,199 @@
+{
+  "base": "http://localhost:18080",
+  "checked_at": "2026-11-19T09:38:37.695Z",
+  "captures": [
+    {
+      "filename": "desktop-dark-dashboard.png",
+      "width": 1440,
+      "height": 900,
+      "theme": "dark",
+      "route": "dashboard"
+    },
+    {
+      "filename": "desktop-dark-inspection.png",
+      "width": 1440,
+      "height": 900,
+      "theme": "dark",
+      "route": "inspection"
+    },
+    {
+      "filename": "desktop-dark-comparison.png",
+      "width": 1440,
+      "height": 900,
+      "theme": "dark",
+      "route": "comparison"
+    },
+    {
+      "filename": "desktop-dark-analytics.png",
+      "width": 1440,
+      "height": 900,
+      "theme": "dark",
+      "route": "analytics"
+    },
+    {
+      "filename": "desktop-light-dashboard.png",
+      "width": 1440,
+      "height": 900,
+      "theme": "light",
+      "route": "dashboard"
+    },
+    {
+      "filename": "desktop-light-inspection.png",
+      "width": 1440,
+      "height": 900,
+      "theme": "light",
+      "route": "inspection"
+    },
+    {
+      "filename": "desktop-light-comparison.png",
+      "width": 1440,
+      "height": 900,
+      "theme": "light",
+      "route": "comparison"
+    },
+    {
+      "filename": "desktop-light-analytics.png",
+      "width": 1440,
+      "height": 900,
+      "theme": "light",
+      "route": "analytics"
+    },
+    {
+      "filename": "laptop-dark-dashboard.png",
+      "width": 1280,
+      "height": 720,
+      "theme": "dark",
+      "route": "dashboard"
+    },
+    {
+      "filename": "laptop-dark-inspection.png",
+      "width": 1280,
+      "height": 720,
+      "theme": "dark",
+      "route": "inspection"
+    },
+    {
+      "filename": "laptop-dark-comparison.png",
+      "width": 1280,
+      "height": 720,
+      "theme": "dark",
+      "route": "comparison"
+    },
+    {
+      "filename": "laptop-dark-analytics.png",
+      "width": 1280,
+      "height": 720,
+      "theme": "dark",
+      "route": "analytics"
+    },
+    {
+      "filename": "laptop-light-dashboard.png",
+      "width": 1280,
+      "height": 720,
+      "theme": "light",
+      "route": "dashboard"
+    },
+    {
+      "filename": "laptop-light-inspection.png",
+      "width": 1280,
+      "height": 720,
+      "theme": "light",
+      "route": "inspection"
+    },
+    {
+      "filename": "laptop-light-comparison.png",
+      "width": 1280,
+      "height": 720,
+      "theme": "light",
+      "route": "comparison"
+    },
+    {
+      "filename": "laptop-light-analytics.png",
+      "width": 1280,
+      "height": 720,
+      "theme": "light",
+      "route": "analytics"
+    },
+    {
+      "filename": "mobile-dark-dashboard.png",
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "route": "dashboard"
+    },
+    {
+      "filename": "mobile-dark-inspection.png",
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "route": "inspection"
+    },
+    {
+      "filename": "mobile-dark-comparison.png",
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "route": "comparison"
+    },
+    {
+      "filename": "mobile-dark-analytics.png",
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "route": "analytics"
+    },
+    {
+      "filename": "mobile-light-dashboard.png",
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "route": "dashboard"
+    },
+    {
+      "filename": "mobile-light-inspection.png",
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "route": "inspection"
+    },
+    {
+      "filename": "mobile-light-comparison.png",
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "route": "comparison"
+    },
+    {
+      "filename": "mobile-light-analytics.png",
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "route": "analytics"
+    }
+  ],
+  "requests": [
+    {
+      "url": "/api/predict",
+      "status": 200
+    },
+    {
+      "url": "/api/predict/visualize",
+      "status": 200
+    },
+    {
+      "url": "/api/predict/visualize",
+      "status": 200
+    },
+    {
+      "url": "/api/predict/visualize",
+      "status": 200
+    }
+  ],
+  "errors": [],
+  "checks": [
+    "B0 real prediction, reconstruction error, side-by-side and native full-screen dialog",
+    "Comparison B0/T2 real sequential requests and both explanatory maps",
+    "3 real inspection metadata entries persisted without image bytes"
+  ],
+  "passed": true
+}

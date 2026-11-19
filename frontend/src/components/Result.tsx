@@ -1,16 +1,86 @@
-import { useState } from 'react';
+import { useId, useRef, useState } from 'react';
+import { Copy, Download, Maximize2 } from 'lucide-react';
 import type { Prediction, VisualizedPrediction } from '../api/contracts';
 import { Icon } from './Icon';
 
 export const formatScore = (value: number) =>
-  value.toLocaleString('fr-FR', { minimumFractionDigits: 6, maximumFractionDigits: 6 });
+  value !== 0 && Math.abs(value) < 0.0001
+    ? value.toExponential(6)
+    : value.toLocaleString('fr-FR', { minimumFractionDigits: 6, maximumFractionDigits: 6 });
 
-export function Result({ result, elapsed }: { result: Prediction; elapsed: number }) {
+function CopyValue({ value }: { value: string }) {
+  const [notice, setNotice] = useState('');
+  return (
+    <span className="copy-control">
+      <button
+        className="icon-button"
+        aria-label={`Copier ${value}`}
+        onClick={() => {
+          if (!navigator.clipboard) {
+            setNotice('Copie indisponible');
+            return;
+          }
+          void navigator.clipboard
+            .writeText(value)
+            .then(() => setNotice('Copié'))
+            .catch(() => setNotice('Copie indisponible'));
+        }}
+      >
+        <Copy size={14} />
+      </button>
+      <small role="status">{notice}</small>
+    </span>
+  );
+}
+export function ScoreGauge({ result }: { result: Prediction }) {
+  const limit = Math.min(
+    1,
+    Math.max(result.anomaly_score, result.threshold, Number.MIN_VALUE) * 1.4,
+  );
+  const score = (100 * result.anomaly_score) / limit,
+    threshold = (100 * result.threshold) / limit;
+  return (
+    <figure
+      className="score-gauge"
+      aria-label={`Score ${result.anomaly_score}, seuil ${result.threshold}. Échelle locale 0 à ${limit}.`}
+    >
+      <figcaption>
+        Score / seuil de ce modèle <span>Échelle locale, pas une confiance</span>
+      </figcaption>
+      <div className="gauge-track">
+        <div className={result.decision} style={{ width: `${score}%` }} />
+        <i className="threshold-marker" style={{ left: `${threshold}%` }}>
+          <span>Seuil</span>
+        </i>
+        <i
+          className="score-marker"
+          style={{ left: `${score}%` }}
+          title={String(result.anomaly_score)}
+        />
+      </div>
+      <div className="gauge-axis">
+        <span>0</span>
+        <span>{formatScore(limit)}</span>
+      </div>
+    </figure>
+  );
+}
+
+export function Result({
+  result,
+  elapsed,
+  endpoint = '/predict',
+}: {
+  result: Prediction;
+  elapsed: number;
+  endpoint?: string;
+}) {
+  const titleId = useId();
   const anomaly = result.decision === 'anomaly';
   return (
-    <section className="panel result-panel" aria-labelledby="result-title">
+    <section className="panel result-panel" aria-labelledby={titleId}>
       <div className="panel-heading">
-        <h2 id="result-title">Résultat de l’inspection</h2>
+        <h2 id={titleId}>Résultat de l’inspection</h2>
         <span className="eyebrow">INFÉRENCE CPU</span>
       </div>
       <div className={`decision ${anomaly ? 'anomaly' : 'normal'}`}>
@@ -37,6 +107,15 @@ export function Result({ result, elapsed }: { result: Prediction; elapsed: numbe
           <strong>{formatScore(result.threshold)}</strong>
         </div>
       </div>
+      <ScoreGauge result={result} />
+      <details className="exact-values">
+        <summary>Valeurs exactes de l’API</summary>
+        <p className="mono">
+          Score : {String(result.anomaly_score)}
+          <br />
+          Seuil : {String(result.threshold)}
+        </p>
+      </details>
       <p className="score-note">
         {['B0', 'A1'].includes(result.model)
           ? 'Erreur de reconstruction RGB · Ce score n’est pas une probabilité.'
@@ -53,22 +132,32 @@ export function Result({ result, elapsed }: { result: Prediction; elapsed: numbe
           <dd>{result.category}</dd>
         </div>
         <div>
-          <dt>Latence d’inférence</dt>
+          <dt>
+            {endpoint === '/predict/visualize'
+              ? 'Calcul : inférence et explication'
+              : 'Latence d’inférence'}
+          </dt>
           <dd>
             {result.inference_time_ms.toLocaleString('fr-FR', { maximumFractionDigits: 1 })} ms
           </dd>
         </div>
         <div>
-          <dt>Aller-retour /predict</dt>
+          <dt>Aller-retour {endpoint}</dt>
           <dd>{elapsed.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} ms</dd>
         </div>
         <div className="full">
-          <dt>Identifiant de requête /predict</dt>
-          <dd className="mono">{result.request_id}</dd>
+          <dt>Identifiant de requête {endpoint}</dt>
+          <dd className="mono">
+            <span>{result.request_id}</span>
+            <CopyValue value={result.request_id} />
+          </dd>
         </div>
         <div className="full">
           <dt>Version du modèle · SHA256</dt>
-          <dd className="mono small">{result.version}</dd>
+          <dd className="mono small">
+            <span>{result.version}</span>
+            <CopyValue value={result.version} />
+          </dd>
         </div>
       </dl>
     </section>
@@ -76,10 +165,55 @@ export function Result({ result, elapsed }: { result: Prediction; elapsed: numbe
 }
 
 export function Explanation({ result }: { result: VisualizedPrediction }) {
-  const [view, setView] = useState<'overlay' | 'heatmap' | 'image'>('overlay');
+  const [view, setView] = useState<'overlay' | 'heatmap' | 'image' | 'side'>('overlay');
+  const [zoom, setZoom] = useState(1);
+  const [opacity, setOpacity] = useState(0.5);
+  const dialog = useRef<HTMLDialogElement>(null);
   const visual = result.visualization;
   const gradcam = visual.kind === 'gradcam';
-  const labels = { overlay: 'Superposition', heatmap: 'Carte seule', image: 'Image préparée' };
+  const labels = {
+    overlay: 'Superposition',
+    heatmap: 'Carte seule',
+    image: 'Image préparée',
+    side: 'Côte à côte',
+  };
+  const png = (key: 'overlay' | 'heatmap' | 'image') =>
+    `data:image/png;base64,${visual[`${key}_png_base64`]}`;
+  function frame() {
+    return (
+      <div className={`visual-frame ${view === 'side' ? 'side-by-side' : ''}`}>
+        <div className="zoom-canvas" style={{ transform: `scale(${zoom})` }}>
+          {view === 'side' ? (
+            <>
+              <figure>
+                <img src={png('image')} alt="Image préparée en coordonnées letterbox" />
+                <figcaption>Image préparée</figcaption>
+              </figure>
+              <figure>
+                <img src={png('heatmap')} alt="Carte explicative originale" />
+                <figcaption>Carte originale</figcaption>
+              </figure>
+            </>
+          ) : view === 'overlay' ? (
+            <div className="opacity-composite">
+              <img src={png('image')} alt="Fond préparé letterbox" />
+              <img
+                className="api-overlay"
+                style={{ opacity: opacity * 2 }}
+                src={png('overlay')}
+                alt={`Superposition : ${gradcam ? 'Grad-CAM' : 'erreur de reconstruction'} pour ${result.category}`}
+              />
+            </div>
+          ) : (
+            <img
+              src={png(view)}
+              alt={`${labels[view]} : ${gradcam ? 'Grad-CAM' : 'erreur de reconstruction'} pour ${result.category}`}
+            />
+          )}
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="explanation">
       <div className="explanation-toolbar">
@@ -90,18 +224,69 @@ export function Explanation({ result }: { result: VisualizedPrediction }) {
         <span className="tag">{result.model}</span>
       </div>
       <div className="segmented" aria-label="Vue de la visualisation">
-        {(['overlay', 'heatmap', 'image'] as const).map((key) => (
+        {(['overlay', 'heatmap', 'image', 'side'] as const).map((key) => (
           <button key={key} type="button" aria-pressed={view === key} onClick={() => setView(key)}>
             {labels[key]}
           </button>
         ))}
       </div>
-      <div className="visual-frame">
-        <img
-          src={`data:image/png;base64,${visual[`${view}_png_base64`]}`}
-          alt={`${labels[view]} : ${gradcam ? 'Grad-CAM' : 'erreur de reconstruction'} pour ${result.category}`}
-        />
+      <div className="viewer-toolbar">
+        <label>
+          Zoom{' '}
+          <select value={zoom} onChange={(e) => setZoom(Number(e.target.value))}>
+            <option value={1}>100 %</option>
+            <option value={1.5}>150 %</option>
+            <option value={2}>200 %</option>
+          </select>
+        </label>
+        {view === 'overlay' && (
+          <label>
+            Intensité d’exploration
+            <input
+              aria-label="Intensité de la superposition"
+              type="range"
+              min="0"
+              max="0.5"
+              step="0.01"
+              value={opacity}
+              onChange={(e) => setOpacity(Number(e.target.value))}
+            />
+          </label>
+        )}
+        <button
+          className="icon-button"
+          aria-label="Ouvrir le visualiseur plein écran"
+          onClick={() => dialog.current?.showModal()}
+        >
+          <Maximize2 size={17} />
+        </button>
+        <a
+          className="icon-button"
+          aria-label="Télécharger le PNG original"
+          href={png(view === 'side' ? 'heatmap' : view)}
+          download={`${result.model}-${result.category}-${view}.png`}
+        >
+          <Download size={17} />
+        </a>
       </div>
+      {frame()}
+      {view === 'overlay' && (
+        <p className="small muted">
+          À 50 %, superposition API originale. En dessous : fondu vers l’image préparée ; le PNG
+          téléchargé reste inchangé.
+        </p>
+      )}
+      <dialog ref={dialog} className="viewer-dialog">
+        <div className="panel-heading">
+          <h2>
+            {gradcam ? 'Grad-CAM' : 'Erreur de reconstruction'} · {result.model}
+          </h2>
+          <button onClick={() => dialog.current?.close()} aria-label="Fermer le visualiseur">
+            Fermer
+          </button>
+        </div>
+        {frame()}
+      </dialog>
       <div className="legend">
         <span>Faible</span>
         <div />
@@ -112,7 +297,7 @@ export function Explanation({ result }: { result: VisualizedPrediction }) {
         <span>
           {gradcam
             ? 'Attribution visuelle grossière, relative à cette image. Grad-CAM n’est pas une segmentation pixel et ne délimite pas un défaut.'
-            : 'Intensité de l’erreur de reconstruction sur une échelle absolue L1 [0, 1]. Le padding est exclu du calcul.'}
+            : 'Intensité de l’erreur de reconstruction sur une échelle absolue L1 [0, 1]. Le score est la moyenne du top 1 % des pixels valides. Le padding est exclu du calcul.'}
         </span>
       </p>
       <details>

@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import App from './App';
+import App from './SmartInspection';
 import { health, metadata, prediction, requestId, visualization } from './test/fixtures';
 import type { Prediction } from './api/contracts';
 

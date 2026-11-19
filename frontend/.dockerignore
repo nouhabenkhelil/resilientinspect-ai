@@ -12,5 +12,7 @@
 !src/**/*.ts
 !src/**/*.tsx
 !src/**/*.css
+!src/**/*.json
 !public/
 !public/favicon.svg
+!public/logo.svg

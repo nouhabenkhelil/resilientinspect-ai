@@ -1,596 +1,304 @@
-import { useEffect, useRef, useState } from 'react';
-import { api, ApiError, errorMessage } from './api/client';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import {
-  CATEGORIES,
-  MODEL_NAMES,
-  type Category,
-  type Health,
-  type Metadata,
-  type Prediction,
-  type VisualizedPrediction,
-} from './api/contracts';
-import { validateFile, validateImage } from './image';
-import { Icon } from './components/Icon';
-import { Explanation, formatScore, Result } from './components/Result';
-
-type Upload = { file: File; url: string; width: number; height: number };
-type Stage = 'idle' | 'predict' | 'visualize';
-const categoryLabels = { bottle: 'Bouteille', hazelnut: 'Noisette', leather: 'Cuir' };
-
-function ErrorNotice({ error, title }: { error: unknown; title: string }) {
-  return (
-    <div className="notice error" role="alert">
-      <Icon name="alert" />
-      <div>
-        <strong>{title}</strong>
-        <p>{errorMessage(error)}</p>
-        {error instanceof ApiError && error.requestId && (
-          <p className="mono small">Requête : {error.requestId}</p>
-        )}
-      </div>
-    </div>
-  );
+  Activity,
+  BarChart3,
+  ChevronLeft,
+  Cpu,
+  FlaskConical,
+  History,
+  LayoutDashboard,
+  Menu,
+  Moon,
+  ScanLine,
+  Sun,
+  Presentation,
+  RefreshCw,
+} from 'lucide-react';
+import SmartInspection from './SmartInspection';
+import { ComparisonLab } from './components/ComparisonLab';
+import { Dashboard, HistoryPage, SystemMonitor } from './components/StudioPages';
+import { readHistory, type HistoryEntry } from './studio/history';
+import { useSystem } from './studio/useSystem';
+const Analytics = lazy(() =>
+  import('./components/Analytics').then((m) => ({ default: m.Analytics })),
+);
+const pages = [
+  {
+    id: 'dashboard',
+    name: 'Control Center',
+    title: 'Le contrôle, en perspective.',
+    description: 'Votre espace de supervision et d’inspection visuelle assistée par IA.',
+    icon: LayoutDashboard,
+  },
+  {
+    id: 'inspection',
+    name: 'Smart Inspection',
+    title: 'Un regard plus précis.',
+    description: 'Inspectez une image et explorez les régions qui influencent la décision.',
+    icon: ScanLine,
+  },
+  {
+    id: 'comparison',
+    name: 'Comparison Lab',
+    title: 'Confrontez les regards.',
+    description: 'Une même image, des architectures différentes. Comparez sans fusionner.',
+    icon: FlaskConical,
+  },
+  {
+    id: 'analytics',
+    name: 'Model Analytics',
+    title: 'La preuve par les mesures.',
+    description: 'Résultats expérimentaux authentiques · protocoles et seuils figés.',
+    icon: BarChart3,
+  },
+  {
+    id: 'monitor',
+    name: 'System Monitor',
+    title: 'Au cœur du système.',
+    description: 'Disponibilité et provenance retournées par votre API locale.',
+    icon: Activity,
+  },
+  {
+    id: 'history',
+    name: 'Historique',
+    title: 'Chaque inspection, documentée.',
+    description: 'Un journal local léger. Vos images ne sont pas enregistrées.',
+    icon: History,
+  },
+];
+function stored(key: string, fallback: string) {
+  try {
+    return localStorage.getItem(key) || fallback;
+  } catch {
+    return fallback;
+  }
 }
-
+function pageFromHash() {
+  const hash = window.location.hash.slice(1);
+  return pages.some((p) => p.id === hash) ? hash : 'dashboard';
+}
 export default function App() {
-  const [health, setHealth] = useState<Health | null>(null);
-  const [metadata, setMetadata] = useState<Metadata | null>(null);
-  const [connectionError, setConnectionError] = useState<unknown>(null);
-  const [refreshing, setRefreshing] = useState(true);
-  const [category, setCategory] = useState<Category>('bottle');
-  const [preferredModel, setPreferredModel] = useState('B0');
-  const [upload, setUpload] = useState<Upload | null>(null);
-  const [validating, setValidating] = useState(false);
-  const [fileError, setFileError] = useState<unknown>(null);
-  const [analysisError, setAnalysisError] = useState<unknown>(null);
-  const [visualError, setVisualError] = useState<unknown>(null);
-  const [prediction, setPrediction] = useState<Prediction | null>(null);
-  const [visualized, setVisualized] = useState<VisualizedPrediction | null>(null);
-  const [elapsed, setElapsed] = useState(0);
-  const [stage, setStage] = useState<Stage>('idle');
-  const [dragging, setDragging] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
-  const fileInput = useRef<HTMLInputElement>(null);
-  const uploadRevision = useRef(0);
-  const analysisController = useRef<AbortController | null>(null);
-  const dragDepth = useRef(0);
-  const busy = stage !== 'idle';
-  const available = (metadata?.models || [])
-    .filter((item) => item.category === category)
-    .sort((a, b) => MODEL_NAMES.indexOf(a.model) - MODEL_NAMES.indexOf(b.model));
-  const selected = available.find((item) => item.model === preferredModel) || available[0];
-  const unavailable = (metadata?.unavailable || []).filter((item) => item.category === category);
-
+  const [page, setPage] = useState(pageFromHash);
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [theme, setTheme] = useState(() => stored('ri.theme', 'dark'));
+  const [demo, setDemo] = useState(false);
+  const [history, setHistory] = useState<HistoryEntry[]>(readHistory);
+  const [notice, setNotice] = useState('');
+  const system = useSystem();
+  const current = pages.find((p) => p.id === page)!;
   useEffect(() => {
-    const controller = new AbortController();
-    let inFlight = false;
-    async function refresh() {
-      if (inFlight) return;
-      inFlight = true;
-      setRefreshing(true);
-      const [healthResult, metadataResult] = await Promise.allSettled([
-        api.health(controller.signal),
-        api.metadata(controller.signal),
-      ]);
-      if (controller.signal.aborted) return;
-      setHealth(healthResult.status === 'fulfilled' ? healthResult.value : null);
-      setMetadata(metadataResult.status === 'fulfilled' ? metadataResult.value : null);
-      setConnectionError(
-        healthResult.status === 'rejected'
-          ? healthResult.reason
-          : metadataResult.status === 'rejected'
-            ? metadataResult.reason
-            : null,
-      );
-      setRefreshing(false);
-      inFlight = false;
+    function navigate() {
+      setPage(pageFromHash());
+      setMobileOpen(false);
     }
-    void refresh();
-    const timer = setInterval(() => void refresh(), 30_000);
+    window.addEventListener('hashchange', navigate);
+    return () => window.removeEventListener('hashchange', navigate);
+  }, []);
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    try {
+      localStorage.setItem('ri.theme', theme);
+    } catch {}
+  }, [theme]);
+  useEffect(() => {
+    const update = () => setHistory(readHistory());
+    const error = () =>
+      setNotice('Stockage local indisponible : cette inspection ne pourra pas être conservée.');
+    window.addEventListener('ri-history', update);
+    window.addEventListener('storage', update);
+    window.addEventListener('ri-storage-error', error);
     return () => {
-      controller.abort();
-      clearInterval(timer);
+      window.removeEventListener('ri-history', update);
+      window.removeEventListener('storage', update);
+      window.removeEventListener('ri-storage-error', error);
     };
-  }, [refreshKey]);
-
-  useEffect(
-    () => () => {
-      if (upload) URL.revokeObjectURL(upload.url);
-    },
-    [upload],
-  );
-  useEffect(
-    () => () => {
-      analysisController.current?.abort();
-      uploadRevision.current++;
-    },
-    [],
-  );
-
-  function clearResults() {
-    setPrediction(null);
-    setVisualized(null);
-    setAnalysisError(null);
-    setVisualError(null);
+  }, []);
+  useEffect(() => {
+    document.title = `${current.name} · ResilientInspect AI`;
+  }, [current.name]);
+  const status =
+    system.health?.status === 'ok'
+      ? 'API opérationnelle'
+      : system.health
+        ? 'API dégradée'
+        : system.loading
+          ? 'Connexion à l’API'
+          : 'API hors ligne';
+  function navigate(id: string) {
+    window.location.hash = id;
+    setPage(id);
+    setMobileOpen(false);
   }
-
-  function removeUpload() {
-    uploadRevision.current++;
-    setUpload(null);
-    setFileError(null);
-    setValidating(false);
-    clearResults();
-    if (fileInput.current) fileInput.current.value = '';
-  }
-
-  async function importFiles(files: File[]) {
-    if (busy || files.length === 0) return;
-    const revision = ++uploadRevision.current;
-    setUpload(null);
-    setFileError(null);
-    clearResults();
-    setValidating(true);
-    let url: string | undefined;
-    try {
-      if (files.length !== 1) throw new Error('Importez une seule image à la fois.');
-      const file = files[0];
-      validateFile(file);
-      url = URL.createObjectURL(file);
-      const size = await validateImage(url);
-      if (revision !== uploadRevision.current) {
-        URL.revokeObjectURL(url);
-        return;
-      }
-      setUpload({ file, url, ...size });
-    } catch (error) {
-      if (url) URL.revokeObjectURL(url);
-      if (revision === uploadRevision.current) setFileError(error);
-    } finally {
-      if (revision === uploadRevision.current) setValidating(false);
-      if (fileInput.current) fileInput.current.value = '';
-    }
-  }
-
-  async function analyze(visualOnly = false) {
-    if (!upload || !selected || !health || busy) return;
-    const input = { file: upload.file, category, model: selected.model };
-    const controller = new AbortController();
-    analysisController.current = controller;
-    setAnalysisError(null);
-    setVisualError(null);
-    setVisualized(null);
-    setStage(visualOnly ? 'visualize' : 'predict');
-    try {
-      if (!visualOnly) {
-        setPrediction(null);
-        const started = performance.now();
-        const result = await api.predict(input, controller.signal);
-        if (controller.signal.aborted) return;
-        setPrediction(result);
-        setElapsed(performance.now() - started);
-        setStage('visualize');
-      }
-      try {
-        const result = await api.visualize(input, controller.signal);
-        if (!controller.signal.aborted) setVisualized(result);
-      } catch (error) {
-        if (!controller.signal.aborted) setVisualError(error);
-      }
-    } catch (error) {
-      if (!controller.signal.aborted) setAnalysisError(error);
-    } finally {
-      if (analysisController.current === controller) {
-        setStage('idle');
-        analysisController.current = null;
-      }
-    }
-  }
-
-  const status = !health
-    ? refreshing
-      ? 'Connexion à l’API'
-      : 'API hors ligne'
-    : health.status === 'degraded'
-      ? 'API dégradée'
-      : 'API opérationnelle';
-
   return (
-    <div className="app-shell">
+    <div
+      className={`app-shell ${collapsed ? 'sidebar-collapsed' : ''} ${mobileOpen ? 'mobile-nav-open' : ''} ${demo ? 'demo-mode' : ''}`}
+    >
+      <a
+        className="skip-link"
+        href="#main-content"
+        onClick={(e) => {
+          e.preventDefault();
+          document.getElementById('main-content')?.focus();
+        }}
+      >
+        Aller au contenu
+      </a>
       <aside className="sidebar">
-        <a className="brand" href="#inspection" aria-label="ResilientInspect AI, inspection">
-          <span className="brand-mark">
-            <Icon name="scan" size={25} />
-          </span>
+        <a className="brand" href="#dashboard" onClick={() => navigate('dashboard')}>
+          <img src="/logo.svg" alt="" width="44" height="44" />
           <span>
-            Resilient
-            <span className="brand-second">
-              Inspect <b>AI</b>
-            </span>
+            ResilientInspect <b>AI</b>
+            <small>INDUSTRIAL INTELLIGENCE</small>
           </span>
         </a>
-        <div className="workspace-label">ESPACE DE TRAVAIL</div>
+        <span className="workspace-label">
+          WORKSPACE <span>2.0</span>
+        </span>
         <nav aria-label="Navigation principale">
-          <a href="#inspection" className="nav-link" aria-current="page">
-            <Icon name="scan" /> Inspection <span>01</span>
-          </a>
+          {pages.map((p) => (
+            <a
+              key={p.id}
+              href={`#${p.id}`}
+              aria-current={page === p.id ? 'page' : undefined}
+              title={collapsed ? p.name : undefined}
+              onClick={() => navigate(p.id)}
+            >
+              <p.icon size={19} />
+              <span>{p.name}</span>
+              {p.id === 'comparison' && <small>LAB</small>}
+            </a>
+          ))}
         </nav>
         <div className="sidebar-bottom">
-          <span className="sidebar-badge">
-            <Icon name="layers" size={17} /> Inférence locale
-          </span>
-          <p>
-            Inspection visuelle
-            <br />
-            assistée par intelligence artificielle.
-          </p>
-          <div className="sidebar-footer">
-            RESILIENTINSPECT <span>CPU</span>
+          <div className="local-engine">
+            <Cpu size={20} />
+            <div>
+              <strong>Inférence locale</strong>
+              <small>CPU · données sous contrôle</small>
+            </div>
           </div>
+          <p>
+            Décision assistée.
+            <br />
+            L’expertise humaine reste centrale.
+          </p>
+          <button
+            className="text-button collapse-button"
+            onClick={() => setCollapsed((c) => !c)}
+            aria-label={collapsed ? 'Déployer la navigation' : 'Réduire la navigation'}
+          >
+            <ChevronLeft size={18} />
+            <span>Réduire</span>
+          </button>
         </div>
       </aside>
+      {mobileOpen && (
+        <button
+          className="nav-backdrop"
+          aria-label="Fermer la navigation"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
       <div className="main-shell">
         <header className="topbar">
           <div className="breadcrumb">
-            Espace de travail <span>/</span> <strong>Inspection</strong>
+            <button
+              className="icon-button mobile-menu"
+              aria-label="Ouvrir la navigation"
+              onClick={() => setMobileOpen((v) => !v)}
+            >
+              <Menu size={20} />
+            </button>
+            <span>Workspace</span>
+            <span>/</span>
+            <strong>{current.name}</strong>
           </div>
-          <div
-            className={`api-status ${health?.status === 'ok' ? 'online' : health ? 'degraded' : 'offline'}`}
-            role="status"
-          >
-            <span className={`status-dot ${refreshing ? 'pulsing' : ''}`} />
-            {status}
-          </div>
-        </header>
-        <main id="inspection">
-          <div className="page-heading">
-            <div>
-              <div className="eyebrow accent">CONTRÔLE QUALITÉ VISUEL</div>
-              <h1>Inspection</h1>
-              <p>Importez une image. Détectez les anomalies. Examinez les zones d’attention.</p>
-            </div>
-            <span className="environment">
-              <span className="status-dot" /> ENVIRONNEMENT LOCAL
-            </span>
-          </div>
-          <section className="service-strip" aria-label="État du service">
-            <div>
-              <Icon name="layers" />
-              <span>
-                <strong>
-                  {health ? `${health.ready_models} / ${health.expected_models}` : '—'}
-                </strong>{' '}
-                modèles prêts
-              </span>
-            </div>
-            <div>
-              <span className="service-label">Calcul</span>
-              <strong>CPU</strong>
-            </div>
-            <div>
-              <span className="service-label">Version API</span>
-              <strong>{health?.version || '—'}</strong>
+          <div className="toolbar">
+            <div
+              role="status"
+              className={`api-status ${system.health?.status === 'ok' ? 'online' : system.health ? 'degraded' : 'offline'}`}
+            >
+              <span className="status-dot" />
+              {status}
             </div>
             <button
-              className="text-button refresh"
-              disabled={refreshing}
-              onClick={() => setRefreshKey((value) => value + 1)}
+              className="icon-button"
               aria-label="Actualiser le statut API"
+              disabled={system.loading}
+              onClick={system.refresh}
             >
-              <Icon name="refresh" size={16} />
-              {refreshing ? 'Vérification…' : 'Actualiser'}
+              <RefreshCw size={17} />
             </button>
-          </section>
-          {connectionError != null && (
-            <ErrorNotice error={connectionError} title="Connexion au service à vérifier" />
-          )}
-          {health?.status === 'degraded' && (
-            <div className="notice warning" role="status">
-              <Icon name="alert" />
-              <div>
-                <strong>Service partiellement disponible</strong>
-                <p>
-                  Les modèles disponibles restent utilisables. Les autres sont signalés dans le
-                  sélecteur.
-                </p>
-              </div>
-            </div>
-          )}
-          <div className="inspection-grid">
-            <div className="input-column">
-              <section className="panel" aria-labelledby="setup-title">
-                <div className="panel-heading">
-                  <h2 id="setup-title">
-                    <span className="step-number">01</span> Configuration
-                  </h2>
-                  <span className="eyebrow">PARAMÈTRES</span>
-                </div>
-                <div className="configuration">
-                  <div className="field">
-                    <label htmlFor="category">Catégorie du produit</label>
-                    <select
-                      id="category"
-                      value={category}
-                      disabled={busy}
-                      onChange={(event) => {
-                        setCategory(event.target.value as Category);
-                        clearResults();
-                      }}
-                    >
-                      {CATEGORIES.map((item) => (
-                        <option value={item} key={item}>
-                          {categoryLabels[item]} · {item}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="field">
-                    <label htmlFor="model">Modèle d’inspection</label>
-                    <select
-                      id="model"
-                      value={selected?.model || ''}
-                      disabled={busy || !available.length}
-                      onChange={(event) => {
-                        setPreferredModel(event.target.value);
-                        clearResults();
-                      }}
-                    >
-                      {!available.length && (
-                        <option value="">
-                          {refreshing ? 'Chargement des modèles…' : 'Aucun modèle disponible'}
-                        </option>
-                      )}
-                      {MODEL_NAMES.map((name) => {
-                        const loaded = available.find((item) => item.model === name);
-                        const missing = unavailable.find((item) => item.model === name);
-                        return loaded || missing ? (
-                          <option key={name} value={name} disabled={!loaded}>
-                            {name} ·{' '}
-                            {loaded
-                              ? loaded.explanation === 'gradcam'
-                                ? 'Transfert'
-                                : 'Autoencodeur'
-                              : 'Indisponible'}
-                          </option>
-                        ) : null;
-                      })}
-                    </select>
-                  </div>
-                </div>
-                {selected && (
-                  <div className="model-info">
-                    <Icon name="info" size={17} />
-                    <span>
-                      {selected.explanation === 'gradcam'
-                        ? 'Attribution Grad-CAM'
-                        : 'Erreur de reconstruction'}
-                      <span className="info-separator">·</span>Entrée{' '}
-                      {selected.input_size.join(' × ')} px<span className="info-separator">·</span>
-                      Seuil {formatScore(selected.threshold)}
-                    </span>
-                  </div>
-                )}
-                {unavailable.length > 0 && (
-                  <details className="unavailable-details">
-                    <summary>
-                      {unavailable.length} modèle(s) indisponible(s) pour {category}
-                    </summary>
-                    {unavailable.map((item) => (
-                      <p key={item.model}>
-                        <strong>{item.model}</strong> — {item.reason}
-                      </p>
-                    ))}
-                  </details>
-                )}
-              </section>
-              <section className="panel upload-panel" aria-labelledby="upload-title">
-                <div className="panel-heading">
-                  <h2 id="upload-title">
-                    <span className="step-number">02</span> Image à inspecter
-                  </h2>
-                  <span className="eyebrow">PNG / JPEG</span>
-                </div>
-                <div
-                  className={`drop-zone ${dragging ? 'dragging' : ''} ${upload ? 'has-image' : ''}`}
-                  onDragEnter={(event) => {
-                    event.preventDefault();
-                    if (!busy) {
-                      dragDepth.current++;
-                      setDragging(true);
-                    }
-                  }}
-                  onDragOver={(event) => event.preventDefault()}
-                  onDragLeave={(event) => {
-                    event.preventDefault();
-                    dragDepth.current = Math.max(0, dragDepth.current - 1);
-                    if (!dragDepth.current) setDragging(false);
-                  }}
-                  onDrop={(event) => {
-                    event.preventDefault();
-                    dragDepth.current = 0;
-                    setDragging(false);
-                    void importFiles(Array.from(event.dataTransfer.files));
-                  }}
-                >
-                  {upload ? (
-                    <>
-                      <div className="preview-grid">
-                        <img
-                          className="local-preview"
-                          src={upload.url}
-                          alt={`Aperçu local : ${upload.file.name}`}
-                        />
-                      </div>
-                      <div className="file-bar">
-                        <Icon name="image" />
-                        <div>
-                          <strong title={upload.file.name}>{upload.file.name}</strong>
-                          <span>
-                            {upload.width} × {upload.height} px ·{' '}
-                            {(upload.file.size / 1024).toLocaleString('fr-FR', {
-                              maximumFractionDigits: 1,
-                            })}{' '}
-                            Kio
-                          </span>
-                        </div>
-                        <button
-                          className="icon-button"
-                          aria-label="Retirer l’image"
-                          disabled={busy}
-                          onClick={removeUpload}
-                        >
-                          <Icon name="close" size={18} />
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="drop-content">
-                      <span className="upload-symbol">
-                        <Icon name="upload" size={27} />
-                      </span>
-                      <h3>
-                        {validating
-                          ? 'Vérification de l’image…'
-                          : dragging
-                            ? 'Déposez votre image ici'
-                            : 'Glissez votre image ici'}
-                      </h3>
-                      <p>ou choisissez un fichier sur votre ordinateur</p>
-                      <button
-                        className="secondary-button"
-                        disabled={busy || validating}
-                        onClick={() => fileInput.current?.click()}
-                      >
-                        <Icon name="image" size={17} />
-                        Importer une image
-                      </button>
-                      <span className="file-hint">
-                        PNG, JPG ou JPEG · 10 Mio max. · 20 Mpx max.
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <input
-                  ref={fileInput}
-                  type="file"
-                  accept=".png,.jpg,.jpeg,image/png,image/jpeg"
-                  aria-label="Fichier image à inspecter"
-                  className="sr-only"
-                  tabIndex={-1}
-                  disabled={busy}
-                  onChange={(event) => void importFiles(Array.from(event.target.files || []))}
-                />
-                {upload && (
-                  <button
-                    className="text-button replace-image"
-                    disabled={busy}
-                    onClick={() => fileInput.current?.click()}
-                  >
-                    Remplacer l’image
-                  </button>
-                )}
-                {fileError != null && <ErrorNotice error={fileError} title="Fichier invalide" />}
-                <div className="analysis-action">
-                  <p>
-                    <Icon name="info" size={16} />
-                    L’image sera envoyée à votre API locale pour analyse.
-                  </p>
-                  <button
-                    className="primary-button"
-                    disabled={!upload || !selected || !health || busy || validating}
-                    onClick={() => void analyze()}
-                  >
-                    {busy ? <span className="spinner" /> : <Icon name="scan" />}
-                    {stage === 'predict'
-                      ? 'Analyse en cours…'
-                      : stage === 'visualize'
-                        ? 'Visualisation en cours…'
-                        : 'Analyser l’image'}
-                    {!busy && <Icon name="arrow" size={18} />}
-                  </button>
-                  {busy && (
-                    <button
-                      className="text-button cancel"
-                      onClick={() => analysisController.current?.abort()}
-                    >
-                      Annuler l’attente
-                    </button>
-                  )}
-                </div>
-              </section>
-              {analysisError != null && (
-                <ErrorNotice error={analysisError} title="L’analyse n’a pas abouti" />
-              )}
-              {prediction && <Result result={prediction} elapsed={elapsed} />}
-            </div>
-            <section className="panel visualization-panel" aria-labelledby="visualization-title">
-              <div className="panel-heading">
-                <h2 id="visualization-title">
-                  <span className="step-number">03</span> Visualisation
-                </h2>
-                <span className="tag">EXPLICABILITÉ</span>
-              </div>
-              {visualized ? (
-                <Explanation key={visualized.request_id} result={visualized} />
-              ) : (
-                <div className="visual-empty">
-                  <div className={`scan-placeholder ${busy ? 'scanning' : ''}`}>
-                    <Icon name="scan" size={52} />
-                    <span />
-                  </div>
-                  <h3>
-                    {stage === 'predict'
-                      ? 'Analyse de l’image'
-                      : stage === 'visualize'
-                        ? 'Génération de la visualisation'
-                        : visualError
-                          ? 'Visualisation indisponible'
-                          : 'Un regard sur la décision'}
-                  </h3>
-                  <p>
-                    {busy
-                      ? 'Le modèle traite votre image sur CPU. Cette opération peut prendre quelques instants.'
-                      : 'Après l’analyse, explorez la heatmap de reconstruction ou l’attribution Grad-CAM du modèle.'}
-                  </p>
-                  {busy && (
-                    <span className="processing-label" role="status">
-                      <span className="spinner" />
-                      {stage === 'predict'
-                        ? 'Étape 1 / 2 · Prédiction'
-                        : 'Étape 2 / 2 · Explication'}
-                    </span>
-                  )}
-                </div>
-              )}
-              {visualError != null && (
-                <div className="visual-error">
-                  <ErrorNotice error={visualError} title="La prédiction reste disponible" />
-                  <button
-                    className="secondary-button"
-                    disabled={busy || !health || !selected}
-                    onClick={() => void analyze(true)}
-                  >
-                    <Icon name="refresh" size={16} />
-                    Réessayer la visualisation
-                  </button>
-                </div>
-              )}
-              {!visualized && (
-                <div className="visual-footer">
-                  <Icon name="layers" size={18} />
-                  <span>
-                    <strong>B0 / A1</strong> · Reconstruction
-                    <br />
-                    <strong>T0 / T1 / T2</strong> · Grad-CAM
-                  </span>
-                </div>
-              )}
-            </section>
+            <button
+              className="icon-button"
+              aria-label={theme === 'dark' ? 'Activer le mode clair' : 'Activer le mode sombre'}
+              onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
+            >
+              {theme === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
+            </button>
+            <button
+              className="icon-button demo-toggle"
+              aria-label="Mode démonstration"
+              aria-pressed={demo}
+              title="Mode démonstration : agrandir, sans données simulées"
+              onClick={() => {
+                setDemo((d) => !d);
+                setCollapsed(true);
+              }}
+            >
+              <Presentation size={19} />
+            </button>
           </div>
+        </header>
+        <main id="main-content" tabIndex={-1}>
+          <div className="page-heading">
+            <div>
+              <div className="eyebrow accent">
+                INDUSTRIAL INTELLIGENCE STUDIO <span className="heading-separator">/</span>{' '}
+                {current.name.toUpperCase()}
+              </div>
+              <h1>{current.title}</h1>
+              <p>{current.description}</p>
+            </div>
+            <span className="environment">
+              <span className="status-dot" />
+              ENVIRONNEMENT LOCAL
+            </span>
+          </div>
+          {notice && (
+            <div role="alert" className="notice warning">
+              {notice}
+              <button onClick={() => setNotice('')} aria-label="Fermer la notification">
+                ×
+              </button>
+            </div>
+          )}
+          {page === 'dashboard' && (
+            <Dashboard system={system} history={history} navigate={navigate} />
+          )}
+          {page === 'inspection' && <SmartInspection />}
+          {page === 'comparison' && <ComparisonLab metadata={system.metadata} />}
+          {page === 'analytics' && (
+            <Suspense
+              fallback={
+                <div className="skeleton panel" role="status">
+                  Chargement des mesures officielles…
+                </div>
+              }
+            >
+              <Analytics />
+            </Suspense>
+          )}
+          {page === 'monitor' && <SystemMonitor system={system} />}
+          {page === 'history' && <HistoryPage entries={history} />}
           <footer className="page-footer">
             <span>
-              ResilientInspect AI <span>·</span> Inspection industrielle
+              ResilientInspect AI <span>·</span> Vision industrielle explicable
             </span>
-            <span>Décision assistée · Validation humaine requise</span>
+            <span>
+              CPU / FP32 <span>·</span> Validation humaine requise
+            </span>
           </footer>
         </main>
       </div>

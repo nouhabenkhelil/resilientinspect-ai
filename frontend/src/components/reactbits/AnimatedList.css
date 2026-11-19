@@ -1,0 +1,33 @@
+.rb-animated-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  min-width: 0;
+}
+.rb-animated-list li + li {
+  margin-top: 0.5rem;
+}
+.rb-list-item {
+  display: block;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  text-align: left;
+  color: inherit;
+  background: var(--surface, #111827);
+  border: 1px solid var(--border, #253449);
+  border-radius: 0.75rem;
+  overflow-wrap: anywhere;
+  font: inherit;
+}
+button.rb-list-item {
+  cursor: pointer;
+}
+button.rb-list-item:hover,
+.rb-list-item.selected {
+  border-color: var(--accent, #22d3ee);
+}
+button.rb-list-item:focus-visible {
+  outline: 2px solid var(--accent, #22d3ee);
+  outline-offset: 3px;
+}

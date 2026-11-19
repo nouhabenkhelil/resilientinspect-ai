@@ -1,4 +1,81 @@
-# ResilientInspect AI — frontend React
+# ResilientInspect AI 2.0 — Industrial Intelligence Studio
+
+La refonte ajoute six espaces : Control Center, Smart Inspection, Comparison
+Lab, Model Analytics, System Monitor et Historique. L’application conserve
+les quatre endpoints FastAPI et le proxy `/api`, sans changement du backend.
+
+Le [DESIGN.md](DESIGN.md) fixe les tokens, composants, comportements et règles
+scientifiques. Les quatre composants React Bits intégrés et leur licence
+MIT + Commons Clause sont documentés dans [THIRD_PARTY.md](THIRD_PARTY.md).
+Les résultats et limites de vérification figurent dans
+[reports/redesign-verification.md](reports/redesign-verification.md).
+
+## Exécution et vérification de la version 2.0
+
+Depuis la racine, avec FastAPI local sur 8000 pour Vite :
+
+```powershell
+npm.cmd --prefix frontend ci
+npm.cmd --prefix frontend run dev
+```
+
+Pour utiliser le backend Docker existant sur 8001 pendant le développement :
+
+```powershell
+$env:API_PROXY_TARGET = 'http://127.0.0.1:8001'
+npm.cmd --prefix frontend run dev
+```
+
+Reconstruction du seul frontend Docker, sans recréer le backend sain :
+
+```powershell
+docker compose config --quiet
+docker compose build frontend
+docker compose up -d --no-deps --wait --wait-timeout 60 frontend
+docker compose ps
+Invoke-RestMethod http://localhost:18080/api/health
+```
+
+Ouvrir <http://localhost:18080>. Oracle conserve le port 8080.
+
+```powershell
+npm.cmd --prefix frontend test
+npm.cmd --prefix frontend run build
+& .\.venv\Scripts\python.exe frontend/scripts/export-analytics.py --check
+& .\.venv\Scripts\python.exe -m pytest frontend/scripts/tests/test_export_analytics.py -q
+& .\.venv\Scripts\python.exe scripts/check_containers.py --output frontend/reports/http-verification.json
+Push-Location frontend
+npm.cmd exec playwright install chromium
+npm.cmd run test:browser
+Pop-Location
+```
+
+Le test navigateur utilise une image de validation normale locale, vérifiée
+par SHA256, et l’API réelle. Les captures restent dans
+`frontend/reports/screenshots/`, exclues de Git car certaines contiennent
+des images autorisées du dataset. Aucun dataset n’est ajouté au bundle.
+`UI_TEST_URL` permet de choisir une autre URL pour Playwright.
+
+Les métriques publiques sont un export agrégé et versionné de quinze rapports,
+avec 27 références de sources et empreintes. Pour le régénérer explicitement :
+
+```powershell
+& .\.venv\Scripts\python.exe frontend/scripts/export-analytics.py
+```
+
+La comparaison exécute une seule requête `/predict/visualize` à la fois, sans
+fusionner les scores ni modifier les seuils. L’annulation coupe l’attente et
+les requêtes suivantes ; un calcul déjà reçu par FastAPI peut terminer.
+Les latences de cette page incluent l’explication. Les compteurs du dashboard
+reposent sur les entrées conservées pendant le chargement courant de
+l’application, avec une limite de 200 entrées locales. Le rechargement ouvre
+une nouvelle session de compteurs. Aucun PNG ni image brute n’est conservé.
+
+La webcam exige un clic volontaire et l’autorisation du navigateur ; elle
+s’arrête après capture, fermeture ou changement de page. Aucune galerie MVTec
+n’est distribuée. Le mode démonstration ne fait qu’agrandir l’interface.
+
+## Parcours d’inspection conservé
 
 Interface locale d’inspection pour la validation du **24 novembre 2026**.
 React, TypeScript et Vite ; styles CSS locaux, sans police distante ni jeu de données embarqué.
