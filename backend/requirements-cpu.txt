@@ -1,0 +1,10 @@
+# Serving dependencies only; no MLflow, database, plotting stack or CUDA extras.
+-r requirements.txt
+torch==2.15.0+cpu
+torchvision==0.29.2+cpu
+numpy==2.3.5
+scikit-learn==1.8.0
+Pillow==13.0.0
+PyYAML==6.0.3
+setuptools==80.9.0
+wheel==0.45.1

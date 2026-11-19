@@ -1,0 +1,1450 @@
+{
+  "generated_at": "2026-11-17T15:26:18.849282+00:00",
+  "file_mounts": 273,
+  "linux_admission_blockers": [
+    {
+      "model": "B0",
+      "category": "bottle",
+      "reason": "Frozen calibration compares an absolute Windows checkpoint path to the Linux path."
+    },
+    {
+      "model": "B0",
+      "category": "hazelnut",
+      "reason": "Frozen calibration compares an absolute Windows checkpoint path to the Linux path."
+    },
+    {
+      "model": "B0",
+      "category": "leather",
+      "reason": "Frozen calibration compares an absolute Windows checkpoint path to the Linux path."
+    },
+    {
+      "model": "A1",
+      "category": "bottle",
+      "reason": "Frozen calibration compares an absolute Windows checkpoint path to the Linux path."
+    },
+    {
+      "model": "A1",
+      "category": "hazelnut",
+      "reason": "Frozen calibration compares an absolute Windows checkpoint path to the Linux path."
+    },
+    {
+      "model": "A1",
+      "category": "leather",
+      "reason": "Frozen calibration compares an absolute Windows checkpoint path to the Linux path."
+    },
+    {
+      "model": "T0",
+      "category": "bottle",
+      "reason": "Frozen CPU compatibility report requires the exact Windows platform; Linux is not validated."
+    },
+    {
+      "model": "T0",
+      "category": "hazelnut",
+      "reason": "Frozen CPU compatibility report requires the exact Windows platform; Linux is not validated."
+    },
+    {
+      "model": "T0",
+      "category": "leather",
+      "reason": "Frozen CPU compatibility report requires the exact Windows platform; Linux is not validated."
+    },
+    {
+      "model": "T1",
+      "category": "bottle",
+      "reason": "Frozen CPU compatibility report requires the exact Windows platform; Linux is not validated."
+    },
+    {
+      "model": "T1",
+      "category": "hazelnut",
+      "reason": "Frozen CPU compatibility report requires the exact Windows platform; Linux is not validated."
+    },
+    {
+      "model": "T1",
+      "category": "leather",
+      "reason": "Frozen CPU compatibility report requires the exact Windows platform; Linux is not validated."
+    },
+    {
+      "model": "T2",
+      "category": "bottle",
+      "reason": "Frozen CPU compatibility report requires the exact Windows platform; Linux is not validated."
+    },
+    {
+      "model": "T2",
+      "category": "hazelnut",
+      "reason": "Frozen CPU compatibility report requires the exact Windows platform; Linux is not validated."
+    },
+    {
+      "model": "T2",
+      "category": "leather",
+      "reason": "Frozen CPU compatibility report requires the exact Windows platform; Linux is not validated."
+    }
+  ],
+  "inputs": [
+    {
+      "target": "/app/data/manifests/manifest.csv",
+      "sha256": "13f55c7cf7c87a3e3739e24920bb0d85cc96a39a00e30d277ddfaa1832b84522",
+      "bytes": 164401
+    },
+    {
+      "target": "/app/data/manifests/preparation.json",
+      "sha256": "b7deb937b523c719e4b6b38a585e39003ca4d1aaedcc3b09f872b74a0f55d5b4",
+      "bytes": 2225
+    },
+    {
+      "target": "/app/configs/evaluate_ae_b0.yaml",
+      "sha256": "f515662ab4ef0437194f7fdc7b57c8ea435ae6cb7e1be95c26476a91fa5d963e",
+      "bytes": 467
+    },
+    {
+      "target": "/app/configs/evaluate_transfer.yaml",
+      "sha256": "6422dedbba1b6366cea3e3f4b617742ea1b87c3db3119e534545a78f7ce0ae56",
+      "bytes": 479
+    },
+    {
+      "target": "/app/configs/train_t0.yaml",
+      "sha256": "708568363722a7dc2b2c5e2cfc327d4bcb3085cc7c8ca485b1fb852039ac9267",
+      "bytes": 720
+    },
+    {
+      "target": "/app/configs/train_t1.yaml",
+      "sha256": "9444aaeb9fc52af00cefe616fb6e3ae60707ed1421bf3c73d39b54137cb15233",
+      "bytes": 700
+    },
+    {
+      "target": "/app/configs/train_t2.yaml",
+      "sha256": "495c0a2055dfc7a3a0eee2ffef772d7d1f775751670cd52fcf5db9ad66a75936",
+      "bytes": 710
+    },
+    {
+      "target": "/app/configs/synthetic_transfer.yaml",
+      "sha256": "b9657e3d55c2c94b7bfdbc8f8b11e9972171f0cfff355e427df99ffe4b670f19",
+      "bytes": 261
+    },
+    {
+      "target": "/app/artifacts/b0_runs/bottle/full_7b8b71d28bc44868840ca50f4b16f4a1/best.pt",
+      "sha256": "b70366819fdbd9043eb78e8865ca39cebadf5cb251ff7a9c0e94817c3c0593e4",
+      "bytes": 2377757
+    },
+    {
+      "target": "/app/artifacts/b0_runs/bottle/full_7b8b71d28bc44868840ca50f4b16f4a1/summary.json",
+      "sha256": "a7cccea7eab3c35807f540c8946e9c5e222677c1bbf8b77388bbb588afe07c42",
+      "bytes": 6370
+    },
+    {
+      "target": "/app/artifacts/b0_runs/bottle/full_7b8b71d28bc44868840ca50f4b16f4a1/effective_config.yaml",
+      "sha256": "a34c5b62ce861ed98331ef3f7092e287852a8ee90709e033433f17338bda4c61",
+      "bytes": 564
+    },
+    {
+      "target": "/app/artifacts/b0_runs/bottle/full_7b8b71d28bc44868840ca50f4b16f4a1/environment.json",
+      "sha256": "548fad232cc57a5ee3697b928dae961636cff157f13de252e2ddf9f5c1c867dc",
+      "bytes": 465
+    },
+    {
+      "target": "/app/reports/evaluation/b0/f515662ab4ef/bottle/calibration.json",
+      "sha256": "32a6df1e1284689ad07b451a76fe449019cf142a4bbfa1192f03c5da62483f3e",
+      "bytes": 5456
+    },
+    {
+      "target": "/app/reports/evaluation/b0/f515662ab4ef/bottle/calibration.sha256",
+      "sha256": "24b3a4173346a3a4df189097e47304ca403bf0a56d73b0ab120f9ee2c4dc0cf2",
+      "bytes": 65
+    },
+    {
+      "target": "/app/artifacts/b0_runs/hazelnut/full_7ad19992bae44fcb9a04b5e7e15eccaf/best.pt",
+      "sha256": "28317915de9c191bdee13fa002996445f456f0d3de08b0b43426126efdc2178d",
+      "bytes": 2377757
+    },
+    {
+      "target": "/app/artifacts/b0_runs/hazelnut/full_7ad19992bae44fcb9a04b5e7e15eccaf/summary.json",
+      "sha256": "6f40126a874b8e510116a0a2dbbb07abff6ba5c215293b219628f9ee3e0dd7d0",
+      "bytes": 6378
+    },
+    {
+      "target": "/app/artifacts/b0_runs/hazelnut/full_7ad19992bae44fcb9a04b5e7e15eccaf/effective_config.yaml",
+      "sha256": "a3f0204a2bce285e7e12454f7db8cf709df075224c3a167ecdb608a4ae69dccc",
+      "bytes": 566
+    },
+    {
+      "target": "/app/artifacts/b0_runs/hazelnut/full_7ad19992bae44fcb9a04b5e7e15eccaf/environment.json",
+      "sha256": "548fad232cc57a5ee3697b928dae961636cff157f13de252e2ddf9f5c1c867dc",
+      "bytes": 465
+    },
+    {
+      "target": "/app/reports/evaluation/b0/f515662ab4ef/hazelnut/calibration.json",
+      "sha256": "01bfd62ad2579699aec9161aab0e6a9cb1017a35237c61d3dd95b012b955a723",
+      "bytes": 9213
+    },
+    {
+      "target": "/app/reports/evaluation/b0/f515662ab4ef/hazelnut/calibration.sha256",
+      "sha256": "72fc9cb8b9f44c777149ea01c76f741c26656883c34f2777677b4288804031c9",
+      "bytes": 65
+    },
+    {
+      "target": "/app/artifacts/b0_runs/leather/full_15ee92b51d3e4ff99632422619e64c00/best.pt",
+      "sha256": "9de0b30085893bd24a45997cd87828c36c1c09030768327682715bcbe7403be3",
+      "bytes": 2377757
+    },
+    {
+      "target": "/app/artifacts/b0_runs/leather/full_15ee92b51d3e4ff99632422619e64c00/summary.json",
+      "sha256": "b20fc5a2b5550eb0b4428d448ad0f89ea03c23d791d52cdb6d87fe2218a8da56",
+      "bytes": 6150
+    },
+    {
+      "target": "/app/artifacts/b0_runs/leather/full_15ee92b51d3e4ff99632422619e64c00/effective_config.yaml",
+      "sha256": "8b471bda80edc253056fe7e1078143e55c7b7f26b8d6cba9ca934f759a0bde94",
+      "bytes": 565
+    },
+    {
+      "target": "/app/artifacts/b0_runs/leather/full_15ee92b51d3e4ff99632422619e64c00/environment.json",
+      "sha256": "548fad232cc57a5ee3697b928dae961636cff157f13de252e2ddf9f5c1c867dc",
+      "bytes": 465
+    },
+    {
+      "target": "/app/reports/evaluation/b0/f515662ab4ef/leather/calibration.json",
+      "sha256": "b48dd4d349cef4dbb6053185e9013eb52e18795776a5fb2f2ae2bd2a8fcc1541",
+      "bytes": 6193
+    },
+    {
+      "target": "/app/reports/evaluation/b0/f515662ab4ef/leather/calibration.sha256",
+      "sha256": "eb74d8ae692f62b02cbdaed727dfadcdbb071daeefcc19b22e0948e54baca8a5",
+      "bytes": 65
+    },
+    {
+      "target": "/app/artifacts/a1_runs/bottle/full_03f6c284b0164105bf364181695ce3b5/best.pt",
+      "sha256": "a6741c693306601ea41ad21675bd194f4a7d8f77ea7342f78ce10098c7efe71d",
+      "bytes": 33167781
+    },
+    {
+      "target": "/app/artifacts/a1_runs/bottle/full_03f6c284b0164105bf364181695ce3b5/summary.json",
+      "sha256": "58b8117fc416a199fc14854c90c18d10d4d7a0df3107c2d2615ac7065ed6c0a5",
+      "bytes": 10477
+    },
+    {
+      "target": "/app/artifacts/a1_runs/bottle/full_03f6c284b0164105bf364181695ce3b5/effective_config.yaml",
+      "sha256": "5c8bebb0339c6e73008d37255a71c8358ffda3c4095825480d42914f451a5068",
+      "bytes": 1164
+    },
+    {
+      "target": "/app/artifacts/a1_runs/bottle/full_03f6c284b0164105bf364181695ce3b5/environment.json",
+      "sha256": "548fad232cc57a5ee3697b928dae961636cff157f13de252e2ddf9f5c1c867dc",
+      "bytes": 465
+    },
+    {
+      "target": "/app/artifacts/a1_runs/bottle/full_03f6c284b0164105bf364181695ce3b5/architecture.yaml",
+      "sha256": "4fb6ee12884ff5fb762b3fc0a280f2f4fb9febb4e9c52e12ddc1848dce5c3504",
+      "bytes": 574
+    },
+    {
+      "target": "/app/artifacts/a1_runs/bottle/full_03f6c284b0164105bf364181695ce3b5/provenance.json",
+      "sha256": "f17dcb96b5b7b6987e319c1d54bc89d0880cb3bf1a1e87c4ae1fdadb52b1dd69",
+      "bytes": 2107
+    },
+    {
+      "target": "/app/artifacts/a1_runs/bottle/full_03f6c284b0164105bf364181695ce3b5/data_usage.json",
+      "sha256": "ca11ac8edabf5683cdda664ca947dc07f9afeefe10097e466b8c8fd72a87b72b",
+      "bytes": 6932
+    },
+    {
+      "target": "/app/artifacts/a1_runs/bottle/full_03f6c284b0164105bf364181695ce3b5/source/train_ae_a1.yaml",
+      "sha256": "15ffa33f69ec395289eba61fdf8d23f4e142ac3c64b1210d1000dab11fb63b11",
+      "bytes": 576
+    },
+    {
+      "target": "/app/artifacts/a1_runs/bottle/full_03f6c284b0164105bf364181695ce3b5/source/ae_improved.yaml",
+      "sha256": "4fb6ee12884ff5fb762b3fc0a280f2f4fb9febb4e9c52e12ddc1848dce5c3504",
+      "bytes": 574
+    },
+    {
+      "target": "/app/artifacts/a1_runs/bottle/full_03f6c284b0164105bf364181695ce3b5/source/dataset.yaml",
+      "sha256": "fa1e2ac94b803ac0983971ec1fe77f67d57438de854c9cfa79dbe3b312772ece",
+      "bytes": 1199
+    },
+    {
+      "target": "/app/artifacts/a1_runs/bottle/full_03f6c284b0164105bf364181695ce3b5/source/train_ae.py",
+      "sha256": "4ff4e8f3233c76c8a6681a40a363f98d62ce8ab365347fb5d8af183a86f4c2fc",
+      "bytes": 26726
+    },
+    {
+      "target": "/app/artifacts/a1_runs/bottle/full_03f6c284b0164105bf364181695ce3b5/source/pyproject.toml",
+      "sha256": "479845238bc22c1983bd3b7c80fe671ee87ddb4ae65a221caed7ad530adca0d6",
+      "bytes": 1056
+    },
+    {
+      "target": "/app/artifacts/a1_runs/bottle/full_03f6c284b0164105bf364181695ce3b5/source/autoencoder.py",
+      "sha256": "ce604d569536ade81bc52d13a8349aa1b10d85e16cd9a6f8856ce6f4437beec7",
+      "bytes": 2588
+    },
+    {
+      "target": "/app/artifacts/a1_runs/bottle/full_03f6c284b0164105bf364181695ce3b5/source/dataset.py",
+      "sha256": "de33d924f5ceaaf1ed1558efc8a23d7728bfe8890ed42530d1c10f0d839a9605",
+      "bytes": 5386
+    },
+    {
+      "target": "/app/artifacts/a1_runs/bottle/full_03f6c284b0164105bf364181695ce3b5/source/prepare.py",
+      "sha256": "b103f7279d802f2942f46cd4c2f30e207995ec297babcdcc01cc7307c066762e",
+      "bytes": 14188
+    },
+    {
+      "target": "/app/artifacts/a1_runs/bottle/full_03f6c284b0164105bf364181695ce3b5/source/audit.py",
+      "sha256": "60f11e416d3231e7aab535a171bb8b090f7593a163900334282900dd49925883",
+      "bytes": 19016
+    },
+    {
+      "target": "/app/artifacts/a1_runs/bottle/full_03f6c284b0164105bf364181695ce3b5/source/losses.py",
+      "sha256": "3568eb0107589ac1ddd9e3fb7beda7b640312be5a16de40901f2123e913a7de9",
+      "bytes": 3731
+    },
+    {
+      "target": "/app/artifacts/a1_runs/bottle/full_03f6c284b0164105bf364181695ce3b5/source/a1_config.py",
+      "sha256": "b4f540ad1bef77a395655c081927c34340e75b5e8dc1eed4f453a038adb27b32",
+      "bytes": 2996
+    },
+    {
+      "target": "/app/artifacts/a1_runs/bottle/full_03f6c284b0164105bf364181695ce3b5/source/autoencoder_improved.py",
+      "sha256": "1ec371823884802a48f66befaade8f533875e9a1249825a39968f13f72bfbbd9",
+      "bytes": 4207
+    },
+    {
+      "target": "/app/artifacts/a1_runs/bottle/full_03f6c284b0164105bf364181695ce3b5/source/augment.py",
+      "sha256": "e94c0613469ae1f9572c370bb957b11a4985be387c6fda27dbe108d312fdf41f",
+      "bytes": 2738
+    },
+    {
+      "target": "/app/reports/evaluation/a1/f515662ab4ef/bottle/calibration.json",
+      "sha256": "7a315ac7b60185b58af4bad846fb3dad85bfe214b66bdbaaf0c547d9f3ea4ac3",
+      "bytes": 6569
+    },
+    {
+      "target": "/app/reports/evaluation/a1/f515662ab4ef/bottle/calibration.sha256",
+      "sha256": "d356054d7f0ddddc2549999503974190e00d94f952562521d5d6e18dd64397c4",
+      "bytes": 65
+    },
+    {
+      "target": "/app/artifacts/a1_runs/hazelnut/full_0966957370a14cdda9d65a15e54cbaa5/best.pt",
+      "sha256": "e3d75856bc044ac8f6ae728b4ac1e44994b4514e48cc4435b8b708698cd293e4",
+      "bytes": 33167781
+    },
+    {
+      "target": "/app/artifacts/a1_runs/hazelnut/full_0966957370a14cdda9d65a15e54cbaa5/summary.json",
+      "sha256": "952f356d034ad3e78d6d7a282d4fa0747b33c590568d1b805c681df7cc764276",
+      "bytes": 10503
+    },
+    {
+      "target": "/app/artifacts/a1_runs/hazelnut/full_0966957370a14cdda9d65a15e54cbaa5/effective_config.yaml",
+      "sha256": "09e7c02c7c5428c73e8a648b79017dd9859d00e357ed19e68bb0177b1384991c",
+      "bytes": 1166
+    },
+    {
+      "target": "/app/artifacts/a1_runs/hazelnut/full_0966957370a14cdda9d65a15e54cbaa5/environment.json",
+      "sha256": "548fad232cc57a5ee3697b928dae961636cff157f13de252e2ddf9f5c1c867dc",
+      "bytes": 465
+    },
+    {
+      "target": "/app/artifacts/a1_runs/hazelnut/full_0966957370a14cdda9d65a15e54cbaa5/architecture.yaml",
+      "sha256": "4fb6ee12884ff5fb762b3fc0a280f2f4fb9febb4e9c52e12ddc1848dce5c3504",
+      "bytes": 574
+    },
+    {
+      "target": "/app/artifacts/a1_runs/hazelnut/full_0966957370a14cdda9d65a15e54cbaa5/provenance.json",
+      "sha256": "f17dcb96b5b7b6987e319c1d54bc89d0880cb3bf1a1e87c4ae1fdadb52b1dd69",
+      "bytes": 2107
+    },
+    {
+      "target": "/app/artifacts/a1_runs/hazelnut/full_0966957370a14cdda9d65a15e54cbaa5/data_usage.json",
+      "sha256": "11503c3bdbd8979c421748d88c0583cb24612115ff99f142f504343401d1b997",
+      "bytes": 13720
+    },
+    {
+      "target": "/app/artifacts/a1_runs/hazelnut/full_0966957370a14cdda9d65a15e54cbaa5/source/train_ae_a1.yaml",
+      "sha256": "15ffa33f69ec395289eba61fdf8d23f4e142ac3c64b1210d1000dab11fb63b11",
+      "bytes": 576
+    },
+    {
+      "target": "/app/artifacts/a1_runs/hazelnut/full_0966957370a14cdda9d65a15e54cbaa5/source/ae_improved.yaml",
+      "sha256": "4fb6ee12884ff5fb762b3fc0a280f2f4fb9febb4e9c52e12ddc1848dce5c3504",
+      "bytes": 574
+    },
+    {
+      "target": "/app/artifacts/a1_runs/hazelnut/full_0966957370a14cdda9d65a15e54cbaa5/source/dataset.yaml",
+      "sha256": "fa1e2ac94b803ac0983971ec1fe77f67d57438de854c9cfa79dbe3b312772ece",
+      "bytes": 1199
+    },
+    {
+      "target": "/app/artifacts/a1_runs/hazelnut/full_0966957370a14cdda9d65a15e54cbaa5/source/train_ae.py",
+      "sha256": "4ff4e8f3233c76c8a6681a40a363f98d62ce8ab365347fb5d8af183a86f4c2fc",
+      "bytes": 26726
+    },
+    {
+      "target": "/app/artifacts/a1_runs/hazelnut/full_0966957370a14cdda9d65a15e54cbaa5/source/pyproject.toml",
+      "sha256": "479845238bc22c1983bd3b7c80fe671ee87ddb4ae65a221caed7ad530adca0d6",
+      "bytes": 1056
+    },
+    {
+      "target": "/app/artifacts/a1_runs/hazelnut/full_0966957370a14cdda9d65a15e54cbaa5/source/autoencoder.py",
+      "sha256": "ce604d569536ade81bc52d13a8349aa1b10d85e16cd9a6f8856ce6f4437beec7",
+      "bytes": 2588
+    },
+    {
+      "target": "/app/artifacts/a1_runs/hazelnut/full_0966957370a14cdda9d65a15e54cbaa5/source/dataset.py",
+      "sha256": "de33d924f5ceaaf1ed1558efc8a23d7728bfe8890ed42530d1c10f0d839a9605",
+      "bytes": 5386
+    },
+    {
+      "target": "/app/artifacts/a1_runs/hazelnut/full_0966957370a14cdda9d65a15e54cbaa5/source/prepare.py",
+      "sha256": "b103f7279d802f2942f46cd4c2f30e207995ec297babcdcc01cc7307c066762e",
+      "bytes": 14188
+    },
+    {
+      "target": "/app/artifacts/a1_runs/hazelnut/full_0966957370a14cdda9d65a15e54cbaa5/source/audit.py",
+      "sha256": "60f11e416d3231e7aab535a171bb8b090f7593a163900334282900dd49925883",
+      "bytes": 19016
+    },
+    {
+      "target": "/app/artifacts/a1_runs/hazelnut/full_0966957370a14cdda9d65a15e54cbaa5/source/losses.py",
+      "sha256": "3568eb0107589ac1ddd9e3fb7beda7b640312be5a16de40901f2123e913a7de9",
+      "bytes": 3731
+    },
+    {
+      "target": "/app/artifacts/a1_runs/hazelnut/full_0966957370a14cdda9d65a15e54cbaa5/source/a1_config.py",
+      "sha256": "b4f540ad1bef77a395655c081927c34340e75b5e8dc1eed4f453a038adb27b32",
+      "bytes": 2996
+    },
+    {
+      "target": "/app/artifacts/a1_runs/hazelnut/full_0966957370a14cdda9d65a15e54cbaa5/source/autoencoder_improved.py",
+      "sha256": "1ec371823884802a48f66befaade8f533875e9a1249825a39968f13f72bfbbd9",
+      "bytes": 4207
+    },
+    {
+      "target": "/app/artifacts/a1_runs/hazelnut/full_0966957370a14cdda9d65a15e54cbaa5/source/augment.py",
+      "sha256": "e94c0613469ae1f9572c370bb957b11a4985be387c6fda27dbe108d312fdf41f",
+      "bytes": 2738
+    },
+    {
+      "target": "/app/reports/evaluation/a1/f515662ab4ef/hazelnut/calibration.json",
+      "sha256": "e928b98e907c5f9d6f758b29ff2f65858a511cc89c5769b8c5cc8133b63ca8c0",
+      "bytes": 10324
+    },
+    {
+      "target": "/app/reports/evaluation/a1/f515662ab4ef/hazelnut/calibration.sha256",
+      "sha256": "31db2662164de8397e03520b918fcfa36d2fb5ad324634b0c52f96642997dcf4",
+      "bytes": 65
+    },
+    {
+      "target": "/app/artifacts/a1_runs/leather/full_41e6a12c4b4942b6b7d6dc9e1ea3720a/best.pt",
+      "sha256": "2c236a97a07b9c0b3243e9354ae6941b4a121fb908753098d1e2bdec0df40c50",
+      "bytes": 33167781
+    },
+    {
+      "target": "/app/artifacts/a1_runs/leather/full_41e6a12c4b4942b6b7d6dc9e1ea3720a/summary.json",
+      "sha256": "69d37e888e6d828ee8309b73ebfda988c92a0519b7eca4f576fde276646a3577",
+      "bytes": 10458
+    },
+    {
+      "target": "/app/artifacts/a1_runs/leather/full_41e6a12c4b4942b6b7d6dc9e1ea3720a/effective_config.yaml",
+      "sha256": "09431e9906814bc22eccd60276eb4f9cd9e1a8e188f2c337ca403a84d430bfc9",
+      "bytes": 1165
+    },
+    {
+      "target": "/app/artifacts/a1_runs/leather/full_41e6a12c4b4942b6b7d6dc9e1ea3720a/environment.json",
+      "sha256": "548fad232cc57a5ee3697b928dae961636cff157f13de252e2ddf9f5c1c867dc",
+      "bytes": 465
+    },
+    {
+      "target": "/app/artifacts/a1_runs/leather/full_41e6a12c4b4942b6b7d6dc9e1ea3720a/architecture.yaml",
+      "sha256": "4fb6ee12884ff5fb762b3fc0a280f2f4fb9febb4e9c52e12ddc1848dce5c3504",
+      "bytes": 574
+    },
+    {
+      "target": "/app/artifacts/a1_runs/leather/full_41e6a12c4b4942b6b7d6dc9e1ea3720a/provenance.json",
+      "sha256": "f17dcb96b5b7b6987e319c1d54bc89d0880cb3bf1a1e87c4ae1fdadb52b1dd69",
+      "bytes": 2107
+    },
+    {
+      "target": "/app/artifacts/a1_runs/leather/full_41e6a12c4b4942b6b7d6dc9e1ea3720a/data_usage.json",
+      "sha256": "d6a6a3373761387400c43a241bd71b7db63c361e78d79933c3bbeb71e2fba3af",
+      "bytes": 8365
+    },
+    {
+      "target": "/app/artifacts/a1_runs/leather/full_41e6a12c4b4942b6b7d6dc9e1ea3720a/source/train_ae_a1.yaml",
+      "sha256": "15ffa33f69ec395289eba61fdf8d23f4e142ac3c64b1210d1000dab11fb63b11",
+      "bytes": 576
+    },
+    {
+      "target": "/app/artifacts/a1_runs/leather/full_41e6a12c4b4942b6b7d6dc9e1ea3720a/source/ae_improved.yaml",
+      "sha256": "4fb6ee12884ff5fb762b3fc0a280f2f4fb9febb4e9c52e12ddc1848dce5c3504",
+      "bytes": 574
+    },
+    {
+      "target": "/app/artifacts/a1_runs/leather/full_41e6a12c4b4942b6b7d6dc9e1ea3720a/source/dataset.yaml",
+      "sha256": "fa1e2ac94b803ac0983971ec1fe77f67d57438de854c9cfa79dbe3b312772ece",
+      "bytes": 1199
+    },
+    {
+      "target": "/app/artifacts/a1_runs/leather/full_41e6a12c4b4942b6b7d6dc9e1ea3720a/source/train_ae.py",
+      "sha256": "4ff4e8f3233c76c8a6681a40a363f98d62ce8ab365347fb5d8af183a86f4c2fc",
+      "bytes": 26726
+    },
+    {
+      "target": "/app/artifacts/a1_runs/leather/full_41e6a12c4b4942b6b7d6dc9e1ea3720a/source/pyproject.toml",
+      "sha256": "479845238bc22c1983bd3b7c80fe671ee87ddb4ae65a221caed7ad530adca0d6",
+      "bytes": 1056
+    },
+    {
+      "target": "/app/artifacts/a1_runs/leather/full_41e6a12c4b4942b6b7d6dc9e1ea3720a/source/autoencoder.py",
+      "sha256": "ce604d569536ade81bc52d13a8349aa1b10d85e16cd9a6f8856ce6f4437beec7",
+      "bytes": 2588
+    },
+    {
+      "target": "/app/artifacts/a1_runs/leather/full_41e6a12c4b4942b6b7d6dc9e1ea3720a/source/dataset.py",
+      "sha256": "de33d924f5ceaaf1ed1558efc8a23d7728bfe8890ed42530d1c10f0d839a9605",
+      "bytes": 5386
+    },
+    {
+      "target": "/app/artifacts/a1_runs/leather/full_41e6a12c4b4942b6b7d6dc9e1ea3720a/source/prepare.py",
+      "sha256": "b103f7279d802f2942f46cd4c2f30e207995ec297babcdcc01cc7307c066762e",
+      "bytes": 14188
+    },
+    {
+      "target": "/app/artifacts/a1_runs/leather/full_41e6a12c4b4942b6b7d6dc9e1ea3720a/source/audit.py",
+      "sha256": "60f11e416d3231e7aab535a171bb8b090f7593a163900334282900dd49925883",
+      "bytes": 19016
+    },
+    {
+      "target": "/app/artifacts/a1_runs/leather/full_41e6a12c4b4942b6b7d6dc9e1ea3720a/source/losses.py",
+      "sha256": "3568eb0107589ac1ddd9e3fb7beda7b640312be5a16de40901f2123e913a7de9",
+      "bytes": 3731
+    },
+    {
+      "target": "/app/artifacts/a1_runs/leather/full_41e6a12c4b4942b6b7d6dc9e1ea3720a/source/a1_config.py",
+      "sha256": "b4f540ad1bef77a395655c081927c34340e75b5e8dc1eed4f453a038adb27b32",
+      "bytes": 2996
+    },
+    {
+      "target": "/app/artifacts/a1_runs/leather/full_41e6a12c4b4942b6b7d6dc9e1ea3720a/source/autoencoder_improved.py",
+      "sha256": "1ec371823884802a48f66befaade8f533875e9a1249825a39968f13f72bfbbd9",
+      "bytes": 4207
+    },
+    {
+      "target": "/app/artifacts/a1_runs/leather/full_41e6a12c4b4942b6b7d6dc9e1ea3720a/source/augment.py",
+      "sha256": "e94c0613469ae1f9572c370bb957b11a4985be387c6fda27dbe108d312fdf41f",
+      "bytes": 2738
+    },
+    {
+      "target": "/app/reports/evaluation/a1/f515662ab4ef/leather/calibration.json",
+      "sha256": "2aecc0976f3389d5c1019c71148cf2e466bcb04df6d2460faec500ac18b0a51c",
+      "bytes": 7318
+    },
+    {
+      "target": "/app/reports/evaluation/a1/f515662ab4ef/leather/calibration.sha256",
+      "sha256": "5938eb9fc9fc620a78f5febdd20dd10eec05c7d187404cc04c58482d996326f2",
+      "bytes": 65
+    },
+    {
+      "target": "/app/reports/transfer/portability/validation_summary.json",
+      "sha256": "321680b0ba55ac29fc244e57da6ff8736a0cb5ff0735f11baa7648b2f2505ece",
+      "bytes": 11474
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/bottle/seed42/full_5653285316dc489badc96d0178688a1f/best.pt",
+      "sha256": "83b4a9794523bd533bdb05415de4945ee8864863a61dcd531934bb714b26db96",
+      "bytes": 48563441
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/bottle/seed42/full_5653285316dc489badc96d0178688a1f/summary.json",
+      "sha256": "ca6cc8a8830af8ab2352a4ae0a27b1b82000e2bc03d81c80d6761906c0d6e5e9",
+      "bytes": 18452
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/bottle/seed42/full_5653285316dc489badc96d0178688a1f/effective_config.yaml",
+      "sha256": "cab7097046532e76d2112241ba03bcd9d5bacd56a5ddab680567d0c5cc0cf1d8",
+      "bytes": 937
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/bottle/seed42/full_5653285316dc489badc96d0178688a1f/synthetic_plan.json",
+      "sha256": "b1bd73bc639561e335b9997c33369d2611c2fff5d0df996f77c1fba0883ce8f4",
+      "bytes": 818650
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/bottle/seed42/full_5653285316dc489badc96d0178688a1f/calibration.json",
+      "sha256": "26b845d02d5a42644c7bb5f3ef9c9b10e29b5fa96048784445e327b079ebff00",
+      "bytes": 21149
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/bottle/seed42/full_5653285316dc489badc96d0178688a1f/calibration.sha256",
+      "sha256": "cc6124c8259871465e7b39f0a4a97f4a977003b84f0c55f4ac47a9e63167c467",
+      "bytes": 65
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/bottle/seed42/full_5653285316dc489badc96d0178688a1f/environment.json",
+      "sha256": "6241960e82c893bc1a50d3baf3aed39a75355701b70abb73a42b6339d30739e1",
+      "bytes": 311
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/bottle/seed42/full_5653285316dc489badc96d0178688a1f/provenance.json",
+      "sha256": "17e2b90c0ee38324c9af2890363c9bc5c52b7f7c3c3fc5a89789b4d346c5ec27",
+      "bytes": 2083
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/bottle/seed42/full_5653285316dc489badc96d0178688a1f/source/train_t0.yaml",
+      "sha256": "708568363722a7dc2b2c5e2cfc327d4bcb3085cc7c8ca485b1fb852039ac9267",
+      "bytes": 720
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/bottle/seed42/full_5653285316dc489badc96d0178688a1f/source/synthetic_transfer.yaml",
+      "sha256": "b9657e3d55c2c94b7bfdbc8f8b11e9972171f0cfff355e427df99ffe4b670f19",
+      "bytes": 261
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/bottle/seed42/full_5653285316dc489badc96d0178688a1f/source/train_transfer.py",
+      "sha256": "d96470884ffc186939b1f6d628955c5cce5dcf42f20eb5a6c98e084e85b0cefe",
+      "bytes": 29355
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/bottle/seed42/full_5653285316dc489badc96d0178688a1f/source/transfer.py",
+      "sha256": "4d883d0533d3b5e54e0002de3da739164c526a2fba4a1fb06a7255eb27ab18ee",
+      "bytes": 9824
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/bottle/seed42/full_5653285316dc489badc96d0178688a1f/source/synthetic.py",
+      "sha256": "12919e781572e08c0389969be355a2dac04c52d7878ff1cb997536e7a0eaa619",
+      "bytes": 12577
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/bottle/seed42/full_5653285316dc489badc96d0178688a1f/source/dataset.py",
+      "sha256": "de33d924f5ceaaf1ed1558efc8a23d7728bfe8890ed42530d1c10f0d839a9605",
+      "bytes": 5386
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/bottle/seed42/full_5653285316dc489badc96d0178688a1f/source/prepare.py",
+      "sha256": "b103f7279d802f2942f46cd4c2f30e207995ec297babcdcc01cc7307c066762e",
+      "bytes": 14188
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/bottle/seed42/full_5653285316dc489badc96d0178688a1f/source/audit.py",
+      "sha256": "60f11e416d3231e7aab535a171bb8b090f7593a163900334282900dd49925883",
+      "bytes": 19016
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/bottle/seed42/full_5653285316dc489badc96d0178688a1f/source/train_ae.py",
+      "sha256": "4ff4e8f3233c76c8a6681a40a363f98d62ce8ab365347fb5d8af183a86f4c2fc",
+      "bytes": 26726
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/bottle/seed42/full_5653285316dc489badc96d0178688a1f/source/evaluate_ae.py",
+      "sha256": "cee5cd06d05e78af208345bee3d927bde8452994fab998998970d74c2d702ce0",
+      "bytes": 26930
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/bottle/seed42/full_5653285316dc489badc96d0178688a1f/source/pyproject.toml",
+      "sha256": "b7253ba29c910ca0962356c25eda01b06b9ae6b35b90b674374bc9a39cf75091",
+      "bytes": 1173
+    },
+    {
+      "target": "/app/reports/transfer/portability/T0/bottle/seed42/83b4a9794523/6422dedbba1b/compatibility.json",
+      "sha256": "4f3e26b5a54d8c9fcade84a0fd2c185c31c4b28a22906128df62ed85217fbc16",
+      "bytes": 47395
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/hazelnut/seed42/full_4d027c3ae4524798b2914df49689f3ef/best.pt",
+      "sha256": "7f31b37da53f0944695bc1682d4a97f9bd5859544619118cf852dc7094f2d025",
+      "bytes": 48563441
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/hazelnut/seed42/full_4d027c3ae4524798b2914df49689f3ef/summary.json",
+      "sha256": "fbdc460a23d522b488b29488396763f8e7427018fee90286b2ee1b0bf4dab363",
+      "bytes": 17867
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/hazelnut/seed42/full_4d027c3ae4524798b2914df49689f3ef/effective_config.yaml",
+      "sha256": "b1cb65d52b2750a685bbde1d579d9f7488e98f13bae1fa33eea3297013c9ee14",
+      "bytes": 939
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/hazelnut/seed42/full_4d027c3ae4524798b2914df49689f3ef/synthetic_plan.json",
+      "sha256": "b1bd73bc639561e335b9997c33369d2611c2fff5d0df996f77c1fba0883ce8f4",
+      "bytes": 818650
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/hazelnut/seed42/full_4d027c3ae4524798b2914df49689f3ef/calibration.json",
+      "sha256": "a1b8e76f10a61c54b0a0f6d587e125e6f47e36866c13b0d5025a420929158834",
+      "bytes": 38925
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/hazelnut/seed42/full_4d027c3ae4524798b2914df49689f3ef/calibration.sha256",
+      "sha256": "3680881b8ce5fa731641147bde6aed9996684ea839e0188f4a379a92bc835bb1",
+      "bytes": 65
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/hazelnut/seed42/full_4d027c3ae4524798b2914df49689f3ef/environment.json",
+      "sha256": "6241960e82c893bc1a50d3baf3aed39a75355701b70abb73a42b6339d30739e1",
+      "bytes": 311
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/hazelnut/seed42/full_4d027c3ae4524798b2914df49689f3ef/provenance.json",
+      "sha256": "17e2b90c0ee38324c9af2890363c9bc5c52b7f7c3c3fc5a89789b4d346c5ec27",
+      "bytes": 2083
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/hazelnut/seed42/full_4d027c3ae4524798b2914df49689f3ef/source/train_t0.yaml",
+      "sha256": "708568363722a7dc2b2c5e2cfc327d4bcb3085cc7c8ca485b1fb852039ac9267",
+      "bytes": 720
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/hazelnut/seed42/full_4d027c3ae4524798b2914df49689f3ef/source/synthetic_transfer.yaml",
+      "sha256": "b9657e3d55c2c94b7bfdbc8f8b11e9972171f0cfff355e427df99ffe4b670f19",
+      "bytes": 261
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/hazelnut/seed42/full_4d027c3ae4524798b2914df49689f3ef/source/train_transfer.py",
+      "sha256": "d96470884ffc186939b1f6d628955c5cce5dcf42f20eb5a6c98e084e85b0cefe",
+      "bytes": 29355
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/hazelnut/seed42/full_4d027c3ae4524798b2914df49689f3ef/source/transfer.py",
+      "sha256": "4d883d0533d3b5e54e0002de3da739164c526a2fba4a1fb06a7255eb27ab18ee",
+      "bytes": 9824
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/hazelnut/seed42/full_4d027c3ae4524798b2914df49689f3ef/source/synthetic.py",
+      "sha256": "12919e781572e08c0389969be355a2dac04c52d7878ff1cb997536e7a0eaa619",
+      "bytes": 12577
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/hazelnut/seed42/full_4d027c3ae4524798b2914df49689f3ef/source/dataset.py",
+      "sha256": "de33d924f5ceaaf1ed1558efc8a23d7728bfe8890ed42530d1c10f0d839a9605",
+      "bytes": 5386
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/hazelnut/seed42/full_4d027c3ae4524798b2914df49689f3ef/source/prepare.py",
+      "sha256": "b103f7279d802f2942f46cd4c2f30e207995ec297babcdcc01cc7307c066762e",
+      "bytes": 14188
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/hazelnut/seed42/full_4d027c3ae4524798b2914df49689f3ef/source/audit.py",
+      "sha256": "60f11e416d3231e7aab535a171bb8b090f7593a163900334282900dd49925883",
+      "bytes": 19016
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/hazelnut/seed42/full_4d027c3ae4524798b2914df49689f3ef/source/train_ae.py",
+      "sha256": "4ff4e8f3233c76c8a6681a40a363f98d62ce8ab365347fb5d8af183a86f4c2fc",
+      "bytes": 26726
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/hazelnut/seed42/full_4d027c3ae4524798b2914df49689f3ef/source/evaluate_ae.py",
+      "sha256": "cee5cd06d05e78af208345bee3d927bde8452994fab998998970d74c2d702ce0",
+      "bytes": 26930
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/hazelnut/seed42/full_4d027c3ae4524798b2914df49689f3ef/source/pyproject.toml",
+      "sha256": "b7253ba29c910ca0962356c25eda01b06b9ae6b35b90b674374bc9a39cf75091",
+      "bytes": 1173
+    },
+    {
+      "target": "/app/reports/transfer/portability/T0/hazelnut/seed42/7f31b37da53f/6422dedbba1b/compatibility.json",
+      "sha256": "7bcce72d9d5538fc7fc76563c6a6acb59e4768010660f573323bb44d1d504373",
+      "bytes": 87686
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/leather/seed42/full_61fd90e9606848af93c96fdbd8d9e000/best.pt",
+      "sha256": "8c9571eed0ff5eff4b84a32c968e8e0b4c142fe07b091285451bda7eb556591c",
+      "bytes": 48563441
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/leather/seed42/full_61fd90e9606848af93c96fdbd8d9e000/summary.json",
+      "sha256": "b043a362ff659bb1476da1bf6f54974b9e267b81b3805f48145be8f42e1a3cfc",
+      "bytes": 20043
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/leather/seed42/full_61fd90e9606848af93c96fdbd8d9e000/effective_config.yaml",
+      "sha256": "9cd25aa07451fde67c8f0ad0b62f0e4305c176e4ed1ce1ac21ddfcee9579a35d",
+      "bytes": 938
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/leather/seed42/full_61fd90e9606848af93c96fdbd8d9e000/synthetic_plan.json",
+      "sha256": "b1bd73bc639561e335b9997c33369d2611c2fff5d0df996f77c1fba0883ce8f4",
+      "bytes": 818650
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/leather/seed42/full_61fd90e9606848af93c96fdbd8d9e000/calibration.json",
+      "sha256": "fb3d96ca0c2af6d94b4aca09ad29a67f7db6a9e48969a343d0e6985c24c66051",
+      "bytes": 24739
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/leather/seed42/full_61fd90e9606848af93c96fdbd8d9e000/calibration.sha256",
+      "sha256": "47d47230f3dd0bed45e7a8512539ee6a4d7bf48341f8638dd375b521d0f6ca56",
+      "bytes": 65
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/leather/seed42/full_61fd90e9606848af93c96fdbd8d9e000/environment.json",
+      "sha256": "6241960e82c893bc1a50d3baf3aed39a75355701b70abb73a42b6339d30739e1",
+      "bytes": 311
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/leather/seed42/full_61fd90e9606848af93c96fdbd8d9e000/provenance.json",
+      "sha256": "17e2b90c0ee38324c9af2890363c9bc5c52b7f7c3c3fc5a89789b4d346c5ec27",
+      "bytes": 2083
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/leather/seed42/full_61fd90e9606848af93c96fdbd8d9e000/source/train_t0.yaml",
+      "sha256": "708568363722a7dc2b2c5e2cfc327d4bcb3085cc7c8ca485b1fb852039ac9267",
+      "bytes": 720
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/leather/seed42/full_61fd90e9606848af93c96fdbd8d9e000/source/synthetic_transfer.yaml",
+      "sha256": "b9657e3d55c2c94b7bfdbc8f8b11e9972171f0cfff355e427df99ffe4b670f19",
+      "bytes": 261
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/leather/seed42/full_61fd90e9606848af93c96fdbd8d9e000/source/train_transfer.py",
+      "sha256": "d96470884ffc186939b1f6d628955c5cce5dcf42f20eb5a6c98e084e85b0cefe",
+      "bytes": 29355
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/leather/seed42/full_61fd90e9606848af93c96fdbd8d9e000/source/transfer.py",
+      "sha256": "4d883d0533d3b5e54e0002de3da739164c526a2fba4a1fb06a7255eb27ab18ee",
+      "bytes": 9824
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/leather/seed42/full_61fd90e9606848af93c96fdbd8d9e000/source/synthetic.py",
+      "sha256": "12919e781572e08c0389969be355a2dac04c52d7878ff1cb997536e7a0eaa619",
+      "bytes": 12577
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/leather/seed42/full_61fd90e9606848af93c96fdbd8d9e000/source/dataset.py",
+      "sha256": "de33d924f5ceaaf1ed1558efc8a23d7728bfe8890ed42530d1c10f0d839a9605",
+      "bytes": 5386
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/leather/seed42/full_61fd90e9606848af93c96fdbd8d9e000/source/prepare.py",
+      "sha256": "b103f7279d802f2942f46cd4c2f30e207995ec297babcdcc01cc7307c066762e",
+      "bytes": 14188
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/leather/seed42/full_61fd90e9606848af93c96fdbd8d9e000/source/audit.py",
+      "sha256": "60f11e416d3231e7aab535a171bb8b090f7593a163900334282900dd49925883",
+      "bytes": 19016
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/leather/seed42/full_61fd90e9606848af93c96fdbd8d9e000/source/train_ae.py",
+      "sha256": "4ff4e8f3233c76c8a6681a40a363f98d62ce8ab365347fb5d8af183a86f4c2fc",
+      "bytes": 26726
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/leather/seed42/full_61fd90e9606848af93c96fdbd8d9e000/source/evaluate_ae.py",
+      "sha256": "cee5cd06d05e78af208345bee3d927bde8452994fab998998970d74c2d702ce0",
+      "bytes": 26930
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T0/leather/seed42/full_61fd90e9606848af93c96fdbd8d9e000/source/pyproject.toml",
+      "sha256": "b7253ba29c910ca0962356c25eda01b06b9ae6b35b90b674374bc9a39cf75091",
+      "bytes": 1173
+    },
+    {
+      "target": "/app/reports/transfer/portability/T0/leather/seed42/8c9571eed0ff/6422dedbba1b/compatibility.json",
+      "sha256": "6bbd6ed09d83c2c6983bc99363a189d35726ab31f36e46325b23e89bd8cea9be",
+      "bytes": 55532
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/bottle/seed42/full_49327e70ea3840a5be06655510ba5752/best.pt",
+      "sha256": "e7ce1dbb2aaee94a8a1e2ad9705f8e7da6b909abd2273416dff44d24d2d94347",
+      "bytes": 16327203
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/bottle/seed42/full_49327e70ea3840a5be06655510ba5752/summary.json",
+      "sha256": "0d07ea94e25dba80c1a71ccfefda303809363379b8ef6784cf01fb9ac99b7402",
+      "bytes": 17157
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/bottle/seed42/full_49327e70ea3840a5be06655510ba5752/effective_config.yaml",
+      "sha256": "c71456467087352eae73c999f945897d9653aa5c4b957519de19b0e6bcd0acb8",
+      "bytes": 891
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/bottle/seed42/full_49327e70ea3840a5be06655510ba5752/synthetic_plan.json",
+      "sha256": "b1bd73bc639561e335b9997c33369d2611c2fff5d0df996f77c1fba0883ce8f4",
+      "bytes": 818650
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/bottle/seed42/full_49327e70ea3840a5be06655510ba5752/calibration.json",
+      "sha256": "ef2e1753c7eafcc200f9dbc31ea124652ccb17beda5068b5fa09e98c5d0ef74e",
+      "bytes": 21316
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/bottle/seed42/full_49327e70ea3840a5be06655510ba5752/calibration.sha256",
+      "sha256": "9d7bb12bb5f2ad67d8633ee59ae21d637393aa2da61e1e8e8439faf3748572f0",
+      "bytes": 65
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/bottle/seed42/full_49327e70ea3840a5be06655510ba5752/environment.json",
+      "sha256": "6241960e82c893bc1a50d3baf3aed39a75355701b70abb73a42b6339d30739e1",
+      "bytes": 311
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/bottle/seed42/full_49327e70ea3840a5be06655510ba5752/provenance.json",
+      "sha256": "d7dd020f40913e88625aa2c531dbbbb6f05e624cb482342c65d062c5dbaf1b6b",
+      "bytes": 2454
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/bottle/seed42/full_49327e70ea3840a5be06655510ba5752/source/train_t1.yaml",
+      "sha256": "9444aaeb9fc52af00cefe616fb6e3ae60707ed1421bf3c73d39b54137cb15233",
+      "bytes": 700
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/bottle/seed42/full_49327e70ea3840a5be06655510ba5752/source/synthetic_transfer.yaml",
+      "sha256": "b9657e3d55c2c94b7bfdbc8f8b11e9972171f0cfff355e427df99ffe4b670f19",
+      "bytes": 261
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/bottle/seed42/full_49327e70ea3840a5be06655510ba5752/source/train_transfer.py",
+      "sha256": "d96470884ffc186939b1f6d628955c5cce5dcf42f20eb5a6c98e084e85b0cefe",
+      "bytes": 29355
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/bottle/seed42/full_49327e70ea3840a5be06655510ba5752/source/transfer.py",
+      "sha256": "4d883d0533d3b5e54e0002de3da739164c526a2fba4a1fb06a7255eb27ab18ee",
+      "bytes": 9824
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/bottle/seed42/full_49327e70ea3840a5be06655510ba5752/source/synthetic.py",
+      "sha256": "12919e781572e08c0389969be355a2dac04c52d7878ff1cb997536e7a0eaa619",
+      "bytes": 12577
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/bottle/seed42/full_49327e70ea3840a5be06655510ba5752/source/dataset.py",
+      "sha256": "de33d924f5ceaaf1ed1558efc8a23d7728bfe8890ed42530d1c10f0d839a9605",
+      "bytes": 5386
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/bottle/seed42/full_49327e70ea3840a5be06655510ba5752/source/prepare.py",
+      "sha256": "b103f7279d802f2942f46cd4c2f30e207995ec297babcdcc01cc7307c066762e",
+      "bytes": 14188
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/bottle/seed42/full_49327e70ea3840a5be06655510ba5752/source/audit.py",
+      "sha256": "60f11e416d3231e7aab535a171bb8b090f7593a163900334282900dd49925883",
+      "bytes": 19016
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/bottle/seed42/full_49327e70ea3840a5be06655510ba5752/source/train_ae.py",
+      "sha256": "4ff4e8f3233c76c8a6681a40a363f98d62ce8ab365347fb5d8af183a86f4c2fc",
+      "bytes": 26726
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/bottle/seed42/full_49327e70ea3840a5be06655510ba5752/source/evaluate_ae.py",
+      "sha256": "cee5cd06d05e78af208345bee3d927bde8452994fab998998970d74c2d702ce0",
+      "bytes": 26930
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/bottle/seed42/full_49327e70ea3840a5be06655510ba5752/source/pyproject.toml",
+      "sha256": "b7253ba29c910ca0962356c25eda01b06b9ae6b35b90b674374bc9a39cf75091",
+      "bytes": 1173
+    },
+    {
+      "target": "/app/reports/transfer/portability/T1/bottle/seed42/e7ce1dbb2aae/6422dedbba1b/compatibility.json",
+      "sha256": "7985ebbbdea48aba16b66fbec6197bc9a7f540ac4418eb593df47fe32bfbb246",
+      "bytes": 48356
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/hazelnut/seed42/full_b2f6fc7e315049fe9236a3326e972b04/best.pt",
+      "sha256": "f0c64a57d2fb8d53f9e6ef06cb0a9e3b7044cf7c2d79c76c7e61138c70348c19",
+      "bytes": 16327203
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/hazelnut/seed42/full_b2f6fc7e315049fe9236a3326e972b04/summary.json",
+      "sha256": "d7ba30c9951d74a3f5241beb52257a94e7503e94323c63710127e18cfc2138e2",
+      "bytes": 17773
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/hazelnut/seed42/full_b2f6fc7e315049fe9236a3326e972b04/effective_config.yaml",
+      "sha256": "b1a22f1cd17d2197f0e25fb856dcbd5c0b180316039c6b2a803db49f5986e09f",
+      "bytes": 893
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/hazelnut/seed42/full_b2f6fc7e315049fe9236a3326e972b04/synthetic_plan.json",
+      "sha256": "b1bd73bc639561e335b9997c33369d2611c2fff5d0df996f77c1fba0883ce8f4",
+      "bytes": 818650
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/hazelnut/seed42/full_b2f6fc7e315049fe9236a3326e972b04/calibration.json",
+      "sha256": "f62bfc917373219680b6d4d897e8519de05ed091e60291fcd02965bbaf348152",
+      "bytes": 38794
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/hazelnut/seed42/full_b2f6fc7e315049fe9236a3326e972b04/calibration.sha256",
+      "sha256": "feec986b61b8fe33d1101f09b4badfd576f482f55ee23bc67e0cb2d16c70ac4e",
+      "bytes": 65
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/hazelnut/seed42/full_b2f6fc7e315049fe9236a3326e972b04/environment.json",
+      "sha256": "6241960e82c893bc1a50d3baf3aed39a75355701b70abb73a42b6339d30739e1",
+      "bytes": 311
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/hazelnut/seed42/full_b2f6fc7e315049fe9236a3326e972b04/provenance.json",
+      "sha256": "d7dd020f40913e88625aa2c531dbbbb6f05e624cb482342c65d062c5dbaf1b6b",
+      "bytes": 2454
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/hazelnut/seed42/full_b2f6fc7e315049fe9236a3326e972b04/source/train_t1.yaml",
+      "sha256": "9444aaeb9fc52af00cefe616fb6e3ae60707ed1421bf3c73d39b54137cb15233",
+      "bytes": 700
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/hazelnut/seed42/full_b2f6fc7e315049fe9236a3326e972b04/source/synthetic_transfer.yaml",
+      "sha256": "b9657e3d55c2c94b7bfdbc8f8b11e9972171f0cfff355e427df99ffe4b670f19",
+      "bytes": 261
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/hazelnut/seed42/full_b2f6fc7e315049fe9236a3326e972b04/source/train_transfer.py",
+      "sha256": "d96470884ffc186939b1f6d628955c5cce5dcf42f20eb5a6c98e084e85b0cefe",
+      "bytes": 29355
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/hazelnut/seed42/full_b2f6fc7e315049fe9236a3326e972b04/source/transfer.py",
+      "sha256": "4d883d0533d3b5e54e0002de3da739164c526a2fba4a1fb06a7255eb27ab18ee",
+      "bytes": 9824
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/hazelnut/seed42/full_b2f6fc7e315049fe9236a3326e972b04/source/synthetic.py",
+      "sha256": "12919e781572e08c0389969be355a2dac04c52d7878ff1cb997536e7a0eaa619",
+      "bytes": 12577
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/hazelnut/seed42/full_b2f6fc7e315049fe9236a3326e972b04/source/dataset.py",
+      "sha256": "de33d924f5ceaaf1ed1558efc8a23d7728bfe8890ed42530d1c10f0d839a9605",
+      "bytes": 5386
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/hazelnut/seed42/full_b2f6fc7e315049fe9236a3326e972b04/source/prepare.py",
+      "sha256": "b103f7279d802f2942f46cd4c2f30e207995ec297babcdcc01cc7307c066762e",
+      "bytes": 14188
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/hazelnut/seed42/full_b2f6fc7e315049fe9236a3326e972b04/source/audit.py",
+      "sha256": "60f11e416d3231e7aab535a171bb8b090f7593a163900334282900dd49925883",
+      "bytes": 19016
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/hazelnut/seed42/full_b2f6fc7e315049fe9236a3326e972b04/source/train_ae.py",
+      "sha256": "4ff4e8f3233c76c8a6681a40a363f98d62ce8ab365347fb5d8af183a86f4c2fc",
+      "bytes": 26726
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/hazelnut/seed42/full_b2f6fc7e315049fe9236a3326e972b04/source/evaluate_ae.py",
+      "sha256": "cee5cd06d05e78af208345bee3d927bde8452994fab998998970d74c2d702ce0",
+      "bytes": 26930
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/hazelnut/seed42/full_b2f6fc7e315049fe9236a3326e972b04/source/pyproject.toml",
+      "sha256": "b7253ba29c910ca0962356c25eda01b06b9ae6b35b90b674374bc9a39cf75091",
+      "bytes": 1173
+    },
+    {
+      "target": "/app/reports/transfer/portability/T1/hazelnut/seed42/f0c64a57d2fb/6422dedbba1b/compatibility.json",
+      "sha256": "28c557300c3c8b4f070748ec7b7bb0a71e815d30f880bad4e63330ca04f0f474",
+      "bytes": 88080
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/leather/seed42/full_4e4db05ac2264401a3e09d9f129b4fc9/best.pt",
+      "sha256": "c2d0e6c9d3432a49dde75d658347cc5cb10dbb1e3e9b4059f10b941af2d7b2d6",
+      "bytes": 16327203
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/leather/seed42/full_4e4db05ac2264401a3e09d9f129b4fc9/summary.json",
+      "sha256": "cafd42bdd5787b6f6f633c220145a11ec49702888e4b710e246053916cda7583",
+      "bytes": 15542
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/leather/seed42/full_4e4db05ac2264401a3e09d9f129b4fc9/effective_config.yaml",
+      "sha256": "5a55a5ffd9ada174fd07c529ed9f15eb75d4c5f03e8d046fe0802112c6ff00e7",
+      "bytes": 892
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/leather/seed42/full_4e4db05ac2264401a3e09d9f129b4fc9/synthetic_plan.json",
+      "sha256": "b1bd73bc639561e335b9997c33369d2611c2fff5d0df996f77c1fba0883ce8f4",
+      "bytes": 818650
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/leather/seed42/full_4e4db05ac2264401a3e09d9f129b4fc9/calibration.json",
+      "sha256": "8ef565baef54bd2d542c468cc25254c784a8d9bdae0b4b6f294dee295e276e8d",
+      "bytes": 24691
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/leather/seed42/full_4e4db05ac2264401a3e09d9f129b4fc9/calibration.sha256",
+      "sha256": "d83baa133ffcba407187e5b6a18e280f93e47c0dd0cf51176cda1c4fafd06683",
+      "bytes": 65
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/leather/seed42/full_4e4db05ac2264401a3e09d9f129b4fc9/environment.json",
+      "sha256": "6241960e82c893bc1a50d3baf3aed39a75355701b70abb73a42b6339d30739e1",
+      "bytes": 311
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/leather/seed42/full_4e4db05ac2264401a3e09d9f129b4fc9/provenance.json",
+      "sha256": "d7dd020f40913e88625aa2c531dbbbb6f05e624cb482342c65d062c5dbaf1b6b",
+      "bytes": 2454
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/leather/seed42/full_4e4db05ac2264401a3e09d9f129b4fc9/source/train_t1.yaml",
+      "sha256": "9444aaeb9fc52af00cefe616fb6e3ae60707ed1421bf3c73d39b54137cb15233",
+      "bytes": 700
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/leather/seed42/full_4e4db05ac2264401a3e09d9f129b4fc9/source/synthetic_transfer.yaml",
+      "sha256": "b9657e3d55c2c94b7bfdbc8f8b11e9972171f0cfff355e427df99ffe4b670f19",
+      "bytes": 261
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/leather/seed42/full_4e4db05ac2264401a3e09d9f129b4fc9/source/train_transfer.py",
+      "sha256": "d96470884ffc186939b1f6d628955c5cce5dcf42f20eb5a6c98e084e85b0cefe",
+      "bytes": 29355
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/leather/seed42/full_4e4db05ac2264401a3e09d9f129b4fc9/source/transfer.py",
+      "sha256": "4d883d0533d3b5e54e0002de3da739164c526a2fba4a1fb06a7255eb27ab18ee",
+      "bytes": 9824
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/leather/seed42/full_4e4db05ac2264401a3e09d9f129b4fc9/source/synthetic.py",
+      "sha256": "12919e781572e08c0389969be355a2dac04c52d7878ff1cb997536e7a0eaa619",
+      "bytes": 12577
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/leather/seed42/full_4e4db05ac2264401a3e09d9f129b4fc9/source/dataset.py",
+      "sha256": "de33d924f5ceaaf1ed1558efc8a23d7728bfe8890ed42530d1c10f0d839a9605",
+      "bytes": 5386
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/leather/seed42/full_4e4db05ac2264401a3e09d9f129b4fc9/source/prepare.py",
+      "sha256": "b103f7279d802f2942f46cd4c2f30e207995ec297babcdcc01cc7307c066762e",
+      "bytes": 14188
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/leather/seed42/full_4e4db05ac2264401a3e09d9f129b4fc9/source/audit.py",
+      "sha256": "60f11e416d3231e7aab535a171bb8b090f7593a163900334282900dd49925883",
+      "bytes": 19016
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/leather/seed42/full_4e4db05ac2264401a3e09d9f129b4fc9/source/train_ae.py",
+      "sha256": "4ff4e8f3233c76c8a6681a40a363f98d62ce8ab365347fb5d8af183a86f4c2fc",
+      "bytes": 26726
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/leather/seed42/full_4e4db05ac2264401a3e09d9f129b4fc9/source/evaluate_ae.py",
+      "sha256": "cee5cd06d05e78af208345bee3d927bde8452994fab998998970d74c2d702ce0",
+      "bytes": 26930
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T1/leather/seed42/full_4e4db05ac2264401a3e09d9f129b4fc9/source/pyproject.toml",
+      "sha256": "b7253ba29c910ca0962356c25eda01b06b9ae6b35b90b674374bc9a39cf75091",
+      "bytes": 1173
+    },
+    {
+      "target": "/app/reports/transfer/portability/T1/leather/seed42/c2d0e6c9d343/6422dedbba1b/compatibility.json",
+      "sha256": "73bfda3734ca9664ae08b715c9c3bf1622ac5a86e623377b9ba4c0b9ccef7f28",
+      "bytes": 55683
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/bottle/seed42/full_d23b0eaa9b3a481bb448633b285e94a3/best.pt",
+      "sha256": "f07a9ca4bd16ada6d5c1bd6840ff90b8bc5e89fb29d86d362ddc51ca575c308d",
+      "bytes": 41630411
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/bottle/seed42/full_d23b0eaa9b3a481bb448633b285e94a3/summary.json",
+      "sha256": "d143045fe0cf93eddf233ee06ffc32ae544a5c7c597b9be47ef7ce7db9cece83",
+      "bytes": 18406
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/bottle/seed42/full_d23b0eaa9b3a481bb448633b285e94a3/effective_config.yaml",
+      "sha256": "1050a004bc99942b32a3886497c9898a63f75e98ffa3a1107a35882e38f859b1",
+      "bytes": 909
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/bottle/seed42/full_d23b0eaa9b3a481bb448633b285e94a3/synthetic_plan.json",
+      "sha256": "b1bd73bc639561e335b9997c33369d2611c2fff5d0df996f77c1fba0883ce8f4",
+      "bytes": 818650
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/bottle/seed42/full_d23b0eaa9b3a481bb448633b285e94a3/calibration.json",
+      "sha256": "aa60c5a59425680567020b8b2465bdb6684c160a2c964ae795a6246b7eb73b6c",
+      "bytes": 21406
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/bottle/seed42/full_d23b0eaa9b3a481bb448633b285e94a3/calibration.sha256",
+      "sha256": "046931b07a695224b567b4a27b2d06c8cfa49dedae84ca7118708d2bc4d4af3b",
+      "bytes": 65
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/bottle/seed42/full_d23b0eaa9b3a481bb448633b285e94a3/environment.json",
+      "sha256": "6241960e82c893bc1a50d3baf3aed39a75355701b70abb73a42b6339d30739e1",
+      "bytes": 311
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/bottle/seed42/full_d23b0eaa9b3a481bb448633b285e94a3/provenance.json",
+      "sha256": "fd949993cf15fd857d81893f90cca075345837d003fdca388eb9bd8bb0a05caa",
+      "bytes": 2454
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/bottle/seed42/full_d23b0eaa9b3a481bb448633b285e94a3/source/train_t2.yaml",
+      "sha256": "495c0a2055dfc7a3a0eee2ffef772d7d1f775751670cd52fcf5db9ad66a75936",
+      "bytes": 710
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/bottle/seed42/full_d23b0eaa9b3a481bb448633b285e94a3/source/synthetic_transfer.yaml",
+      "sha256": "b9657e3d55c2c94b7bfdbc8f8b11e9972171f0cfff355e427df99ffe4b670f19",
+      "bytes": 261
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/bottle/seed42/full_d23b0eaa9b3a481bb448633b285e94a3/source/train_transfer.py",
+      "sha256": "d96470884ffc186939b1f6d628955c5cce5dcf42f20eb5a6c98e084e85b0cefe",
+      "bytes": 29355
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/bottle/seed42/full_d23b0eaa9b3a481bb448633b285e94a3/source/transfer.py",
+      "sha256": "4d883d0533d3b5e54e0002de3da739164c526a2fba4a1fb06a7255eb27ab18ee",
+      "bytes": 9824
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/bottle/seed42/full_d23b0eaa9b3a481bb448633b285e94a3/source/synthetic.py",
+      "sha256": "12919e781572e08c0389969be355a2dac04c52d7878ff1cb997536e7a0eaa619",
+      "bytes": 12577
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/bottle/seed42/full_d23b0eaa9b3a481bb448633b285e94a3/source/dataset.py",
+      "sha256": "de33d924f5ceaaf1ed1558efc8a23d7728bfe8890ed42530d1c10f0d839a9605",
+      "bytes": 5386
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/bottle/seed42/full_d23b0eaa9b3a481bb448633b285e94a3/source/prepare.py",
+      "sha256": "b103f7279d802f2942f46cd4c2f30e207995ec297babcdcc01cc7307c066762e",
+      "bytes": 14188
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/bottle/seed42/full_d23b0eaa9b3a481bb448633b285e94a3/source/audit.py",
+      "sha256": "60f11e416d3231e7aab535a171bb8b090f7593a163900334282900dd49925883",
+      "bytes": 19016
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/bottle/seed42/full_d23b0eaa9b3a481bb448633b285e94a3/source/train_ae.py",
+      "sha256": "4ff4e8f3233c76c8a6681a40a363f98d62ce8ab365347fb5d8af183a86f4c2fc",
+      "bytes": 26726
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/bottle/seed42/full_d23b0eaa9b3a481bb448633b285e94a3/source/evaluate_ae.py",
+      "sha256": "cee5cd06d05e78af208345bee3d927bde8452994fab998998970d74c2d702ce0",
+      "bytes": 26930
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/bottle/seed42/full_d23b0eaa9b3a481bb448633b285e94a3/source/pyproject.toml",
+      "sha256": "b7253ba29c910ca0962356c25eda01b06b9ae6b35b90b674374bc9a39cf75091",
+      "bytes": 1173
+    },
+    {
+      "target": "/app/reports/transfer/portability/T2/bottle/seed42/f07a9ca4bd16/6422dedbba1b/compatibility.json",
+      "sha256": "8cba58516ae1b6b4b1938aad6ecd76a9f25ea77f955d2f2192e6c8203b532cdf",
+      "bytes": 48166
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/hazelnut/seed42/full_c4092b01491247548bfc0113bf52537e/best.pt",
+      "sha256": "0dbbeeb75a174073560bfc7625aa9afae7f1e825340717cd06e38732ea87e57e",
+      "bytes": 41630411
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/hazelnut/seed42/full_c4092b01491247548bfc0113bf52537e/summary.json",
+      "sha256": "a9d77d8f03fa805bd36726e795ec39d58def0b338b0ce5386b5ba32feae11042",
+      "bytes": 17889
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/hazelnut/seed42/full_c4092b01491247548bfc0113bf52537e/effective_config.yaml",
+      "sha256": "04b47091a526e38e201f747850160dd6724cfceba02f9e964b5b126b72d2ca2b",
+      "bytes": 911
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/hazelnut/seed42/full_c4092b01491247548bfc0113bf52537e/synthetic_plan.json",
+      "sha256": "b1bd73bc639561e335b9997c33369d2611c2fff5d0df996f77c1fba0883ce8f4",
+      "bytes": 818650
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/hazelnut/seed42/full_c4092b01491247548bfc0113bf52537e/calibration.json",
+      "sha256": "0ce71a81fd1f78d4392e3efcddf67289e94aa830dc56a70fab13f83af58bf4d4",
+      "bytes": 38886
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/hazelnut/seed42/full_c4092b01491247548bfc0113bf52537e/calibration.sha256",
+      "sha256": "5ced1a0027e87624de57ea6a4df776776dd1d939ac5013ff33c7ee6481e307c4",
+      "bytes": 65
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/hazelnut/seed42/full_c4092b01491247548bfc0113bf52537e/environment.json",
+      "sha256": "6241960e82c893bc1a50d3baf3aed39a75355701b70abb73a42b6339d30739e1",
+      "bytes": 311
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/hazelnut/seed42/full_c4092b01491247548bfc0113bf52537e/provenance.json",
+      "sha256": "fd949993cf15fd857d81893f90cca075345837d003fdca388eb9bd8bb0a05caa",
+      "bytes": 2454
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/hazelnut/seed42/full_c4092b01491247548bfc0113bf52537e/source/train_t2.yaml",
+      "sha256": "495c0a2055dfc7a3a0eee2ffef772d7d1f775751670cd52fcf5db9ad66a75936",
+      "bytes": 710
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/hazelnut/seed42/full_c4092b01491247548bfc0113bf52537e/source/synthetic_transfer.yaml",
+      "sha256": "b9657e3d55c2c94b7bfdbc8f8b11e9972171f0cfff355e427df99ffe4b670f19",
+      "bytes": 261
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/hazelnut/seed42/full_c4092b01491247548bfc0113bf52537e/source/train_transfer.py",
+      "sha256": "d96470884ffc186939b1f6d628955c5cce5dcf42f20eb5a6c98e084e85b0cefe",
+      "bytes": 29355
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/hazelnut/seed42/full_c4092b01491247548bfc0113bf52537e/source/transfer.py",
+      "sha256": "4d883d0533d3b5e54e0002de3da739164c526a2fba4a1fb06a7255eb27ab18ee",
+      "bytes": 9824
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/hazelnut/seed42/full_c4092b01491247548bfc0113bf52537e/source/synthetic.py",
+      "sha256": "12919e781572e08c0389969be355a2dac04c52d7878ff1cb997536e7a0eaa619",
+      "bytes": 12577
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/hazelnut/seed42/full_c4092b01491247548bfc0113bf52537e/source/dataset.py",
+      "sha256": "de33d924f5ceaaf1ed1558efc8a23d7728bfe8890ed42530d1c10f0d839a9605",
+      "bytes": 5386
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/hazelnut/seed42/full_c4092b01491247548bfc0113bf52537e/source/prepare.py",
+      "sha256": "b103f7279d802f2942f46cd4c2f30e207995ec297babcdcc01cc7307c066762e",
+      "bytes": 14188
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/hazelnut/seed42/full_c4092b01491247548bfc0113bf52537e/source/audit.py",
+      "sha256": "60f11e416d3231e7aab535a171bb8b090f7593a163900334282900dd49925883",
+      "bytes": 19016
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/hazelnut/seed42/full_c4092b01491247548bfc0113bf52537e/source/train_ae.py",
+      "sha256": "4ff4e8f3233c76c8a6681a40a363f98d62ce8ab365347fb5d8af183a86f4c2fc",
+      "bytes": 26726
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/hazelnut/seed42/full_c4092b01491247548bfc0113bf52537e/source/evaluate_ae.py",
+      "sha256": "cee5cd06d05e78af208345bee3d927bde8452994fab998998970d74c2d702ce0",
+      "bytes": 26930
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/hazelnut/seed42/full_c4092b01491247548bfc0113bf52537e/source/pyproject.toml",
+      "sha256": "b7253ba29c910ca0962356c25eda01b06b9ae6b35b90b674374bc9a39cf75091",
+      "bytes": 1173
+    },
+    {
+      "target": "/app/reports/transfer/portability/T2/hazelnut/seed42/0dbbeeb75a17/6422dedbba1b/compatibility.json",
+      "sha256": "a73ca2c2cd5eee5acb0cb151bdf3d2fcb29be83e76d3cf8693123eef9fd9a1f0",
+      "bytes": 87564
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/leather/seed42/full_461328ee0bbf42a19fed8a2093094b34/best.pt",
+      "sha256": "8c450b7450a21e0fbb7fcd6928639cfb6dd49369b7b89f3626b5686f1a600889",
+      "bytes": 41630411
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/leather/seed42/full_461328ee0bbf42a19fed8a2093094b34/summary.json",
+      "sha256": "29df077c63941c5041ae444ff7b41d5cdc4a7de434e2f6a8a8b52e3f1e3c0495",
+      "bytes": 14935
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/leather/seed42/full_461328ee0bbf42a19fed8a2093094b34/effective_config.yaml",
+      "sha256": "4563ae3f0248fcaeb66ee7fa76f24213b2f31e1187dbf8972d7b3049035034ea",
+      "bytes": 910
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/leather/seed42/full_461328ee0bbf42a19fed8a2093094b34/synthetic_plan.json",
+      "sha256": "b1bd73bc639561e335b9997c33369d2611c2fff5d0df996f77c1fba0883ce8f4",
+      "bytes": 818650
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/leather/seed42/full_461328ee0bbf42a19fed8a2093094b34/calibration.json",
+      "sha256": "62b468a923001ae06b05827d85b29335ec7b0f89fc1c0a62771fc9729c602b90",
+      "bytes": 24767
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/leather/seed42/full_461328ee0bbf42a19fed8a2093094b34/calibration.sha256",
+      "sha256": "c4ba6c53438df131480051e5874388a868bf9578c887ab7a1f12feb401654bc1",
+      "bytes": 65
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/leather/seed42/full_461328ee0bbf42a19fed8a2093094b34/environment.json",
+      "sha256": "6241960e82c893bc1a50d3baf3aed39a75355701b70abb73a42b6339d30739e1",
+      "bytes": 311
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/leather/seed42/full_461328ee0bbf42a19fed8a2093094b34/provenance.json",
+      "sha256": "fd949993cf15fd857d81893f90cca075345837d003fdca388eb9bd8bb0a05caa",
+      "bytes": 2454
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/leather/seed42/full_461328ee0bbf42a19fed8a2093094b34/source/train_t2.yaml",
+      "sha256": "495c0a2055dfc7a3a0eee2ffef772d7d1f775751670cd52fcf5db9ad66a75936",
+      "bytes": 710
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/leather/seed42/full_461328ee0bbf42a19fed8a2093094b34/source/synthetic_transfer.yaml",
+      "sha256": "b9657e3d55c2c94b7bfdbc8f8b11e9972171f0cfff355e427df99ffe4b670f19",
+      "bytes": 261
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/leather/seed42/full_461328ee0bbf42a19fed8a2093094b34/source/train_transfer.py",
+      "sha256": "d96470884ffc186939b1f6d628955c5cce5dcf42f20eb5a6c98e084e85b0cefe",
+      "bytes": 29355
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/leather/seed42/full_461328ee0bbf42a19fed8a2093094b34/source/transfer.py",
+      "sha256": "4d883d0533d3b5e54e0002de3da739164c526a2fba4a1fb06a7255eb27ab18ee",
+      "bytes": 9824
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/leather/seed42/full_461328ee0bbf42a19fed8a2093094b34/source/synthetic.py",
+      "sha256": "12919e781572e08c0389969be355a2dac04c52d7878ff1cb997536e7a0eaa619",
+      "bytes": 12577
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/leather/seed42/full_461328ee0bbf42a19fed8a2093094b34/source/dataset.py",
+      "sha256": "de33d924f5ceaaf1ed1558efc8a23d7728bfe8890ed42530d1c10f0d839a9605",
+      "bytes": 5386
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/leather/seed42/full_461328ee0bbf42a19fed8a2093094b34/source/prepare.py",
+      "sha256": "b103f7279d802f2942f46cd4c2f30e207995ec297babcdcc01cc7307c066762e",
+      "bytes": 14188
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/leather/seed42/full_461328ee0bbf42a19fed8a2093094b34/source/audit.py",
+      "sha256": "60f11e416d3231e7aab535a171bb8b090f7593a163900334282900dd49925883",
+      "bytes": 19016
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/leather/seed42/full_461328ee0bbf42a19fed8a2093094b34/source/train_ae.py",
+      "sha256": "4ff4e8f3233c76c8a6681a40a363f98d62ce8ab365347fb5d8af183a86f4c2fc",
+      "bytes": 26726
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/leather/seed42/full_461328ee0bbf42a19fed8a2093094b34/source/evaluate_ae.py",
+      "sha256": "cee5cd06d05e78af208345bee3d927bde8452994fab998998970d74c2d702ce0",
+      "bytes": 26930
+    },
+    {
+      "target": "/app/artifacts/transfer_runs/T2/leather/seed42/full_461328ee0bbf42a19fed8a2093094b34/source/pyproject.toml",
+      "sha256": "b7253ba29c910ca0962356c25eda01b06b9ae6b35b90b674374bc9a39cf75091",
+      "bytes": 1173
+    },
+    {
+      "target": "/app/reports/transfer/portability/T2/leather/seed42/8c450b7450a2/6422dedbba1b/compatibility.json",
+      "sha256": "66d188b20e9263000785d3ff4a284666388fcef35eb286ae3c92d789f4e70d0a",
+      "bytes": 55731
+    }
+  ],
+  "scientific_files_modified": false,
+  "dataset_images_read": false
+}

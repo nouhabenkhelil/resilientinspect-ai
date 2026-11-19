@@ -1,0 +1,2450 @@
+{
+  "checked_at": "2026-11-19T08:49:57.572891+00:00",
+  "frontend_url": "http://localhost:18080",
+  "direct_api_url": "http://localhost:8001",
+  "validation_inputs": {
+    "bottle": "bottle/train/good/002.png",
+    "hazelnut": "hazelnut/train/good/002.png",
+    "leather": "leather/train/good/004.png"
+  },
+  "checks": {
+    "frontend": {
+      "status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "request_id_header": null,
+      "body": "React HTML"
+    },
+    "nginx_health": {
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "request_id_header": null,
+      "body": "ok\n"
+    },
+    "direct_health": {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "5fefe9a9-2cb8-4bc8-a70c-4efbee9eb2a6",
+      "body": {
+        "status": "ok",
+        "version": "0.1.0",
+        "device": "cpu",
+        "ready_models": 15,
+        "expected_models": 15,
+        "request_id": "5fefe9a9-2cb8-4bc8-a70c-4efbee9eb2a6"
+      }
+    },
+    "proxy_health": {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "de9d33a0-8ec9-4801-9c96-8cda79020f2d",
+      "body": {
+        "status": "ok",
+        "version": "0.1.0",
+        "device": "cpu",
+        "ready_models": 15,
+        "expected_models": 15,
+        "request_id": "de9d33a0-8ec9-4801-9c96-8cda79020f2d"
+      }
+    },
+    "direct_metadata": {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "980866d5-885e-4359-b4fc-9e9161124040",
+      "body": {
+        "models": [
+          {
+            "model": "B0",
+            "category": "bottle",
+            "version": "b70366819fdbd9043eb78e8865ca39cebadf5cb251ff7a9c0e94817c3c0593e4",
+            "checkpoint_sha256": "b70366819fdbd9043eb78e8865ca39cebadf5cb251ff7a9c0e94817c3c0593e4",
+            "calibration_sha256": "32a6df1e1284689ad07b451a76fe449019cf142a4bbfa1192f03c5da62483f3e",
+            "threshold": 0.20367741357625985,
+            "seed": null,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "RGB [0,1]",
+            "score": "rgb_mean_absolute_error_top_1_percent_valid_pixels",
+            "decision_rule": "score > threshold",
+            "explanation": "reconstruction_error",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "mlflow": "3.16.1",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "cublas_workspace_config": ":4096:8",
+              "mixed_precision": false,
+              "cudnn_version": 92700,
+              "packages": {
+                "Pillow": "13.0.0",
+                "PyYAML": "6.0.3",
+                "matplotlib": "3.10.8",
+                "sqlalchemy": "2.0.57",
+                "alembic": "1.20.1"
+              }
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": null
+          },
+          {
+            "model": "B0",
+            "category": "hazelnut",
+            "version": "28317915de9c191bdee13fa002996445f456f0d3de08b0b43426126efdc2178d",
+            "checkpoint_sha256": "28317915de9c191bdee13fa002996445f456f0d3de08b0b43426126efdc2178d",
+            "calibration_sha256": "01bfd62ad2579699aec9161aab0e6a9cb1017a35237c61d3dd95b012b955a723",
+            "threshold": 0.11635668613243758,
+            "seed": null,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "RGB [0,1]",
+            "score": "rgb_mean_absolute_error_top_1_percent_valid_pixels",
+            "decision_rule": "score > threshold",
+            "explanation": "reconstruction_error",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "mlflow": "3.16.1",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "cublas_workspace_config": ":4096:8",
+              "mixed_precision": false,
+              "cudnn_version": 92700,
+              "packages": {
+                "Pillow": "13.0.0",
+                "PyYAML": "6.0.3",
+                "matplotlib": "3.10.8",
+                "sqlalchemy": "2.0.57",
+                "alembic": "1.20.1"
+              }
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": null
+          },
+          {
+            "model": "B0",
+            "category": "leather",
+            "version": "9de0b30085893bd24a45997cd87828c36c1c09030768327682715bcbe7403be3",
+            "checkpoint_sha256": "9de0b30085893bd24a45997cd87828c36c1c09030768327682715bcbe7403be3",
+            "calibration_sha256": "b48dd4d349cef4dbb6053185e9013eb52e18795776a5fb2f2ae2bd2a8fcc1541",
+            "threshold": 0.08330504659835886,
+            "seed": null,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "RGB [0,1]",
+            "score": "rgb_mean_absolute_error_top_1_percent_valid_pixels",
+            "decision_rule": "score > threshold",
+            "explanation": "reconstruction_error",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "mlflow": "3.16.1",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "cublas_workspace_config": ":4096:8",
+              "mixed_precision": false,
+              "cudnn_version": 92700,
+              "packages": {
+                "Pillow": "13.0.0",
+                "PyYAML": "6.0.3",
+                "matplotlib": "3.10.8",
+                "sqlalchemy": "2.0.57",
+                "alembic": "1.20.1"
+              }
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": null
+          },
+          {
+            "model": "A1",
+            "category": "bottle",
+            "version": "a6741c693306601ea41ad21675bd194f4a7d8f77ea7342f78ce10098c7efe71d",
+            "checkpoint_sha256": "a6741c693306601ea41ad21675bd194f4a7d8f77ea7342f78ce10098c7efe71d",
+            "calibration_sha256": "7a315ac7b60185b58af4bad846fb3dad85bfe214b66bdbaaf0c547d9f3ea4ac3",
+            "threshold": 0.14375584244319214,
+            "seed": null,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "RGB [0,1]",
+            "score": "rgb_mean_absolute_error_top_1_percent_valid_pixels",
+            "decision_rule": "score > threshold",
+            "explanation": "reconstruction_error",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "mlflow": "3.16.1",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "cublas_workspace_config": ":4096:8",
+              "mixed_precision": false,
+              "cudnn_version": 92700,
+              "packages": {
+                "Pillow": "13.0.0",
+                "PyYAML": "6.0.3",
+                "matplotlib": "3.10.8",
+                "sqlalchemy": "2.0.57",
+                "alembic": "1.20.1"
+              }
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": null
+          },
+          {
+            "model": "A1",
+            "category": "hazelnut",
+            "version": "e3d75856bc044ac8f6ae728b4ac1e44994b4514e48cc4435b8b708698cd293e4",
+            "checkpoint_sha256": "e3d75856bc044ac8f6ae728b4ac1e44994b4514e48cc4435b8b708698cd293e4",
+            "calibration_sha256": "e928b98e907c5f9d6f758b29ff2f65858a511cc89c5769b8c5cc8133b63ca8c0",
+            "threshold": 0.2761151554835279,
+            "seed": null,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "RGB [0,1]",
+            "score": "rgb_mean_absolute_error_top_1_percent_valid_pixels",
+            "decision_rule": "score > threshold",
+            "explanation": "reconstruction_error",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "mlflow": "3.16.1",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "cublas_workspace_config": ":4096:8",
+              "mixed_precision": false,
+              "cudnn_version": 92700,
+              "packages": {
+                "Pillow": "13.0.0",
+                "PyYAML": "6.0.3",
+                "matplotlib": "3.10.8",
+                "sqlalchemy": "2.0.57",
+                "alembic": "1.20.1"
+              }
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": null
+          },
+          {
+            "model": "A1",
+            "category": "leather",
+            "version": "2c236a97a07b9c0b3243e9354ae6941b4a121fb908753098d1e2bdec0df40c50",
+            "checkpoint_sha256": "2c236a97a07b9c0b3243e9354ae6941b4a121fb908753098d1e2bdec0df40c50",
+            "calibration_sha256": "2aecc0976f3389d5c1019c71148cf2e466bcb04df6d2460faec500ac18b0a51c",
+            "threshold": 0.0804537685201844,
+            "seed": null,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "RGB [0,1]",
+            "score": "rgb_mean_absolute_error_top_1_percent_valid_pixels",
+            "decision_rule": "score > threshold",
+            "explanation": "reconstruction_error",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "mlflow": "3.16.1",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "cublas_workspace_config": ":4096:8",
+              "mixed_precision": false,
+              "cudnn_version": 92700,
+              "packages": {
+                "Pillow": "13.0.0",
+                "PyYAML": "6.0.3",
+                "matplotlib": "3.10.8",
+                "sqlalchemy": "2.0.57",
+                "alembic": "1.20.1"
+              }
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": null
+          },
+          {
+            "model": "T0",
+            "category": "bottle",
+            "version": "83b4a9794523bd533bdb05415de4945ee8864863a61dcd531934bb714b26db96",
+            "checkpoint_sha256": "83b4a9794523bd533bdb05415de4945ee8864863a61dcd531934bb714b26db96",
+            "calibration_sha256": "26b845d02d5a42644c7bb5f3ef9c9b10e29b5fa96048784445e327b079ebff00",
+            "threshold": 0.020550070330500603,
+            "seed": 42,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "ImageNet mean=[0.485,0.456,0.406] std=[0.229,0.224,0.225]",
+            "score": "sigmoid_anomaly_logit",
+            "decision_rule": "score > threshold",
+            "explanation": "gradcam",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "torchvision": "0.26.0+cu130",
+              "mlflow": "3.16.1",
+              "scikit_learn": "1.8.0",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "mixed_precision": false
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": "4f3e26b5a54d8c9fcade84a0fd2c185c31c4b28a22906128df62ed85217fbc16"
+          },
+          {
+            "model": "T0",
+            "category": "hazelnut",
+            "version": "7f31b37da53f0944695bc1682d4a97f9bd5859544619118cf852dc7094f2d025",
+            "checkpoint_sha256": "7f31b37da53f0944695bc1682d4a97f9bd5859544619118cf852dc7094f2d025",
+            "calibration_sha256": "a1b8e76f10a61c54b0a0f6d587e125e6f47e36866c13b0d5025a420929158834",
+            "threshold": 0.0032944073900580406,
+            "seed": 42,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "ImageNet mean=[0.485,0.456,0.406] std=[0.229,0.224,0.225]",
+            "score": "sigmoid_anomaly_logit",
+            "decision_rule": "score > threshold",
+            "explanation": "gradcam",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "torchvision": "0.26.0+cu130",
+              "mlflow": "3.16.1",
+              "scikit_learn": "1.8.0",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "mixed_precision": false
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": "7bcce72d9d5538fc7fc76563c6a6acb59e4768010660f573323bb44d1d504373"
+          },
+          {
+            "model": "T0",
+            "category": "leather",
+            "version": "8c9571eed0ff5eff4b84a32c968e8e0b4c142fe07b091285451bda7eb556591c",
+            "checkpoint_sha256": "8c9571eed0ff5eff4b84a32c968e8e0b4c142fe07b091285451bda7eb556591c",
+            "calibration_sha256": "fb3d96ca0c2af6d94b4aca09ad29a67f7db6a9e48969a343d0e6985c24c66051",
+            "threshold": 0.0007329359068535268,
+            "seed": 42,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "ImageNet mean=[0.485,0.456,0.406] std=[0.229,0.224,0.225]",
+            "score": "sigmoid_anomaly_logit",
+            "decision_rule": "score > threshold",
+            "explanation": "gradcam",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "torchvision": "0.26.0+cu130",
+              "mlflow": "3.16.1",
+              "scikit_learn": "1.8.0",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "mixed_precision": false
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": "6bbd6ed09d83c2c6983bc99363a189d35726ab31f36e46325b23e89bd8cea9be"
+          },
+          {
+            "model": "T1",
+            "category": "bottle",
+            "version": "e7ce1dbb2aaee94a8a1e2ad9705f8e7da6b909abd2273416dff44d24d2d94347",
+            "checkpoint_sha256": "e7ce1dbb2aaee94a8a1e2ad9705f8e7da6b909abd2273416dff44d24d2d94347",
+            "calibration_sha256": "ef2e1753c7eafcc200f9dbc31ea124652ccb17beda5068b5fa09e98c5d0ef74e",
+            "threshold": 0.14108403027057648,
+            "seed": 42,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "ImageNet mean=[0.485,0.456,0.406] std=[0.229,0.224,0.225]",
+            "score": "sigmoid_anomaly_logit",
+            "decision_rule": "score > threshold",
+            "explanation": "gradcam",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "torchvision": "0.26.0+cu130",
+              "mlflow": "3.16.1",
+              "scikit_learn": "1.8.0",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "mixed_precision": false
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": "7985ebbbdea48aba16b66fbec6197bc9a7f540ac4418eb593df47fe32bfbb246"
+          },
+          {
+            "model": "T1",
+            "category": "hazelnut",
+            "version": "f0c64a57d2fb8d53f9e6ef06cb0a9e3b7044cf7c2d79c76c7e61138c70348c19",
+            "checkpoint_sha256": "f0c64a57d2fb8d53f9e6ef06cb0a9e3b7044cf7c2d79c76c7e61138c70348c19",
+            "calibration_sha256": "f62bfc917373219680b6d4d897e8519de05ed091e60291fcd02965bbaf348152",
+            "threshold": 0.2466665357351303,
+            "seed": 42,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "ImageNet mean=[0.485,0.456,0.406] std=[0.229,0.224,0.225]",
+            "score": "sigmoid_anomaly_logit",
+            "decision_rule": "score > threshold",
+            "explanation": "gradcam",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "torchvision": "0.26.0+cu130",
+              "mlflow": "3.16.1",
+              "scikit_learn": "1.8.0",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "mixed_precision": false
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": "28c557300c3c8b4f070748ec7b7bb0a71e815d30f880bad4e63330ca04f0f474"
+          },
+          {
+            "model": "T1",
+            "category": "leather",
+            "version": "c2d0e6c9d3432a49dde75d658347cc5cb10dbb1e3e9b4059f10b941af2d7b2d6",
+            "checkpoint_sha256": "c2d0e6c9d3432a49dde75d658347cc5cb10dbb1e3e9b4059f10b941af2d7b2d6",
+            "calibration_sha256": "8ef565baef54bd2d542c468cc25254c784a8d9bdae0b4b6f294dee295e276e8d",
+            "threshold": 0.01378712896257639,
+            "seed": 42,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "ImageNet mean=[0.485,0.456,0.406] std=[0.229,0.224,0.225]",
+            "score": "sigmoid_anomaly_logit",
+            "decision_rule": "score > threshold",
+            "explanation": "gradcam",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "torchvision": "0.26.0+cu130",
+              "mlflow": "3.16.1",
+              "scikit_learn": "1.8.0",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "mixed_precision": false
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": "73bfda3734ca9664ae08b715c9c3bf1622ac5a86e623377b9ba4c0b9ccef7f28"
+          },
+          {
+            "model": "T2",
+            "category": "bottle",
+            "version": "f07a9ca4bd16ada6d5c1bd6840ff90b8bc5e89fb29d86d362ddc51ca575c308d",
+            "checkpoint_sha256": "f07a9ca4bd16ada6d5c1bd6840ff90b8bc5e89fb29d86d362ddc51ca575c308d",
+            "calibration_sha256": "aa60c5a59425680567020b8b2465bdb6684c160a2c964ae795a6246b7eb73b6c",
+            "threshold": 0.00017796678002923727,
+            "seed": 42,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "ImageNet mean=[0.485,0.456,0.406] std=[0.229,0.224,0.225]",
+            "score": "sigmoid_anomaly_logit",
+            "decision_rule": "score > threshold",
+            "explanation": "gradcam",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "torchvision": "0.26.0+cu130",
+              "mlflow": "3.16.1",
+              "scikit_learn": "1.8.0",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "mixed_precision": false
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": "8cba58516ae1b6b4b1938aad6ecd76a9f25ea77f955d2f2192e6c8203b532cdf"
+          },
+          {
+            "model": "T2",
+            "category": "hazelnut",
+            "version": "0dbbeeb75a174073560bfc7625aa9afae7f1e825340717cd06e38732ea87e57e",
+            "checkpoint_sha256": "0dbbeeb75a174073560bfc7625aa9afae7f1e825340717cd06e38732ea87e57e",
+            "calibration_sha256": "0ce71a81fd1f78d4392e3efcddf67289e94aa830dc56a70fab13f83af58bf4d4",
+            "threshold": 0.0010021653724834323,
+            "seed": 42,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "ImageNet mean=[0.485,0.456,0.406] std=[0.229,0.224,0.225]",
+            "score": "sigmoid_anomaly_logit",
+            "decision_rule": "score > threshold",
+            "explanation": "gradcam",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "torchvision": "0.26.0+cu130",
+              "mlflow": "3.16.1",
+              "scikit_learn": "1.8.0",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "mixed_precision": false
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": "a73ca2c2cd5eee5acb0cb151bdf3d2fcb29be83e76d3cf8693123eef9fd9a1f0"
+          },
+          {
+            "model": "T2",
+            "category": "leather",
+            "version": "8c450b7450a21e0fbb7fcd6928639cfb6dd49369b7b89f3626b5686f1a600889",
+            "checkpoint_sha256": "8c450b7450a21e0fbb7fcd6928639cfb6dd49369b7b89f3626b5686f1a600889",
+            "calibration_sha256": "62b468a923001ae06b05827d85b29335ec7b0f89fc1c0a62771fc9729c602b90",
+            "threshold": 0.0006882469169795513,
+            "seed": 42,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "ImageNet mean=[0.485,0.456,0.406] std=[0.229,0.224,0.225]",
+            "score": "sigmoid_anomaly_logit",
+            "decision_rule": "score > threshold",
+            "explanation": "gradcam",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "torchvision": "0.26.0+cu130",
+              "mlflow": "3.16.1",
+              "scikit_learn": "1.8.0",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "mixed_precision": false
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": "66d188b20e9263000785d3ff4a284666388fcef35eb286ae3c92d789f4e70d0a"
+          }
+        ],
+        "unavailable": [],
+        "request_id": "980866d5-885e-4359-b4fc-9e9161124040"
+      }
+    },
+    "proxy_metadata": {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "9324b578-a3f6-4fe4-8582-bbc82134459b",
+      "body": {
+        "models": [
+          {
+            "model": "B0",
+            "category": "bottle",
+            "version": "b70366819fdbd9043eb78e8865ca39cebadf5cb251ff7a9c0e94817c3c0593e4",
+            "checkpoint_sha256": "b70366819fdbd9043eb78e8865ca39cebadf5cb251ff7a9c0e94817c3c0593e4",
+            "calibration_sha256": "32a6df1e1284689ad07b451a76fe449019cf142a4bbfa1192f03c5da62483f3e",
+            "threshold": 0.20367741357625985,
+            "seed": null,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "RGB [0,1]",
+            "score": "rgb_mean_absolute_error_top_1_percent_valid_pixels",
+            "decision_rule": "score > threshold",
+            "explanation": "reconstruction_error",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "mlflow": "3.16.1",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "cublas_workspace_config": ":4096:8",
+              "mixed_precision": false,
+              "cudnn_version": 92700,
+              "packages": {
+                "Pillow": "13.0.0",
+                "PyYAML": "6.0.3",
+                "matplotlib": "3.10.8",
+                "sqlalchemy": "2.0.57",
+                "alembic": "1.20.1"
+              }
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": null
+          },
+          {
+            "model": "B0",
+            "category": "hazelnut",
+            "version": "28317915de9c191bdee13fa002996445f456f0d3de08b0b43426126efdc2178d",
+            "checkpoint_sha256": "28317915de9c191bdee13fa002996445f456f0d3de08b0b43426126efdc2178d",
+            "calibration_sha256": "01bfd62ad2579699aec9161aab0e6a9cb1017a35237c61d3dd95b012b955a723",
+            "threshold": 0.11635668613243758,
+            "seed": null,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "RGB [0,1]",
+            "score": "rgb_mean_absolute_error_top_1_percent_valid_pixels",
+            "decision_rule": "score > threshold",
+            "explanation": "reconstruction_error",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "mlflow": "3.16.1",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "cublas_workspace_config": ":4096:8",
+              "mixed_precision": false,
+              "cudnn_version": 92700,
+              "packages": {
+                "Pillow": "13.0.0",
+                "PyYAML": "6.0.3",
+                "matplotlib": "3.10.8",
+                "sqlalchemy": "2.0.57",
+                "alembic": "1.20.1"
+              }
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": null
+          },
+          {
+            "model": "B0",
+            "category": "leather",
+            "version": "9de0b30085893bd24a45997cd87828c36c1c09030768327682715bcbe7403be3",
+            "checkpoint_sha256": "9de0b30085893bd24a45997cd87828c36c1c09030768327682715bcbe7403be3",
+            "calibration_sha256": "b48dd4d349cef4dbb6053185e9013eb52e18795776a5fb2f2ae2bd2a8fcc1541",
+            "threshold": 0.08330504659835886,
+            "seed": null,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "RGB [0,1]",
+            "score": "rgb_mean_absolute_error_top_1_percent_valid_pixels",
+            "decision_rule": "score > threshold",
+            "explanation": "reconstruction_error",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "mlflow": "3.16.1",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "cublas_workspace_config": ":4096:8",
+              "mixed_precision": false,
+              "cudnn_version": 92700,
+              "packages": {
+                "Pillow": "13.0.0",
+                "PyYAML": "6.0.3",
+                "matplotlib": "3.10.8",
+                "sqlalchemy": "2.0.57",
+                "alembic": "1.20.1"
+              }
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": null
+          },
+          {
+            "model": "A1",
+            "category": "bottle",
+            "version": "a6741c693306601ea41ad21675bd194f4a7d8f77ea7342f78ce10098c7efe71d",
+            "checkpoint_sha256": "a6741c693306601ea41ad21675bd194f4a7d8f77ea7342f78ce10098c7efe71d",
+            "calibration_sha256": "7a315ac7b60185b58af4bad846fb3dad85bfe214b66bdbaaf0c547d9f3ea4ac3",
+            "threshold": 0.14375584244319214,
+            "seed": null,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "RGB [0,1]",
+            "score": "rgb_mean_absolute_error_top_1_percent_valid_pixels",
+            "decision_rule": "score > threshold",
+            "explanation": "reconstruction_error",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "mlflow": "3.16.1",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "cublas_workspace_config": ":4096:8",
+              "mixed_precision": false,
+              "cudnn_version": 92700,
+              "packages": {
+                "Pillow": "13.0.0",
+                "PyYAML": "6.0.3",
+                "matplotlib": "3.10.8",
+                "sqlalchemy": "2.0.57",
+                "alembic": "1.20.1"
+              }
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": null
+          },
+          {
+            "model": "A1",
+            "category": "hazelnut",
+            "version": "e3d75856bc044ac8f6ae728b4ac1e44994b4514e48cc4435b8b708698cd293e4",
+            "checkpoint_sha256": "e3d75856bc044ac8f6ae728b4ac1e44994b4514e48cc4435b8b708698cd293e4",
+            "calibration_sha256": "e928b98e907c5f9d6f758b29ff2f65858a511cc89c5769b8c5cc8133b63ca8c0",
+            "threshold": 0.2761151554835279,
+            "seed": null,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "RGB [0,1]",
+            "score": "rgb_mean_absolute_error_top_1_percent_valid_pixels",
+            "decision_rule": "score > threshold",
+            "explanation": "reconstruction_error",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "mlflow": "3.16.1",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "cublas_workspace_config": ":4096:8",
+              "mixed_precision": false,
+              "cudnn_version": 92700,
+              "packages": {
+                "Pillow": "13.0.0",
+                "PyYAML": "6.0.3",
+                "matplotlib": "3.10.8",
+                "sqlalchemy": "2.0.57",
+                "alembic": "1.20.1"
+              }
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": null
+          },
+          {
+            "model": "A1",
+            "category": "leather",
+            "version": "2c236a97a07b9c0b3243e9354ae6941b4a121fb908753098d1e2bdec0df40c50",
+            "checkpoint_sha256": "2c236a97a07b9c0b3243e9354ae6941b4a121fb908753098d1e2bdec0df40c50",
+            "calibration_sha256": "2aecc0976f3389d5c1019c71148cf2e466bcb04df6d2460faec500ac18b0a51c",
+            "threshold": 0.0804537685201844,
+            "seed": null,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "RGB [0,1]",
+            "score": "rgb_mean_absolute_error_top_1_percent_valid_pixels",
+            "decision_rule": "score > threshold",
+            "explanation": "reconstruction_error",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "mlflow": "3.16.1",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "cublas_workspace_config": ":4096:8",
+              "mixed_precision": false,
+              "cudnn_version": 92700,
+              "packages": {
+                "Pillow": "13.0.0",
+                "PyYAML": "6.0.3",
+                "matplotlib": "3.10.8",
+                "sqlalchemy": "2.0.57",
+                "alembic": "1.20.1"
+              }
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": null
+          },
+          {
+            "model": "T0",
+            "category": "bottle",
+            "version": "83b4a9794523bd533bdb05415de4945ee8864863a61dcd531934bb714b26db96",
+            "checkpoint_sha256": "83b4a9794523bd533bdb05415de4945ee8864863a61dcd531934bb714b26db96",
+            "calibration_sha256": "26b845d02d5a42644c7bb5f3ef9c9b10e29b5fa96048784445e327b079ebff00",
+            "threshold": 0.020550070330500603,
+            "seed": 42,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "ImageNet mean=[0.485,0.456,0.406] std=[0.229,0.224,0.225]",
+            "score": "sigmoid_anomaly_logit",
+            "decision_rule": "score > threshold",
+            "explanation": "gradcam",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "torchvision": "0.26.0+cu130",
+              "mlflow": "3.16.1",
+              "scikit_learn": "1.8.0",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "mixed_precision": false
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": "4f3e26b5a54d8c9fcade84a0fd2c185c31c4b28a22906128df62ed85217fbc16"
+          },
+          {
+            "model": "T0",
+            "category": "hazelnut",
+            "version": "7f31b37da53f0944695bc1682d4a97f9bd5859544619118cf852dc7094f2d025",
+            "checkpoint_sha256": "7f31b37da53f0944695bc1682d4a97f9bd5859544619118cf852dc7094f2d025",
+            "calibration_sha256": "a1b8e76f10a61c54b0a0f6d587e125e6f47e36866c13b0d5025a420929158834",
+            "threshold": 0.0032944073900580406,
+            "seed": 42,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "ImageNet mean=[0.485,0.456,0.406] std=[0.229,0.224,0.225]",
+            "score": "sigmoid_anomaly_logit",
+            "decision_rule": "score > threshold",
+            "explanation": "gradcam",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "torchvision": "0.26.0+cu130",
+              "mlflow": "3.16.1",
+              "scikit_learn": "1.8.0",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "mixed_precision": false
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": "7bcce72d9d5538fc7fc76563c6a6acb59e4768010660f573323bb44d1d504373"
+          },
+          {
+            "model": "T0",
+            "category": "leather",
+            "version": "8c9571eed0ff5eff4b84a32c968e8e0b4c142fe07b091285451bda7eb556591c",
+            "checkpoint_sha256": "8c9571eed0ff5eff4b84a32c968e8e0b4c142fe07b091285451bda7eb556591c",
+            "calibration_sha256": "fb3d96ca0c2af6d94b4aca09ad29a67f7db6a9e48969a343d0e6985c24c66051",
+            "threshold": 0.0007329359068535268,
+            "seed": 42,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "ImageNet mean=[0.485,0.456,0.406] std=[0.229,0.224,0.225]",
+            "score": "sigmoid_anomaly_logit",
+            "decision_rule": "score > threshold",
+            "explanation": "gradcam",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "torchvision": "0.26.0+cu130",
+              "mlflow": "3.16.1",
+              "scikit_learn": "1.8.0",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "mixed_precision": false
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": "6bbd6ed09d83c2c6983bc99363a189d35726ab31f36e46325b23e89bd8cea9be"
+          },
+          {
+            "model": "T1",
+            "category": "bottle",
+            "version": "e7ce1dbb2aaee94a8a1e2ad9705f8e7da6b909abd2273416dff44d24d2d94347",
+            "checkpoint_sha256": "e7ce1dbb2aaee94a8a1e2ad9705f8e7da6b909abd2273416dff44d24d2d94347",
+            "calibration_sha256": "ef2e1753c7eafcc200f9dbc31ea124652ccb17beda5068b5fa09e98c5d0ef74e",
+            "threshold": 0.14108403027057648,
+            "seed": 42,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "ImageNet mean=[0.485,0.456,0.406] std=[0.229,0.224,0.225]",
+            "score": "sigmoid_anomaly_logit",
+            "decision_rule": "score > threshold",
+            "explanation": "gradcam",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "torchvision": "0.26.0+cu130",
+              "mlflow": "3.16.1",
+              "scikit_learn": "1.8.0",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "mixed_precision": false
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": "7985ebbbdea48aba16b66fbec6197bc9a7f540ac4418eb593df47fe32bfbb246"
+          },
+          {
+            "model": "T1",
+            "category": "hazelnut",
+            "version": "f0c64a57d2fb8d53f9e6ef06cb0a9e3b7044cf7c2d79c76c7e61138c70348c19",
+            "checkpoint_sha256": "f0c64a57d2fb8d53f9e6ef06cb0a9e3b7044cf7c2d79c76c7e61138c70348c19",
+            "calibration_sha256": "f62bfc917373219680b6d4d897e8519de05ed091e60291fcd02965bbaf348152",
+            "threshold": 0.2466665357351303,
+            "seed": 42,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "ImageNet mean=[0.485,0.456,0.406] std=[0.229,0.224,0.225]",
+            "score": "sigmoid_anomaly_logit",
+            "decision_rule": "score > threshold",
+            "explanation": "gradcam",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "torchvision": "0.26.0+cu130",
+              "mlflow": "3.16.1",
+              "scikit_learn": "1.8.0",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "mixed_precision": false
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": "28c557300c3c8b4f070748ec7b7bb0a71e815d30f880bad4e63330ca04f0f474"
+          },
+          {
+            "model": "T1",
+            "category": "leather",
+            "version": "c2d0e6c9d3432a49dde75d658347cc5cb10dbb1e3e9b4059f10b941af2d7b2d6",
+            "checkpoint_sha256": "c2d0e6c9d3432a49dde75d658347cc5cb10dbb1e3e9b4059f10b941af2d7b2d6",
+            "calibration_sha256": "8ef565baef54bd2d542c468cc25254c784a8d9bdae0b4b6f294dee295e276e8d",
+            "threshold": 0.01378712896257639,
+            "seed": 42,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "ImageNet mean=[0.485,0.456,0.406] std=[0.229,0.224,0.225]",
+            "score": "sigmoid_anomaly_logit",
+            "decision_rule": "score > threshold",
+            "explanation": "gradcam",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "torchvision": "0.26.0+cu130",
+              "mlflow": "3.16.1",
+              "scikit_learn": "1.8.0",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "mixed_precision": false
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": "73bfda3734ca9664ae08b715c9c3bf1622ac5a86e623377b9ba4c0b9ccef7f28"
+          },
+          {
+            "model": "T2",
+            "category": "bottle",
+            "version": "f07a9ca4bd16ada6d5c1bd6840ff90b8bc5e89fb29d86d362ddc51ca575c308d",
+            "checkpoint_sha256": "f07a9ca4bd16ada6d5c1bd6840ff90b8bc5e89fb29d86d362ddc51ca575c308d",
+            "calibration_sha256": "aa60c5a59425680567020b8b2465bdb6684c160a2c964ae795a6246b7eb73b6c",
+            "threshold": 0.00017796678002923727,
+            "seed": 42,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "ImageNet mean=[0.485,0.456,0.406] std=[0.229,0.224,0.225]",
+            "score": "sigmoid_anomaly_logit",
+            "decision_rule": "score > threshold",
+            "explanation": "gradcam",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "torchvision": "0.26.0+cu130",
+              "mlflow": "3.16.1",
+              "scikit_learn": "1.8.0",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "mixed_precision": false
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": "8cba58516ae1b6b4b1938aad6ecd76a9f25ea77f955d2f2192e6c8203b532cdf"
+          },
+          {
+            "model": "T2",
+            "category": "hazelnut",
+            "version": "0dbbeeb75a174073560bfc7625aa9afae7f1e825340717cd06e38732ea87e57e",
+            "checkpoint_sha256": "0dbbeeb75a174073560bfc7625aa9afae7f1e825340717cd06e38732ea87e57e",
+            "calibration_sha256": "0ce71a81fd1f78d4392e3efcddf67289e94aa830dc56a70fab13f83af58bf4d4",
+            "threshold": 0.0010021653724834323,
+            "seed": 42,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "ImageNet mean=[0.485,0.456,0.406] std=[0.229,0.224,0.225]",
+            "score": "sigmoid_anomaly_logit",
+            "decision_rule": "score > threshold",
+            "explanation": "gradcam",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "torchvision": "0.26.0+cu130",
+              "mlflow": "3.16.1",
+              "scikit_learn": "1.8.0",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "mixed_precision": false
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": "a73ca2c2cd5eee5acb0cb151bdf3d2fcb29be83e76d3cf8693123eef9fd9a1f0"
+          },
+          {
+            "model": "T2",
+            "category": "leather",
+            "version": "8c450b7450a21e0fbb7fcd6928639cfb6dd49369b7b89f3626b5686f1a600889",
+            "checkpoint_sha256": "8c450b7450a21e0fbb7fcd6928639cfb6dd49369b7b89f3626b5686f1a600889",
+            "calibration_sha256": "62b468a923001ae06b05827d85b29335ec7b0f89fc1c0a62771fc9729c602b90",
+            "threshold": 0.0006882469169795513,
+            "seed": 42,
+            "input_size": [
+              256,
+              256
+            ],
+            "normalization": "ImageNet mean=[0.485,0.456,0.406] std=[0.229,0.224,0.225]",
+            "score": "sigmoid_anomaly_logit",
+            "decision_rule": "score > threshold",
+            "explanation": "gradcam",
+            "training_environment": {
+              "python": "3.13.16",
+              "torch": "2.11.0+cu130",
+              "numpy": "2.1.3",
+              "torchvision": "0.26.0+cu130",
+              "mlflow": "3.16.1",
+              "scikit_learn": "1.8.0",
+              "device": "cuda",
+              "cuda_runtime": "13.0",
+              "gpu_name": "Tesla T4",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "mixed_precision": false
+            },
+            "serving_environment": {
+              "python": "3.11.9",
+              "device": "cpu",
+              "torch": "2.15.0+cpu",
+              "numpy": "2.3.5",
+              "scikit_learn": "1.8.0",
+              "cuda_runtime": null,
+              "torchvision": "0.29.2+cpu",
+              "pillow": "13.0.0",
+              "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+              "machine": "x86_64",
+              "cpu_threads": 2,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "mixed_precision": false
+            },
+            "compatibility_report_sha256": "66d188b20e9263000785d3ff4a284666388fcef35eb286ae3c92d789f4e70d0a"
+          }
+        ],
+        "unavailable": [],
+        "request_id": "9324b578-a3f6-4fe4-8582-bbc82134459b"
+      }
+    },
+    "static_assets": [
+      {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "request_id_header": null,
+        "path": "/assets/index-FF735tS3.js",
+        "same_origin_api": true
+      },
+      {
+        "status": 200,
+        "content_type": "text/css",
+        "request_id_header": null,
+        "path": "/assets/index-77TBFjun.css"
+      }
+    ],
+    "invalid_file": {
+      "status": 415,
+      "content_type": "application/json",
+      "request_id_header": "1dd715f8-7e46-47b7-9d80-48ee56a122a9",
+      "body": {
+        "code": "unsupported_extension",
+        "message": "Extensions acceptees : .png, .jpg, .jpeg.",
+        "request_id": "1dd715f8-7e46-47b7-9d80-48ee56a122a9"
+      }
+    }
+  },
+  "predictions": [
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "d211147f-ad17-45cd-a3ff-5821fb87129f",
+      "body": {
+        "category": "bottle",
+        "model": "B0",
+        "version": "b70366819fdbd9043eb78e8865ca39cebadf5cb251ff7a9c0e94817c3c0593e4",
+        "anomaly_score": 0.16482834838239885,
+        "threshold": 0.20367741357625985,
+        "decision": "normal",
+        "inference_time_ms": 121.70580199995129,
+        "request_id": "d211147f-ad17-45cd-a3ff-5821fb87129f"
+      },
+      "path": "/predict",
+      "model": "B0",
+      "category": "bottle"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "64df59eb-631b-4320-b504-ab828e8c6bbf",
+      "body": {
+        "category": "bottle",
+        "model": "B0",
+        "version": "b70366819fdbd9043eb78e8865ca39cebadf5cb251ff7a9c0e94817c3c0593e4",
+        "anomaly_score": 0.16482834838239885,
+        "threshold": 0.20367741357625985,
+        "decision": "normal",
+        "inference_time_ms": 14.028608999979042,
+        "request_id": "64df59eb-631b-4320-b504-ab828e8c6bbf",
+        "visualization_metadata": {
+          "kind": "reconstruction_error",
+          "description": "Erreur absolue moyenne RGB de reconstruction, padding exclu.",
+          "width": 256,
+          "height": 256,
+          "coordinate_space": "letterbox_256",
+          "padding_top_bottom_left_right": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "original_height_width": [
+            900,
+            900
+          ],
+          "scale": "absolute_l1_0_1",
+          "is_segmentation": false
+        }
+      },
+      "path": "/predict/visualize",
+      "model": "B0",
+      "category": "bottle"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "d6df6625-b198-4217-bf43-81f0e62d9f50",
+      "body": {
+        "category": "hazelnut",
+        "model": "B0",
+        "version": "28317915de9c191bdee13fa002996445f456f0d3de08b0b43426126efdc2178d",
+        "anomaly_score": 0.05680237994415731,
+        "threshold": 0.11635668613243758,
+        "decision": "normal",
+        "inference_time_ms": 20.141196000167838,
+        "request_id": "d6df6625-b198-4217-bf43-81f0e62d9f50"
+      },
+      "path": "/predict",
+      "model": "B0",
+      "category": "hazelnut"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "3d0bfe58-d655-4f59-b794-459cbd3d1541",
+      "body": {
+        "category": "hazelnut",
+        "model": "B0",
+        "version": "28317915de9c191bdee13fa002996445f456f0d3de08b0b43426126efdc2178d",
+        "anomaly_score": 0.05680237994415731,
+        "threshold": 0.11635668613243758,
+        "decision": "normal",
+        "inference_time_ms": 16.508820999888485,
+        "request_id": "3d0bfe58-d655-4f59-b794-459cbd3d1541",
+        "visualization_metadata": {
+          "kind": "reconstruction_error",
+          "description": "Erreur absolue moyenne RGB de reconstruction, padding exclu.",
+          "width": 256,
+          "height": 256,
+          "coordinate_space": "letterbox_256",
+          "padding_top_bottom_left_right": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "original_height_width": [
+            1024,
+            1024
+          ],
+          "scale": "absolute_l1_0_1",
+          "is_segmentation": false
+        }
+      },
+      "path": "/predict/visualize",
+      "model": "B0",
+      "category": "hazelnut"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "04710ba7-cbf7-4dba-86c3-8d1354561ed3",
+      "body": {
+        "category": "leather",
+        "model": "B0",
+        "version": "9de0b30085893bd24a45997cd87828c36c1c09030768327682715bcbe7403be3",
+        "anomaly_score": 0.07245151759920324,
+        "threshold": 0.08330504659835886,
+        "decision": "normal",
+        "inference_time_ms": 23.596397000119396,
+        "request_id": "04710ba7-cbf7-4dba-86c3-8d1354561ed3"
+      },
+      "path": "/predict",
+      "model": "B0",
+      "category": "leather"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "9184e99d-f537-4e80-bd5f-8c5f9dbc6e15",
+      "body": {
+        "category": "leather",
+        "model": "B0",
+        "version": "9de0b30085893bd24a45997cd87828c36c1c09030768327682715bcbe7403be3",
+        "anomaly_score": 0.07245151759920324,
+        "threshold": 0.08330504659835886,
+        "decision": "normal",
+        "inference_time_ms": 17.668054000068878,
+        "request_id": "9184e99d-f537-4e80-bd5f-8c5f9dbc6e15",
+        "visualization_metadata": {
+          "kind": "reconstruction_error",
+          "description": "Erreur absolue moyenne RGB de reconstruction, padding exclu.",
+          "width": 256,
+          "height": 256,
+          "coordinate_space": "letterbox_256",
+          "padding_top_bottom_left_right": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "original_height_width": [
+            1024,
+            1024
+          ],
+          "scale": "absolute_l1_0_1",
+          "is_segmentation": false
+        }
+      },
+      "path": "/predict/visualize",
+      "model": "B0",
+      "category": "leather"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "f3ac280d-0acd-4365-9857-2ddcb588937f",
+      "body": {
+        "category": "bottle",
+        "model": "A1",
+        "version": "a6741c693306601ea41ad21675bd194f4a7d8f77ea7342f78ce10098c7efe71d",
+        "anomaly_score": 0.11665581375723932,
+        "threshold": 0.14375584244319214,
+        "decision": "normal",
+        "inference_time_ms": 154.21522700012247,
+        "request_id": "f3ac280d-0acd-4365-9857-2ddcb588937f"
+      },
+      "path": "/predict",
+      "model": "A1",
+      "category": "bottle"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "3ff1ee6a-ca81-484e-8fcf-779df617cca5",
+      "body": {
+        "category": "bottle",
+        "model": "A1",
+        "version": "a6741c693306601ea41ad21675bd194f4a7d8f77ea7342f78ce10098c7efe71d",
+        "anomaly_score": 0.11665581375723932,
+        "threshold": 0.14375584244319214,
+        "decision": "normal",
+        "inference_time_ms": 67.89449499979128,
+        "request_id": "3ff1ee6a-ca81-484e-8fcf-779df617cca5",
+        "visualization_metadata": {
+          "kind": "reconstruction_error",
+          "description": "Erreur absolue moyenne RGB de reconstruction, padding exclu.",
+          "width": 256,
+          "height": 256,
+          "coordinate_space": "letterbox_256",
+          "padding_top_bottom_left_right": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "original_height_width": [
+            900,
+            900
+          ],
+          "scale": "absolute_l1_0_1",
+          "is_segmentation": false
+        }
+      },
+      "path": "/predict/visualize",
+      "model": "A1",
+      "category": "bottle"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "517b8f30-85c7-435d-910c-1aa9bbb3bc5f",
+      "body": {
+        "category": "hazelnut",
+        "model": "A1",
+        "version": "e3d75856bc044ac8f6ae728b4ac1e44994b4514e48cc4435b8b708698cd293e4",
+        "anomaly_score": 0.037757195529482535,
+        "threshold": 0.2761151554835279,
+        "decision": "normal",
+        "inference_time_ms": 126.17028899990146,
+        "request_id": "517b8f30-85c7-435d-910c-1aa9bbb3bc5f"
+      },
+      "path": "/predict",
+      "model": "A1",
+      "category": "hazelnut"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "74fc29f7-cb17-4aac-8799-1aecebcd753c",
+      "body": {
+        "category": "hazelnut",
+        "model": "A1",
+        "version": "e3d75856bc044ac8f6ae728b4ac1e44994b4514e48cc4435b8b708698cd293e4",
+        "anomaly_score": 0.037757195529482535,
+        "threshold": 0.2761151554835279,
+        "decision": "normal",
+        "inference_time_ms": 73.3178120001412,
+        "request_id": "74fc29f7-cb17-4aac-8799-1aecebcd753c",
+        "visualization_metadata": {
+          "kind": "reconstruction_error",
+          "description": "Erreur absolue moyenne RGB de reconstruction, padding exclu.",
+          "width": 256,
+          "height": 256,
+          "coordinate_space": "letterbox_256",
+          "padding_top_bottom_left_right": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "original_height_width": [
+            1024,
+            1024
+          ],
+          "scale": "absolute_l1_0_1",
+          "is_segmentation": false
+        }
+      },
+      "path": "/predict/visualize",
+      "model": "A1",
+      "category": "hazelnut"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "5eb81d89-2736-4c42-bbb0-10c4048f79b0",
+      "body": {
+        "category": "leather",
+        "model": "A1",
+        "version": "2c236a97a07b9c0b3243e9354ae6941b4a121fb908753098d1e2bdec0df40c50",
+        "anomaly_score": 0.05134487581416601,
+        "threshold": 0.0804537685201844,
+        "decision": "normal",
+        "inference_time_ms": 161.69270699992921,
+        "request_id": "5eb81d89-2736-4c42-bbb0-10c4048f79b0"
+      },
+      "path": "/predict",
+      "model": "A1",
+      "category": "leather"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "c2fec5c2-f681-4051-b7b8-0b201467a6fe",
+      "body": {
+        "category": "leather",
+        "model": "A1",
+        "version": "2c236a97a07b9c0b3243e9354ae6941b4a121fb908753098d1e2bdec0df40c50",
+        "anomaly_score": 0.05134487581416601,
+        "threshold": 0.0804537685201844,
+        "decision": "normal",
+        "inference_time_ms": 79.05783699993663,
+        "request_id": "c2fec5c2-f681-4051-b7b8-0b201467a6fe",
+        "visualization_metadata": {
+          "kind": "reconstruction_error",
+          "description": "Erreur absolue moyenne RGB de reconstruction, padding exclu.",
+          "width": 256,
+          "height": 256,
+          "coordinate_space": "letterbox_256",
+          "padding_top_bottom_left_right": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "original_height_width": [
+            1024,
+            1024
+          ],
+          "scale": "absolute_l1_0_1",
+          "is_segmentation": false
+        }
+      },
+      "path": "/predict/visualize",
+      "model": "A1",
+      "category": "leather"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "d0568db6-5137-4cb2-9397-8002df731350",
+      "body": {
+        "category": "bottle",
+        "model": "T0",
+        "version": "83b4a9794523bd533bdb05415de4945ee8864863a61dcd531934bb714b26db96",
+        "anomaly_score": 0.009116406552493572,
+        "threshold": 0.020550070330500603,
+        "decision": "normal",
+        "inference_time_ms": 365.95939299991187,
+        "request_id": "d0568db6-5137-4cb2-9397-8002df731350"
+      },
+      "path": "/predict",
+      "model": "T0",
+      "category": "bottle"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "c183c085-a4c3-4d49-84cb-8b5a50cf4b58",
+      "body": {
+        "category": "bottle",
+        "model": "T0",
+        "version": "83b4a9794523bd533bdb05415de4945ee8864863a61dcd531934bb714b26db96",
+        "anomaly_score": 0.009116406552493572,
+        "threshold": 0.020550070330500603,
+        "decision": "normal",
+        "inference_time_ms": 502.3149689998263,
+        "request_id": "c183c085-a4c3-4d49-84cb-8b5a50cf4b58",
+        "visualization_metadata": {
+          "kind": "gradcam",
+          "description": "Grad-CAM du logit anomalie, attribution visuelle grossiere.",
+          "width": 256,
+          "height": 256,
+          "coordinate_space": "letterbox_256",
+          "padding_top_bottom_left_right": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "original_height_width": [
+            900,
+            900
+          ],
+          "scale": "relative_per_image_0_1",
+          "is_segmentation": false
+        }
+      },
+      "path": "/predict/visualize",
+      "model": "T0",
+      "category": "bottle"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "f45684ea-c6ea-45ef-ba9b-4679b7529e67",
+      "body": {
+        "category": "hazelnut",
+        "model": "T0",
+        "version": "7f31b37da53f0944695bc1682d4a97f9bd5859544619118cf852dc7094f2d025",
+        "anomaly_score": 0.0024465571623295546,
+        "threshold": 0.0032944073900580406,
+        "decision": "normal",
+        "inference_time_ms": 177.99542500006282,
+        "request_id": "f45684ea-c6ea-45ef-ba9b-4679b7529e67"
+      },
+      "path": "/predict",
+      "model": "T0",
+      "category": "hazelnut"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "7bb8dd02-e7d9-4a7e-8d18-8d84bb644583",
+      "body": {
+        "category": "hazelnut",
+        "model": "T0",
+        "version": "7f31b37da53f0944695bc1682d4a97f9bd5859544619118cf852dc7094f2d025",
+        "anomaly_score": 0.0024465571623295546,
+        "threshold": 0.0032944073900580406,
+        "decision": "normal",
+        "inference_time_ms": 326.44016399990505,
+        "request_id": "7bb8dd02-e7d9-4a7e-8d18-8d84bb644583",
+        "visualization_metadata": {
+          "kind": "gradcam",
+          "description": "Grad-CAM du logit anomalie, attribution visuelle grossiere.",
+          "width": 256,
+          "height": 256,
+          "coordinate_space": "letterbox_256",
+          "padding_top_bottom_left_right": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "original_height_width": [
+            1024,
+            1024
+          ],
+          "scale": "relative_per_image_0_1",
+          "is_segmentation": false
+        }
+      },
+      "path": "/predict/visualize",
+      "model": "T0",
+      "category": "hazelnut"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "8150eaf4-182e-4fa8-bb97-6d55ea04f059",
+      "body": {
+        "category": "leather",
+        "model": "T0",
+        "version": "8c9571eed0ff5eff4b84a32c968e8e0b4c142fe07b091285451bda7eb556591c",
+        "anomaly_score": 0.0006366518791764975,
+        "threshold": 0.0007329359068535268,
+        "decision": "normal",
+        "inference_time_ms": 199.68575699999747,
+        "request_id": "8150eaf4-182e-4fa8-bb97-6d55ea04f059"
+      },
+      "path": "/predict",
+      "model": "T0",
+      "category": "leather"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "7bbb8fd2-f374-4f7e-aade-d8df5e0dab6b",
+      "body": {
+        "category": "leather",
+        "model": "T0",
+        "version": "8c9571eed0ff5eff4b84a32c968e8e0b4c142fe07b091285451bda7eb556591c",
+        "anomaly_score": 0.0006366518791764975,
+        "threshold": 0.0007329359068535268,
+        "decision": "normal",
+        "inference_time_ms": 153.66509000000406,
+        "request_id": "7bbb8fd2-f374-4f7e-aade-d8df5e0dab6b",
+        "visualization_metadata": {
+          "kind": "gradcam",
+          "description": "Grad-CAM du logit anomalie, attribution visuelle grossiere.",
+          "width": 256,
+          "height": 256,
+          "coordinate_space": "letterbox_256",
+          "padding_top_bottom_left_right": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "original_height_width": [
+            1024,
+            1024
+          ],
+          "scale": "relative_per_image_0_1",
+          "is_segmentation": false
+        }
+      },
+      "path": "/predict/visualize",
+      "model": "T0",
+      "category": "leather"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "1ccc8df0-0ce3-4b0d-9c60-1dfc8a4e5f8f",
+      "body": {
+        "category": "bottle",
+        "model": "T1",
+        "version": "e7ce1dbb2aaee94a8a1e2ad9705f8e7da6b909abd2273416dff44d24d2d94347",
+        "anomaly_score": 0.05506829917430878,
+        "threshold": 0.14108403027057648,
+        "decision": "normal",
+        "inference_time_ms": 749.5999360000951,
+        "request_id": "1ccc8df0-0ce3-4b0d-9c60-1dfc8a4e5f8f"
+      },
+      "path": "/predict",
+      "model": "T1",
+      "category": "bottle"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "e24ba899-e2d9-470b-baaa-bc31dd04fb32",
+      "body": {
+        "category": "bottle",
+        "model": "T1",
+        "version": "e7ce1dbb2aaee94a8a1e2ad9705f8e7da6b909abd2273416dff44d24d2d94347",
+        "anomaly_score": 0.05506829917430878,
+        "threshold": 0.14108403027057648,
+        "decision": "normal",
+        "inference_time_ms": 542.5634719999834,
+        "request_id": "e24ba899-e2d9-470b-baaa-bc31dd04fb32",
+        "visualization_metadata": {
+          "kind": "gradcam",
+          "description": "Grad-CAM du logit anomalie, attribution visuelle grossiere.",
+          "width": 256,
+          "height": 256,
+          "coordinate_space": "letterbox_256",
+          "padding_top_bottom_left_right": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "original_height_width": [
+            900,
+            900
+          ],
+          "scale": "relative_per_image_0_1",
+          "is_segmentation": false
+        }
+      },
+      "path": "/predict/visualize",
+      "model": "T1",
+      "category": "bottle"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "1f0dadcb-c6af-4a9b-bb76-67a2e2bda1c1",
+      "body": {
+        "category": "hazelnut",
+        "model": "T1",
+        "version": "f0c64a57d2fb8d53f9e6ef06cb0a9e3b7044cf7c2d79c76c7e61138c70348c19",
+        "anomaly_score": 0.04014865309000015,
+        "threshold": 0.2466665357351303,
+        "decision": "normal",
+        "inference_time_ms": 169.45860500004528,
+        "request_id": "1f0dadcb-c6af-4a9b-bb76-67a2e2bda1c1"
+      },
+      "path": "/predict",
+      "model": "T1",
+      "category": "hazelnut"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "609abc1c-bec1-4f57-976e-b1784892fb7e",
+      "body": {
+        "category": "hazelnut",
+        "model": "T1",
+        "version": "f0c64a57d2fb8d53f9e6ef06cb0a9e3b7044cf7c2d79c76c7e61138c70348c19",
+        "anomaly_score": 0.04014865309000015,
+        "threshold": 0.2466665357351303,
+        "decision": "normal",
+        "inference_time_ms": 320.64840799989724,
+        "request_id": "609abc1c-bec1-4f57-976e-b1784892fb7e",
+        "visualization_metadata": {
+          "kind": "gradcam",
+          "description": "Grad-CAM du logit anomalie, attribution visuelle grossiere.",
+          "width": 256,
+          "height": 256,
+          "coordinate_space": "letterbox_256",
+          "padding_top_bottom_left_right": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "original_height_width": [
+            1024,
+            1024
+          ],
+          "scale": "relative_per_image_0_1",
+          "is_segmentation": false
+        }
+      },
+      "path": "/predict/visualize",
+      "model": "T1",
+      "category": "hazelnut"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "bca46c8d-61ac-4cbb-b807-1dd4fc387f06",
+      "body": {
+        "category": "leather",
+        "model": "T1",
+        "version": "c2d0e6c9d3432a49dde75d658347cc5cb10dbb1e3e9b4059f10b941af2d7b2d6",
+        "anomaly_score": 0.008601073175668716,
+        "threshold": 0.01378712896257639,
+        "decision": "normal",
+        "inference_time_ms": 382.45264099987253,
+        "request_id": "bca46c8d-61ac-4cbb-b807-1dd4fc387f06"
+      },
+      "path": "/predict",
+      "model": "T1",
+      "category": "leather"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "3332ac31-0446-4707-ba6f-213539b56ed1",
+      "body": {
+        "category": "leather",
+        "model": "T1",
+        "version": "c2d0e6c9d3432a49dde75d658347cc5cb10dbb1e3e9b4059f10b941af2d7b2d6",
+        "anomaly_score": 0.008601073175668716,
+        "threshold": 0.01378712896257639,
+        "decision": "normal",
+        "inference_time_ms": 188.9571619999515,
+        "request_id": "3332ac31-0446-4707-ba6f-213539b56ed1",
+        "visualization_metadata": {
+          "kind": "gradcam",
+          "description": "Grad-CAM du logit anomalie, attribution visuelle grossiere.",
+          "width": 256,
+          "height": 256,
+          "coordinate_space": "letterbox_256",
+          "padding_top_bottom_left_right": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "original_height_width": [
+            1024,
+            1024
+          ],
+          "scale": "relative_per_image_0_1",
+          "is_segmentation": false
+        }
+      },
+      "path": "/predict/visualize",
+      "model": "T1",
+      "category": "leather"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "39278c29-441e-4e5c-b084-25cbd5e9e307",
+      "body": {
+        "category": "bottle",
+        "model": "T2",
+        "version": "f07a9ca4bd16ada6d5c1bd6840ff90b8bc5e89fb29d86d362ddc51ca575c308d",
+        "anomaly_score": 3.256561467424035e-05,
+        "threshold": 0.00017796678002923727,
+        "decision": "normal",
+        "inference_time_ms": 244.1725660000884,
+        "request_id": "39278c29-441e-4e5c-b084-25cbd5e9e307"
+      },
+      "path": "/predict",
+      "model": "T2",
+      "category": "bottle"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "952d4180-b31c-497f-b50b-9725b9484032",
+      "body": {
+        "category": "bottle",
+        "model": "T2",
+        "version": "f07a9ca4bd16ada6d5c1bd6840ff90b8bc5e89fb29d86d362ddc51ca575c308d",
+        "anomaly_score": 3.256561467424035e-05,
+        "threshold": 0.00017796678002923727,
+        "decision": "normal",
+        "inference_time_ms": 169.4807960000162,
+        "request_id": "952d4180-b31c-497f-b50b-9725b9484032",
+        "visualization_metadata": {
+          "kind": "gradcam",
+          "description": "Grad-CAM du logit anomalie, attribution visuelle grossiere.",
+          "width": 256,
+          "height": 256,
+          "coordinate_space": "letterbox_256",
+          "padding_top_bottom_left_right": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "original_height_width": [
+            900,
+            900
+          ],
+          "scale": "relative_per_image_0_1",
+          "is_segmentation": false
+        }
+      },
+      "path": "/predict/visualize",
+      "model": "T2",
+      "category": "bottle"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "f92c1ebf-c1f0-4a2d-8983-3d1a0479a48e",
+      "body": {
+        "category": "hazelnut",
+        "model": "T2",
+        "version": "0dbbeeb75a174073560bfc7625aa9afae7f1e825340717cd06e38732ea87e57e",
+        "anomaly_score": 0.00011425872071413323,
+        "threshold": 0.0010021653724834323,
+        "decision": "normal",
+        "inference_time_ms": 278.482165000014,
+        "request_id": "f92c1ebf-c1f0-4a2d-8983-3d1a0479a48e"
+      },
+      "path": "/predict",
+      "model": "T2",
+      "category": "hazelnut"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "9052bd09-b1ac-4b34-868c-5a2b8c50889e",
+      "body": {
+        "category": "hazelnut",
+        "model": "T2",
+        "version": "0dbbeeb75a174073560bfc7625aa9afae7f1e825340717cd06e38732ea87e57e",
+        "anomaly_score": 0.00011425872071413323,
+        "threshold": 0.0010021653724834323,
+        "decision": "normal",
+        "inference_time_ms": 156.5255000000434,
+        "request_id": "9052bd09-b1ac-4b34-868c-5a2b8c50889e",
+        "visualization_metadata": {
+          "kind": "gradcam",
+          "description": "Grad-CAM du logit anomalie, attribution visuelle grossiere.",
+          "width": 256,
+          "height": 256,
+          "coordinate_space": "letterbox_256",
+          "padding_top_bottom_left_right": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "original_height_width": [
+            1024,
+            1024
+          ],
+          "scale": "relative_per_image_0_1",
+          "is_segmentation": false
+        }
+      },
+      "path": "/predict/visualize",
+      "model": "T2",
+      "category": "hazelnut"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "aaf59469-5f66-4423-a7e8-b51ae2ba15e6",
+      "body": {
+        "category": "leather",
+        "model": "T2",
+        "version": "8c450b7450a21e0fbb7fcd6928639cfb6dd49369b7b89f3626b5686f1a600889",
+        "anomaly_score": 0.0013309936039149761,
+        "threshold": 0.0006882469169795513,
+        "decision": "anomaly",
+        "inference_time_ms": 285.3342599998996,
+        "request_id": "aaf59469-5f66-4423-a7e8-b51ae2ba15e6"
+      },
+      "path": "/predict",
+      "model": "T2",
+      "category": "leather"
+    },
+    {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "26222f1a-4187-4de2-bcb6-197c38ca538f",
+      "body": {
+        "category": "leather",
+        "model": "T2",
+        "version": "8c450b7450a21e0fbb7fcd6928639cfb6dd49369b7b89f3626b5686f1a600889",
+        "anomaly_score": 0.0013309936039149761,
+        "threshold": 0.0006882469169795513,
+        "decision": "anomaly",
+        "inference_time_ms": 140.41907999990144,
+        "request_id": "26222f1a-4187-4de2-bcb6-197c38ca538f",
+        "visualization_metadata": {
+          "kind": "gradcam",
+          "description": "Grad-CAM du logit anomalie, attribution visuelle grossiere.",
+          "width": 256,
+          "height": 256,
+          "coordinate_space": "letterbox_256",
+          "padding_top_bottom_left_right": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "original_height_width": [
+            1024,
+            1024
+          ],
+          "scale": "relative_per_image_0_1",
+          "is_segmentation": false
+        }
+      },
+      "path": "/predict/visualize",
+      "model": "T2",
+      "category": "leather"
+    }
+  ],
+  "failures": [],
+  "passed": true
+}

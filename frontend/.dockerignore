@@ -1,0 +1,16 @@
+# Frontend build context: code and vector icon only.
+**
+!package.json
+!package-lock.json
+!index.html
+!tsconfig.json
+!vite.config.ts
+!vitest.config.ts
+!nginx.conf
+!src/
+!src/**/
+!src/**/*.ts
+!src/**/*.tsx
+!src/**/*.css
+!public/
+!public/favicon.svg

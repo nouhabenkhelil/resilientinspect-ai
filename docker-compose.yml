@@ -1,0 +1,57 @@
+name: resilientinspect
+
+services:
+  backend:
+    # Generated file mounts only: no dataset images, MLflow stores or histories.
+    extends:
+      file: ./docker-compose.mounts.yml
+      service: scientific_files
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    image: resilientinspect-backend:cpu
+    platform: linux/amd64
+    init: true
+    read_only: true
+    volumes:
+      - type: bind
+        source: ./deployment/reports/portability
+        target: /app/deployment/reports/portability
+        read_only: true
+        bind:
+          create_host_path: false
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=128m
+    environment:
+      OMP_NUM_THREADS: "2"
+      MKL_NUM_THREADS: "2"
+    ports:
+      - "127.0.0.1:${RI_BACKEND_PORT:-8001}:8000"
+    healthcheck:
+      test: ["CMD", "python", "/app/deployment/healthcheck.py"]
+      interval: 10s
+      timeout: 5s
+      start_period: 90s
+      retries: 6
+    stop_grace_period: 30s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: resilientinspect-frontend:local
+    depends_on:
+      backend:
+        condition: service_healthy
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    ports:
+      - "127.0.0.1:${RI_FRONTEND_PORT:-18080}:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/nginx-health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      start_period: 5s
+      retries: 3

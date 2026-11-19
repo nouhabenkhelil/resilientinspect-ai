@@ -1,0 +1,22 @@
+[
+  {
+    "tags": [
+      "resilientinspect-backend:cpu"
+    ],
+    "id": "sha256:78d6e5a0466ed2e7c0622fc828de86b94ed36d59c03ff37c091de49a0f4cb314",
+    "size_bytes": 1885297739,
+    "os": "linux",
+    "architecture": "amd64",
+    "created": "2026-11-17T15:53:31.256765464Z"
+  },
+  {
+    "tags": [
+      "resilientinspect-frontend:local"
+    ],
+    "id": "sha256:6ff1dff34b12ae970fb527261a405fb3334a6acd530e6264f819fca6c59a315b",
+    "size_bytes": 93068816,
+    "os": "linux",
+    "architecture": "amd64",
+    "created": "2026-11-17T15:47:52.686097091Z"
+  }
+]

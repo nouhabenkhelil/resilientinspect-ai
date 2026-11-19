@@ -15,6 +15,7 @@ from resilientinspect.training.train_ae import seed_everything
 
 from .config import Settings
 from .schemas import CATEGORIES, MODELS, ModelMetadata
+from . import portability
 
 
 logger = logging.getLogger(__name__)
@@ -65,10 +66,15 @@ class ModelStore:
 
     def _load_one(self, variant: str, category: str, loader) -> None:
         try:
-            self.models[variant, category] = loader()
+            loaded = loader()
+            self._require_deployment_parity(loaded)
+            self.models[variant, category] = loaded
         except (OSError, ValueError, KeyError, TypeError, RuntimeError, ImportError):
             logger.exception("Chargement refuse pour %s/%s", variant, category)
             self.unavailable[variant, category] = "Checkpoint, calibration ou validation CPU absent ou invalide."
+
+    def _require_deployment_parity(self, loaded):
+        portability.require_evidence(self.settings.project_root, loaded)
 
     def _load_ae(self, variant: str, checkpoint: evaluate_ae.Checkpoint, digest: str) -> LoadedModel:
         root = self.settings.project_root
@@ -77,21 +83,24 @@ class ModelStore:
         protocol = module.load_protocol(protocol_path)
         directory = root / f"reports/evaluation/{variant.lower()}" / _sha256(protocol_path)[:12] / checkpoint.category
         expected = module.binding(protocol_path, checkpoint, digest)
-        if variant == "A1":
-            calibration = evaluate_a1._load_calibration(directory, checkpoint, protocol, expected, CPU)
-            network = a1_checkpoints.load_model(checkpoint, CPU, digest)
-        else:
+        if variant in ("B0", "A1"):
             path = directory / "calibration.json"
             if path.with_suffix(".sha256").read_text(encoding="ascii").strip() != _sha256(path):
                 raise ValueError("Empreinte calibration B0 invalide.")
             calibration = read_json(path)
             if (any(calibration.get(key) != value for key, value in expected.items())
-                    or calibration.get("checkpoint") != asdict(checkpoint)
+                    or not portability.checkpoint_matches(calibration.get("checkpoint"), checkpoint, root, variant)
                     or calibration.get("category") != checkpoint.category
                     or calibration.get("calibration_split") != "val" or calibration.get("normal_only") is not True
                     or calibration.get("environment") != evaluate_ae._environment(CPU)):
-                raise ValueError("Calibration B0 incompatible.")
-            network = evaluate_ae.load_model(checkpoint, CPU, digest)
+                raise ValueError(f"Calibration {variant} incompatible.")
+            if variant == "A1":
+                if (calibration.get("protocol") != protocol
+                        or any(type(calibration.get(k)) is not int or calibration[k] < 1
+                               for k in ("validation_images", "validation_pixels"))
+                        or len(calibration.get("validation_scores", [])) != calibration["validation_images"]):
+                    raise ValueError("Calibration A1 incomplete ou protocole incompatible.")
+            network = (a1_checkpoints if variant == "A1" else evaluate_ae).load_model(checkpoint, CPU, digest)
         threshold, _ = evaluate_ae._thresholds(calibration)
         environment_path = Path(checkpoint.path).with_name("environment.json")
         metadata = ModelMetadata(model=variant, category=checkpoint.category, version=checkpoint.sha256,
@@ -130,7 +139,7 @@ class ModelStore:
                 or report.get("parity_policy") != evaluate_transfer.PARITY_POLICY
                 or report.get("protocol_sha256") != protocol_sha
                 or report.get("evaluation_code_sha256") != _sha256(Path(evaluate_transfer.__file__))
-                or report.get("evaluation_environment") != evaluate_transfer._environment()
+                or not portability.compatible_environment(report.get("evaluation_environment", {}), evaluate_transfer._environment())
                 or report.get("score_tolerance_failures") != 0 or report.get("unjustified_decision_changes") != 0):
             raise ValueError("Validation CPU perimee ou incompatible.")
         network = transfer.load_transfer_checkpoint(run / "best.pt", CPU)

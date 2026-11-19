@@ -1,0 +1,264 @@
+{
+  "checked_at": "2026-11-17T15:48:12.513641+00:00",
+  "frontend_url": "http://localhost:18080",
+  "direct_api_url": "http://localhost:8001",
+  "synthetic_input": "173x89 RGB PNG generated in memory",
+  "checks": {
+    "frontend": {
+      "status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "request_id_header": null,
+      "body": "React HTML"
+    },
+    "nginx_health": {
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "request_id_header": null,
+      "body": "ok\n"
+    },
+    "direct_health": {
+      "status": 503,
+      "content_type": "application/json",
+      "request_id_header": "6e1f93b6-efb2-4c31-a22b-4aa3b8d8341a",
+      "body": {
+        "status": "degraded",
+        "version": "0.1.0",
+        "device": "cpu",
+        "ready_models": 0,
+        "expected_models": 15,
+        "request_id": "6e1f93b6-efb2-4c31-a22b-4aa3b8d8341a"
+      }
+    },
+    "proxy_health": {
+      "status": 503,
+      "content_type": "application/json",
+      "request_id_header": "4260df0a-df24-4639-b0d3-f6626f7cd722",
+      "body": {
+        "status": "degraded",
+        "version": "0.1.0",
+        "device": "cpu",
+        "ready_models": 0,
+        "expected_models": 15,
+        "request_id": "4260df0a-df24-4639-b0d3-f6626f7cd722"
+      }
+    },
+    "direct_metadata": {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "8c384ca3-2d42-44a5-89f8-3d0af0c55b26",
+      "body": {
+        "models": [],
+        "unavailable": [
+          {
+            "model": "B0",
+            "category": "bottle",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "B0",
+            "category": "hazelnut",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "B0",
+            "category": "leather",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "A1",
+            "category": "bottle",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "A1",
+            "category": "hazelnut",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "A1",
+            "category": "leather",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "T0",
+            "category": "bottle",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "T0",
+            "category": "hazelnut",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "T0",
+            "category": "leather",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "T1",
+            "category": "bottle",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "T1",
+            "category": "hazelnut",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "T1",
+            "category": "leather",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "T2",
+            "category": "bottle",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "T2",
+            "category": "hazelnut",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "T2",
+            "category": "leather",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          }
+        ],
+        "request_id": "8c384ca3-2d42-44a5-89f8-3d0af0c55b26"
+      }
+    },
+    "proxy_metadata": {
+      "status": 200,
+      "content_type": "application/json",
+      "request_id_header": "e16652ac-4b22-48ee-8506-17050443d9be",
+      "body": {
+        "models": [],
+        "unavailable": [
+          {
+            "model": "B0",
+            "category": "bottle",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "B0",
+            "category": "hazelnut",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "B0",
+            "category": "leather",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "A1",
+            "category": "bottle",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "A1",
+            "category": "hazelnut",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "A1",
+            "category": "leather",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "T0",
+            "category": "bottle",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "T0",
+            "category": "hazelnut",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "T0",
+            "category": "leather",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "T1",
+            "category": "bottle",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "T1",
+            "category": "hazelnut",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "T1",
+            "category": "leather",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "T2",
+            "category": "bottle",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "T2",
+            "category": "hazelnut",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          },
+          {
+            "model": "T2",
+            "category": "leather",
+            "reason": "Checkpoint, calibration ou validation CPU absent ou invalide."
+          }
+        ],
+        "request_id": "e16652ac-4b22-48ee-8506-17050443d9be"
+      }
+    },
+    "invalid_file": {
+      "status": 415,
+      "content_type": "application/json",
+      "request_id_header": "a606fd60-194d-412c-8539-12a2d133c8a9",
+      "body": {
+        "code": "unsupported_extension",
+        "message": "Extensions acceptees : .png, .jpg, .jpeg.",
+        "request_id": "a606fd60-194d-412c-8539-12a2d133c8a9"
+      }
+    }
+  },
+  "predictions": [
+    {
+      "status": 503,
+      "content_type": "application/json",
+      "request_id_header": "51c8d606-1eb1-4de2-89c4-71ba7c4cfa91",
+      "body": {
+        "code": "model_unavailable",
+        "message": "Ce modele est absent ou ses artefacts n'ont pas pu etre valides.",
+        "request_id": "51c8d606-1eb1-4de2-89c4-71ba7c4cfa91"
+      },
+      "path": "/predict",
+      "model": "B0",
+      "category": "bottle"
+    },
+    {
+      "status": 503,
+      "content_type": "application/json",
+      "request_id_header": "0ce93887-24c3-449a-86e6-80bd2cdfd706",
+      "body": {
+        "code": "model_unavailable",
+        "message": "Ce modele est absent ou ses artefacts n'ont pas pu etre valides.",
+        "request_id": "0ce93887-24c3-449a-86e6-80bd2cdfd706"
+      },
+      "path": "/predict/visualize",
+      "model": "B0",
+      "category": "bottle"
+    }
+  ],
+  "failures": [
+    "direct_health: 15 validated CPU models required",
+    "proxy_health: 15 validated CPU models required",
+    "Only 0/15 models available",
+    "B0/bottle/predict: HTTP 503",
+    "B0/bottle/predict/visualize: HTTP 503"
+  ],
+  "passed": false
+}
