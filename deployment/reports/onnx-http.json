@@ -3,7 +3,7 @@
     "health": {
       "status": 200,
       "content_type": "application/json",
-      "request_id_header": "57fb66d7-4ae5-4e7f-b928-6e1f2eb6e22d",
+      "request_id_header": "aae17163-9357-4a45-ac41-2192ed401501",
       "body": {
         "ready_models_by_engine": {
           "pytorch": 15,
@@ -14,13 +14,13 @@
         "device": "cpu",
         "ready_models": 15,
         "expected_models": 15,
-        "request_id": "57fb66d7-4ae5-4e7f-b928-6e1f2eb6e22d"
+        "request_id": "aae17163-9357-4a45-ac41-2192ed401501"
       }
     },
     "metadata": {
       "status": 200,
       "content_type": "application/json",
-      "request_id_header": "26cc69ba-67d2-406a-b037-cfbe1765c0a5",
+      "request_id_header": "235e9527-6b4a-4604-8c9d-1ccf3ca08da5",
       "body": {
         "models": [
           {
@@ -923,27 +923,27 @@
           }
         ],
         "unavailable": [],
-        "request_id": "26cc69ba-67d2-406a-b037-cfbe1765c0a5"
+        "request_id": "235e9527-6b4a-4604-8c9d-1ccf3ca08da5"
       }
     },
     "invalid_engine": {
       "status": 422,
       "content_type": "application/json",
-      "request_id_header": "50696305-3be9-4cf1-a493-1e716af1d31d",
+      "request_id_header": "8d0ac339-a4a9-4866-a5f1-0b4946e63cd9",
       "body": {
         "code": "invalid_input",
         "message": "Verifier les champs file, category et model et leurs valeurs autorisees.",
-        "request_id": "50696305-3be9-4cf1-a493-1e716af1d31d"
+        "request_id": "8d0ac339-a4a9-4866-a5f1-0b4946e63cd9"
       }
     },
     "unavailable_engine": {
       "status": 503,
       "content_type": "application/json",
-      "request_id_header": "a3068568-8084-4852-af4a-21904ba3ed7d",
+      "request_id_header": "0aa3c832-800b-45f8-adb2-d6af51e8d77e",
       "body": {
         "code": "onnx_unavailable",
         "message": "Export ONNX absent, incompatible ou non valide pour ce modele. Aucun repli automatique.",
-        "request_id": "a3068568-8084-4852-af4a-21904ba3ed7d"
+        "request_id": "0aa3c832-800b-45f8-adb2-d6af51e8d77e"
       }
     }
   },
@@ -954,7 +954,7 @@
       "path": "/predict",
       "status": 200,
       "content_type": "application/json",
-      "request_id_header": "a09b3dde-94d5-49c3-9d3b-3e6a2210f037",
+      "request_id_header": "589f7a4d-c792-496b-8cb9-38ca30f1d5f5",
       "body": {
         "engine": "pytorch",
         "explanation_engine": null,
@@ -968,8 +968,8 @@
         "anomaly_score": 0.16482834838239885,
         "threshold": 0.20367741357625985,
         "decision": "normal",
-        "inference_time_ms": 2702.019656999937,
-        "request_id": "a09b3dde-94d5-49c3-9d3b-3e6a2210f037"
+        "inference_time_ms": 1276.9803909995971,
+        "request_id": "589f7a4d-c792-496b-8cb9-38ca30f1d5f5"
       }
     },
     {
@@ -978,22 +978,22 @@
       "path": "/predict/visualize",
       "status": 200,
       "content_type": "application/json",
-      "request_id_header": "26d6f0a9-2b9f-4d0b-9d18-897b89ad1b65",
+      "request_id_header": "f932fb57-267e-48af-94bc-8cc6bdafaaa0",
       "body": {
         "engine": "pytorch",
         "explanation_engine": "pytorch",
         "explanation_reference_score": null,
         "explanation_score_coherent": null,
         "explanation_decision_changed": null,
-        "explanation_time_ms": 0.0016029998732847162,
+        "explanation_time_ms": 0.0035869998100679368,
         "category": "bottle",
         "model": "B0",
         "version": "b70366819fdbd9043eb78e8865ca39cebadf5cb251ff7a9c0e94817c3c0593e4",
         "anomaly_score": 0.16482834838239885,
         "threshold": 0.20367741357625985,
         "decision": "normal",
-        "inference_time_ms": 68.53375900004721,
-        "request_id": "26d6f0a9-2b9f-4d0b-9d18-897b89ad1b65",
+        "inference_time_ms": 73.4204079999472,
+        "request_id": "f932fb57-267e-48af-94bc-8cc6bdafaaa0",
         "visualization_metadata": {
           "kind": "reconstruction_error",
           "description": "Erreur absolue moyenne RGB de reconstruction, padding exclu.",
@@ -1021,7 +1021,7 @@
       "path": "/predict",
       "status": 200,
       "content_type": "application/json",
-      "request_id_header": "bb166fb1-099f-431d-9314-bbc52352b4bd",
+      "request_id_header": "ffa6763e-ded4-4f8d-8651-b6ec13fdeb15",
       "body": {
         "engine": "onnxruntime",
         "explanation_engine": null,
@@ -1035,8 +1035,8 @@
         "anomaly_score": 0.16482830760864223,
         "threshold": 0.20367741357625985,
         "decision": "normal",
-        "inference_time_ms": 629.6198219999951,
-        "request_id": "bb166fb1-099f-431d-9314-bbc52352b4bd"
+        "inference_time_ms": 616.7496500002017,
+        "request_id": "ffa6763e-ded4-4f8d-8651-b6ec13fdeb15"
       }
     },
     {
@@ -1045,22 +1045,22 @@
       "path": "/predict/visualize",
       "status": 200,
       "content_type": "application/json",
-      "request_id_header": "75eb8717-a67a-41b2-aac5-e24da412be9c",
+      "request_id_header": "1ac32a1d-8af8-439a-a06f-bd3e597651d1",
       "body": {
         "engine": "onnxruntime",
         "explanation_engine": "onnxruntime",
         "explanation_reference_score": null,
         "explanation_score_coherent": null,
         "explanation_decision_changed": null,
-        "explanation_time_ms": 0.0013230001059127972,
+        "explanation_time_ms": 0.0024850005502230488,
         "category": "bottle",
         "model": "B0",
         "version": "b70366819fdbd9043eb78e8865ca39cebadf5cb251ff7a9c0e94817c3c0593e4",
         "anomaly_score": 0.16482830760864223,
         "threshold": 0.20367741357625985,
         "decision": "normal",
-        "inference_time_ms": 45.41182000002664,
-        "request_id": "75eb8717-a67a-41b2-aac5-e24da412be9c",
+        "inference_time_ms": 31.1770370008162,
+        "request_id": "1ac32a1d-8af8-439a-a06f-bd3e597651d1",
         "visualization_metadata": {
           "kind": "reconstruction_error",
           "description": "Erreur absolue moyenne RGB de reconstruction, padding exclu.",
@@ -1088,7 +1088,7 @@
       "path": "/predict",
       "status": 200,
       "content_type": "application/json",
-      "request_id_header": "10abbef0-d4f3-497a-ae6b-0bae38148e86",
+      "request_id_header": "8abb98e9-1af6-4318-97af-090294e3607a",
       "body": {
         "engine": "pytorch",
         "explanation_engine": null,
@@ -1102,8 +1102,8 @@
         "anomaly_score": 3.256561467424035e-05,
         "threshold": 0.00017796678002923727,
         "decision": "normal",
-        "inference_time_ms": 829.0690600001653,
-        "request_id": "10abbef0-d4f3-497a-ae6b-0bae38148e86"
+        "inference_time_ms": 1788.3846960003211,
+        "request_id": "8abb98e9-1af6-4318-97af-090294e3607a"
       }
     },
     {
@@ -1112,22 +1112,22 @@
       "path": "/predict/visualize",
       "status": 200,
       "content_type": "application/json",
-      "request_id_header": "8de701ba-f6fb-4b7f-9cbc-1a3421bac517",
+      "request_id_header": "c7328873-9e73-4554-84bd-56b7fed265a6",
       "body": {
         "engine": "pytorch",
         "explanation_engine": "pytorch",
         "explanation_reference_score": null,
         "explanation_score_coherent": null,
         "explanation_decision_changed": null,
-        "explanation_time_ms": 845.0316020000628,
+        "explanation_time_ms": 3014.91220600019,
         "category": "bottle",
         "model": "T2",
         "version": "f07a9ca4bd16ada6d5c1bd6840ff90b8bc5e89fb29d86d362ddc51ca575c308d",
         "anomaly_score": 3.256561467424035e-05,
         "threshold": 0.00017796678002923727,
         "decision": "normal",
-        "inference_time_ms": 1111.1185640002077,
-        "request_id": "8de701ba-f6fb-4b7f-9cbc-1a3421bac517",
+        "inference_time_ms": 3409.814390000065,
+        "request_id": "c7328873-9e73-4554-84bd-56b7fed265a6",
         "visualization_metadata": {
           "kind": "gradcam",
           "description": "Grad-CAM du logit anomalie, attribution visuelle grossiere.",
@@ -1155,7 +1155,7 @@
       "path": "/predict",
       "status": 200,
       "content_type": "application/json",
-      "request_id_header": "8f35d77f-483d-4cb1-86a1-12636de0c09f",
+      "request_id_header": "df4ba3a5-e141-485f-a534-b46e96f20d93",
       "body": {
         "engine": "onnxruntime",
         "explanation_engine": null,
@@ -1169,8 +1169,8 @@
         "anomaly_score": 3.255931005696766e-05,
         "threshold": 0.00017796678002923727,
         "decision": "normal",
-        "inference_time_ms": 4271.277183999928,
-        "request_id": "8f35d77f-483d-4cb1-86a1-12636de0c09f"
+        "inference_time_ms": 1162.1365139999398,
+        "request_id": "df4ba3a5-e141-485f-a534-b46e96f20d93"
       }
     },
     {
@@ -1179,22 +1179,22 @@
       "path": "/predict/visualize",
       "status": 200,
       "content_type": "application/json",
-      "request_id_header": "8f9f343e-2bf3-4d54-a5e7-b5c43e688bdb",
+      "request_id_header": "2c1464bb-2bc5-432e-8b5a-4302d47bd54a",
       "body": {
         "engine": "onnxruntime",
         "explanation_engine": "pytorch",
         "explanation_reference_score": 3.256561467424035e-05,
         "explanation_score_coherent": true,
         "explanation_decision_changed": false,
-        "explanation_time_ms": 340.5352590000348,
+        "explanation_time_ms": 3400.4167329994743,
         "category": "bottle",
         "model": "T2",
         "version": "f07a9ca4bd16ada6d5c1bd6840ff90b8bc5e89fb29d86d362ddc51ca575c308d",
         "anomaly_score": 3.255931005696766e-05,
         "threshold": 0.00017796678002923727,
         "decision": "normal",
-        "inference_time_ms": 371.2151030001678,
-        "request_id": "8f9f343e-2bf3-4d54-a5e7-b5c43e688bdb",
+        "inference_time_ms": 3903.8895510002476,
+        "request_id": "2c1464bb-2bc5-432e-8b5a-4302d47bd54a",
         "visualization_metadata": {
           "kind": "gradcam",
           "description": "Grad-CAM du logit anomalie, attribution visuelle grossiere.",

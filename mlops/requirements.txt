@@ -1,0 +1,5 @@
+# MLOps only: install in .venv-mlops, never in the serving environment.
+dvc==3.67.1
+mlflow==3.16.1
+setuptools==80.9.0
+wheel==0.45.1

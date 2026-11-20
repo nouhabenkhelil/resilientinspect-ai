@@ -1,0 +1,6 @@
+outs:
+- md5: e0cea361a07971cebc6b7ede013995d9.dir
+  size: 607441993
+  nfiles: 506
+  hash: md5
+  path: deployment

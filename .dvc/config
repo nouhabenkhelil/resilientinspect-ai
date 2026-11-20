@@ -1,0 +1,5 @@
+[cache]
+    type = copy
+[core]
+    autostage = false
+    analytics = false

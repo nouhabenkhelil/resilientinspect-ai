@@ -1,0 +1,50 @@
+{
+  "models": [
+    {
+      "name": "ResilientInspect-T2-bottle",
+      "version": "1",
+      "uri": "models:/ResilientInspect-T2-bottle/1",
+      "category": "bottle",
+      "checkpoint_sha256": "f07a9ca4bd16ada6d5c1bd6840ff90b8bc5e89fb29d86d362ddc51ca575c308d",
+      "packaging_sha256": "17bf6c864e1dc180d851f03614ef6cd5226a4c09748453ef9f3b72bf489a0875",
+      "alias": "demo_candidate",
+      "normal_validation_images": 42,
+      "max_score_error": 0.0,
+      "decision_changes": 0,
+      "sha256_verified": true,
+      "status": "passed"
+    },
+    {
+      "name": "ResilientInspect-T2-hazelnut",
+      "version": "1",
+      "uri": "models:/ResilientInspect-T2-hazelnut/1",
+      "category": "hazelnut",
+      "checkpoint_sha256": "0dbbeeb75a174073560bfc7625aa9afae7f1e825340717cd06e38732ea87e57e",
+      "packaging_sha256": "825b48e4db6f7a55fae49752319d5d38789ec0e90fb767d35e3d39df66bd4190",
+      "alias": "demo_candidate",
+      "normal_validation_images": 79,
+      "max_score_error": 0.0,
+      "decision_changes": 0,
+      "sha256_verified": true,
+      "status": "passed"
+    },
+    {
+      "name": "ResilientInspect-T2-leather",
+      "version": "1",
+      "uri": "models:/ResilientInspect-T2-leather/1",
+      "category": "leather",
+      "checkpoint_sha256": "8c450b7450a21e0fbb7fcd6928639cfb6dd49369b7b89f3626b5686f1a600889",
+      "packaging_sha256": "c5ada027b4aa6a881c0c66165df8f5305100e79584f3c7b28af3ec9c5e2715a9",
+      "alias": "demo_candidate",
+      "normal_validation_images": 49,
+      "max_score_error": 0.0,
+      "decision_changes": 0,
+      "sha256_verified": true,
+      "status": "passed"
+    }
+  ],
+  "total_normal_images": 170,
+  "score_atol": 1e-05,
+  "score_rtol": 0.0001,
+  "selection": "Retrospective demo candidates; no independent validation; no test images read."
+}

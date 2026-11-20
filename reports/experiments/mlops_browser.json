@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "engine": "Chromium",
+  "mlflow_version": "3.16.1",
+  "screens": [
+    "experiments",
+    "run-metrics-parameters",
+    "run-artifacts",
+    "registry",
+    "registry-version"
+  ],
+  "real_run_id": "c4267a11d69b43468cb8c81b0c5e5dbf",
+  "real_registry_model": "ResilientInspect-T2-bottle",
+  "real_registry_version": "1",
+  "parameters_metrics_artifacts_visible": true,
+  "three_registry_models_visible": true,
+  "alias_visible": true,
+  "page_errors": []
+}

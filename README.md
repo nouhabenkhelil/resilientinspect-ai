@@ -1,11 +1,13 @@
 # ResilientInspect AI
 
-Projet de Deep Learning avancé, Axe 1 CNN et Transfer Learning. Le socle de la
-phase 0 et la phase 1 (audit, préparation, EDA visuelle) sont validés. La
-**phase 2, étape 2 couvre le pipeline d'entraînement B0 et son smoke CPU**,
-autorisés le 7 novembre 2026. L'architecture B0 est validée. Un entraînement court
-de vérification bottle/train et bottle/val est exécuté ; le run complet GPU,
-A1 et T0/T1/T2 attendent une nouvelle validation.
+Projet de Deep Learning avancé, Axe 1 CNN et Transfer Learning. État au
+20 novembre 2026 : **15 modèles PyTorch et 14 modèles ONNX validés**, application
+React/FastAPI sur `http://localhost:18080`, versionnement DVC local et MLflow
+Tracking/Registry sur `http://127.0.0.1:5000`.
+
+Voir [le guide MLOps](mlops/README.md), [la vérification MLOps](reports/experiments/mlops_verification.md)
+et [la finalisation ONNX](deployment/reports/onnx-finalization.md).
+Les sections historiques ci-dessous conservent le contexte des premières phases.
 
 ## Référence et périmètre
 
