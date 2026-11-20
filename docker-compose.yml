@@ -15,6 +15,12 @@ services:
     read_only: true
     volumes:
       - type: bind
+        source: ./artifacts/onnx
+        target: /app/artifacts/onnx
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
         source: ./deployment/reports/portability
         target: /app/deployment/reports/portability
         read_only: true

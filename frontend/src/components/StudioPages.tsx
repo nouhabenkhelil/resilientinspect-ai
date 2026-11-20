@@ -369,6 +369,14 @@ export function SystemMonitor({ system }: { system: SystemState }) {
             </dd>
           </div>
           <div>
+            <dt>PyTorch / ONNX validés</dt>
+            <dd>
+              {health?.ready_models_by_engine
+                ? `${health.ready_models_by_engine.pytorch} / ${health.ready_models_by_engine.onnxruntime}`
+                : 'Non exposé par cette version API'}
+            </dd>
+          </div>
+          <div>
             <dt>Dernier aller-retour de supervision</dt>
             <dd>{system.timings[0] ? ms(system.timings[0].ms) : 'Aucune mesure réussie'}</dd>
           </div>
@@ -436,6 +444,10 @@ export function SystemMonitor({ system }: { system: SystemState }) {
                 {model.model} · {categoryLabels[model.category]}{' '}
                 <span className="mono">{model.version.slice(0, 12)}</span>
               </summary>
+              <p className="small muted">
+                Moteurs : {(model.available_engines || ['pytorch']).join(' · ')}. ONNX :{' '}
+                {model.engine_validation?.onnxruntime || 'non exposé'}.
+              </p>
               <dl className="technical-details">
                 <div>
                   <dt>Checkpoint SHA256</dt>
@@ -636,6 +648,7 @@ export function HistoryPage({ entries }: { entries: HistoryEntry[] }) {
                   <th>Date et heure</th>
                   <th>Catégorie</th>
                   <th>Modèle</th>
+                  <th>Moteur</th>
                   <th>Décision</th>
                   <th>Score</th>
                   <th>Seuil</th>
@@ -649,6 +662,7 @@ export function HistoryPage({ entries }: { entries: HistoryEntry[] }) {
                     <td>{stamp(r.recorded_at)}</td>
                     <td>{categoryLabels[r.category]}</td>
                     <td>{r.model}</td>
+                    <td>{r.engine || 'pytorch'}</td>
                     <td>
                       <span className={r.decision === 'anomaly' ? 'anomaly' : 'normal'}>
                         {r.decision === 'anomaly' ? 'Anormal' : 'Normal'}

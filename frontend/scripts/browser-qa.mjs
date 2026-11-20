@@ -9,6 +9,8 @@ import { fileURLToPath } from 'node:url';
 const base = process.env.UI_TEST_URL || 'http://localhost:18080';
 const reports = new URL('../reports/', import.meta.url);
 const shots = new URL('screenshots/', reports);
+const benchmark = JSON.parse(await readFile(new URL('../src/data/onnx-performance.json',import.meta.url),'utf8'));
+const expectedCharts = benchmark.status==='measured'?4:3;
 await mkdir(shots, { recursive: true });
 const browser = await chromium.launch({ headless: true });
 const report = {
@@ -44,7 +46,7 @@ try {
           const charts = await page
             .locator('.recharts-wrapper')
             .evaluateAll((nodes) => nodes.map((e) => e.getBoundingClientRect().width));
-          assert.ok(charts.length === 3 && charts.every((w) => w > 100), `Empty charts: ${charts}`);
+          assert.ok(charts.length === expectedCharts && charts.every((w) => w > 100), `Empty charts: ${charts}`);
         }
         await page.evaluate(() => document.fonts.ready);
         const dimensions = await page.evaluate(() => ({

@@ -69,6 +69,7 @@ function multipart(input: InspectionInput): FormData {
   body.append('file', input.file);
   body.append('category', input.category);
   body.append('model', input.model);
+  if (input.engine) body.append('engine', input.engine);
   return body;
 }
 

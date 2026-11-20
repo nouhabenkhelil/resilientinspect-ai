@@ -124,6 +124,16 @@ export function Result({
       </p>
       <dl className="result-details">
         <div>
+          <dt>Moteur de prédiction</dt>
+          <dd>{result.engine === 'onnxruntime' ? 'ONNX Runtime' : 'PyTorch'}</dd>
+        </div>
+        {result.explanation_engine && (
+          <div>
+            <dt>Moteur d’explication</dt>
+            <dd>{result.explanation_engine === 'onnxruntime' ? 'ONNX Runtime' : 'PyTorch'}</dd>
+          </div>
+        )}
+        <div>
           <dt>Modèle</dt>
           <dd>{result.model}</dd>
         </div>
@@ -223,6 +233,25 @@ export function Explanation({ result }: { result: VisualizedPrediction }) {
         </div>
         <span className="tag">{result.model}</span>
       </div>
+      {result.engine === 'onnxruntime' && (
+        <p className="notice scientific-note">
+          Prédiction ONNX Runtime · explication{' '}
+          {result.explanation_engine === 'pytorch'
+            ? 'PyTorch (Grad-CAM)'
+            : 'ONNX Runtime (erreur de reconstruction)'}
+          .
+          {result.explanation_reference_score != null && (
+            <>
+              {' '}
+              Score PyTorch associé : {String(result.explanation_reference_score)} · cohérence{' '}
+              {result.explanation_score_coherent ? 'validée' : 'non validée'}.
+            </>
+          )}
+          {result.explanation_decision_changed && (
+            <> Basculement proche du seuil : inspection humaine recommandée.</>
+          )}
+        </p>
+      )}
       <div className="segmented" aria-label="Vue de la visualisation">
         {(['overlay', 'heatmap', 'image', 'side'] as const).map((key) => (
           <button key={key} type="button" aria-pressed={view === key} onClick={() => setView(key)}>

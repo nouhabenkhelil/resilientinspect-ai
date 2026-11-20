@@ -16,7 +16,7 @@ from .imaging import decode_upload
 from .inference import predict
 from .middleware import RequestMiddleware
 from .models import ModelStore
-from .schemas import (Category, ErrorResponse, HealthResponse, MetadataResponse, ModelName,
+from .schemas import (Category, Engine, ErrorResponse, HealthResponse, MetadataResponse, ModelName,
                       Prediction, UnavailableModel, VisualizedPrediction)
 
 
@@ -61,6 +61,7 @@ def create_app(settings: Settings | None = None, store: ModelStore | None = None
         if ready != 15:
             response.status_code = 503
         return HealthResponse(status="ok" if ready == 15 else "degraded", version=API_VERSION,
+                              ready_models_by_engine={engine: sum(engine in m.metadata.available_engines for m in request.app.state.models.models.values()) for engine in ("pytorch", "onnxruntime")},
                               ready_models=ready, request_id=request.state.request_id)
 
     @app.get("/model/metadata", response_model=MetadataResponse)
@@ -73,28 +74,34 @@ def create_app(settings: Settings | None = None, store: ModelStore | None = None
                                              for key, reason in service.unavailable.items() if selected(key)],
                                 request_id=request.state.request_id)
 
-    def infer(request: Request, file: UploadFile, category: Category, model: ModelName, visualize: bool):
+    def infer(request: Request, file: UploadFile, category: Category, model: ModelName, visualize: bool, engine: Engine):
         sample = decode_upload(file, settings)
         loaded = request.app.state.models.models.get((model, category))
         if loaded is None:
             raise APIError(503, "model_unavailable", "Ce modele est absent ou ses artefacts n'ont pas pu etre valides.")
+        if engine == "onnxruntime" and loaded.onnx_path is None:
+            raise APIError(503, "onnx_unavailable", "Export ONNX absent, incompatible ou non valide pour ce modele. Aucun repli automatique.")
         try:
-            return predict(loaded, sample, request.state.request_id, visualize=visualize)
+            return predict(loaded, sample, request.state.request_id, visualize=visualize, engine=engine)
+        except APIError:
+            raise
         except Exception as exc:
             logger.exception("Inference impossible pour %s/%s, requete %s", model, category, request.state.request_id)
             raise APIError(500, "inference_failed", "L'inference est impossible pour cette requete.") from exc
 
-    errors = {status: {"model": ErrorResponse} for status in (400, 413, 415, 422, 500, 503)}
+    errors = {status: {"model": ErrorResponse} for status in (400, 409, 413, 415, 422, 500, 503)}
 
     @app.post("/predict", response_model=Prediction, responses=errors)
     def predict_route(request: Request, file: Annotated[UploadFile, File()],
-                      category: Annotated[Category, Form()], model: Annotated[ModelName, Form()]):
-        return infer(request, file, category, model, False)
+                      category: Annotated[Category, Form()], model: Annotated[ModelName, Form()],
+                      engine: Annotated[Engine, Form()] = "pytorch"):
+        return infer(request, file, category, model, False, engine)
 
     @app.post("/predict/visualize", response_model=VisualizedPrediction, responses=errors)
     def visualize_route(request: Request, file: Annotated[UploadFile, File()],
-                        category: Annotated[Category, Form()], model: Annotated[ModelName, Form()]):
-        return infer(request, file, category, model, True)
+                        category: Annotated[Category, Form()], model: Annotated[ModelName, Form()],
+                        engine: Annotated[Engine, Form()] = "pytorch"):
+        return infer(request, file, category, model, True, engine)
 
     return app
 

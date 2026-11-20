@@ -3,8 +3,10 @@ export const CATEGORIES = ['bottle', 'hazelnut', 'leather'] as const;
 export const MODEL_NAMES = ['B0', 'A1', 'T0', 'T1', 'T2'] as const;
 export type Category = (typeof CATEGORIES)[number];
 export type ModelName = (typeof MODEL_NAMES)[number];
+export type Engine = 'pytorch' | 'onnxruntime';
 
 export interface Health {
+  ready_models_by_engine?: Record<Engine, number>;
   status: 'ok' | 'degraded';
   version: string;
   device: 'cpu';
@@ -13,6 +15,9 @@ export interface Health {
   request_id: string;
 }
 export interface ModelMetadata {
+  available_engines?: Engine[];
+  engine_validation?: Record<string, string>;
+  engine_unavailable_reasons?: Record<string, string>;
   model: ModelName;
   category: Category;
   version: string;
@@ -35,6 +40,12 @@ export interface Metadata {
   request_id: string;
 }
 export interface Prediction {
+  engine?: Engine;
+  explanation_engine?: Engine | null;
+  explanation_reference_score?: number | null;
+  explanation_score_coherent?: boolean | null;
+  explanation_decision_changed?: boolean | null;
+  explanation_time_ms?: number | null;
   category: Category;
   model: ModelName;
   version: string;
@@ -62,6 +73,7 @@ export interface VisualizedPrediction extends Prediction {
   visualization: Visualization;
 }
 export interface InspectionInput {
+  engine?: Engine;
   file: File;
   category: Category;
   model: ModelName;

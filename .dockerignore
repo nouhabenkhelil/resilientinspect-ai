@@ -9,6 +9,7 @@
 !backend/__init__.py
 !backend/requirements.txt
 !backend/requirements-cpu.txt
+!backend/requirements-onnx.txt
 !backend/app/
 !backend/app/*.py
 !deployment/

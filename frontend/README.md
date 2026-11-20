@@ -1,5 +1,20 @@
 # ResilientInspect AI 2.0 — Industrial Intelligence Studio
 
+L’extension ONNX ajoute un sélecteur de moteur explicite dans Smart Inspection,
+une comparaison technique de moteurs dans Comparison Lab, les moteurs réels
+dans l’historique et une section Performance Engineering dans Model Analytics.
+La disponibilité ONNX provient exclusivement de l’API et de ses preuves.
+Les mesures d’inférence restent distinctes des résultats de classification.
+Une explication Grad-CAM d’une prédiction ONNX est clairement identifiée
+comme produite par PyTorch, avec contrôle de cohérence.
+
+Après démarrage du déploiement ONNX validé :
+
+```powershell
+node frontend/scripts/onnx-qa.mjs
+& .\.venv\Scripts\python.exe scripts/check_onnx_api.py
+```
+
 La refonte ajoute six espaces : Control Center, Smart Inspection, Comparison
 Lab, Model Analytics, System Monitor et Historique. L’application conserve
 les quatre endpoints FastAPI et le proxy `/api`, sans changement du backend.

@@ -13,6 +13,7 @@ import { validateFile, validateImage } from '../image';
 import { recordInspection } from '../studio/history';
 import { Result, Explanation } from './Result';
 import { architectures, categoryLabels } from './InspectionTools';
+import { EngineDuel } from './EngineDuel';
 
 export function classification(decision: string, truth: string) {
   if (truth === 'unknown') return null;
@@ -30,7 +31,9 @@ export function ComparisonLab({ metadata }: { metadata: Metadata | null }) {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState('');
   const [error, setError] = useState('');
-  const [busy, setBusy] = useState(false);
+  const [architectureBusy, setBusy] = useState(false);
+  const [engineBusy, setEngineBusy] = useState(false);
+  const busy = architectureBusy || engineBusy;
   const [truth, setTruth] = useState('unknown');
   const [active, setActive] = useState('');
   const [results, setResults] = useState<
@@ -257,6 +260,13 @@ export function ComparisonLab({ metadata }: { metadata: Metadata | null }) {
           <p>Comparez B0 et T2 sur votre image, puis explorez leurs explications.</p>
         </div>
       )}
+      <EngineDuel
+        file={file}
+        category={category}
+        metadata={metadata}
+        disabled={architectureBusy}
+        onBusyChange={setEngineBusy}
+      />
       <div className="comparison-results">
         {results.map((row) => (
           <section key={row.model} className="comparison-result">

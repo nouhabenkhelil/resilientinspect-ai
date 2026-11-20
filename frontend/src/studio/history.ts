@@ -28,6 +28,7 @@ export function readHistory(): HistoryEntry[] {
           typeof r.version === 'string' &&
           Number.isFinite(r.round_trip_ms),
       )
+      .map((r) => ({ ...r, engine: r.engine || 'pytorch' }))
       .slice(0, 200);
   } catch {
     return [];
@@ -77,6 +78,7 @@ export function recordInspection(
             round_trip_ms,
             session,
             endpoint,
+            engine: result.engine || 'pytorch',
           },
           ...readHistory().filter((r) => r.request_id !== request_id),
         ].slice(0, 200),
@@ -110,6 +112,7 @@ export function exportHistory(entries: HistoryEntry[], format: 'json' | 'csv') {
     'inference_time_ms',
     'round_trip_ms',
     'endpoint',
+    'engine',
     'request_id',
     'version',
   ];

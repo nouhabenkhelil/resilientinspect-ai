@@ -1,5 +1,53 @@
 # Déploiement Docker Linux CPU
 
+## Extension ONNX Runtime
+
+PyTorch reste la référence FP32 et le moteur par défaut. `engine=pytorch`
+ou `engine=onnxruntime` est un champ multipart facultatif des deux POST.
+Une demande ONNX non admise renvoie HTTP 503 `onnx_unavailable`, sans repli.
+La réponse indique `engine` et, pour une visualisation, `explanation_engine`.
+Grad-CAM utilise toujours PyTorch ; sa cohérence avec le score ONNX est
+vérifiée et une divergence injustifiée renvoie 409 `explanation_divergence`.
+
+Les tolérances préalables sont dans [ONNX_PROTOCOL.md](ONNX_PROTOCOL.md).
+Les exports/proofs sont montés en lecture seule sous `/app/artifacts/onnx`,
+sans entrer dans l’image. Cache limité à deux sessions ORT réutilisées ;
+threads inactifs sans spinning. Un échec ONNX ne retire pas un modèle PyTorch.
+
+```powershell
+& .\.venv\Scripts\python.exe -m pip install -r backend/requirements-onnx.txt
+& .\.venv\Scripts\python.exe -m resilientinspect.export.onnx_cli export --models B0 T2 --categories bottle
+& .\.venv\Scripts\python.exe -m resilientinspect.export.onnx_cli validate --models B0 T2 --categories bottle
+# Après succès des pilotes, exporter/valider les quinze :
+& .\.venv\Scripts\python.exe -m resilientinspect.export.onnx_cli export
+& .\.venv\Scripts\python.exe -m resilientinspect.export.onnx_cli validate
+```
+
+Tout ajout Python sous `src/` ou `backend/app/` nécessite une nouvelle mesure
+PyTorch Windows/Linux. Les anciennes preuves sont archivées localement sous
+`deployment/reports/portability/archive/pre-onnx-9bb2c8d/`, exclues de Git.
+Le validateur existant exécute explicitement PyTorch FP32 ; sa nouvelle preuve
+n’est jamais substituée à une preuve ONNX. Renouveler d’abord ces preuves par
+la procédure ci-dessous, puis ONNX Linux sur les mêmes sources finalisées :
+
+```powershell
+docker compose -f docker-compose.yml -f deployment/docker-compose.validation.yml run --rm --no-deps -T backend python -m resilientinspect.export.onnx_cli validate --dataset /validation --output /evidence/onnx-linux
+# Benchmark : uniquement les modèles dont parity-linux.json indique passed.
+# Exemple des deux pilotes, 20 warm-ups + 100 mesures par condition :
+docker compose -f docker-compose.yml -f deployment/docker-compose.validation.yml run --rm --no-deps -T backend python -m resilientinspect.export.onnx_cli benchmark --models B0 T2 --categories bottle --dataset /validation --output /evidence/onnx-benchmark-linux
+docker compose up -d --wait --wait-timeout 300
+```
+
+L’override hors ligne autorise l’écriture des nouvelles preuves ONNX dans le
+dossier dérivé des exports. Les fichiers scientifiques originaux restent en
+lecture seule. Ne jamais utiliser cet override pour servir l’application.
+Une commande `validate` qui retourne 1 conserve les preuves failed et ne rend
+pas les exports correspondants admissibles. Ne pas élargir les tolérances.
+
+Les mesures et limites finales sont dans
+`reports/experiments/onnx_benchmark.md` ; les valeurs publiques du frontend
+sont un export agrégé, sans images ni chemins personnels.
+
 Depuis la racine du dépôt, avec Docker Desktop en mode Linux :
 
 ```powershell

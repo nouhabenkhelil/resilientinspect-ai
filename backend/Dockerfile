@@ -19,12 +19,13 @@ RUN apt-get update \
     && useradd --uid 10001 --create-home --home-dir /home/inspector inspector
 
 # CPU wheels only. Cached independently of application sources; no train extras.
-COPY backend/requirements.txt backend/requirements-cpu.txt /tmp/requirements/
+COPY backend/requirements.txt backend/requirements-cpu.txt backend/requirements-onnx.txt /tmp/requirements/
 RUN --mount=type=cache,target=/tmp/.cache/pip \
     python -m pip install --only-binary=:all: \
       'torch==2.15.0+cpu' 'torchvision==0.29.2+cpu' \
       --index-url https://download.pytorch.org/whl/cpu \
     && python -m pip install --only-binary=:all: -r /tmp/requirements/requirements-cpu.txt \
+    && python -m pip install --only-binary=:all: -r /tmp/requirements/requirements-onnx.txt \
     && python -m pip check \
     && python -c "import torch,torchvision,importlib.metadata as m; assert torch.version.cuda is None; assert torch.__version__ == '2.15.0+cpu'; assert torchvision.__version__ == '0.29.2+cpu'; assert not any(d.metadata['Name'].lower().startswith(('nvidia-', 'cuda-', 'triton')) for d in m.distributions())"
 

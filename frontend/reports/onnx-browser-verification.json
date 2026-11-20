@@ -1,0 +1,53 @@
+{
+  "base": "http://localhost:18080",
+  "checks": [
+    "Real B0 ONNX prediction and correct explanation engine",
+    "Real T2 ONNX prediction and correct explanation engine",
+    "Technical engine comparison executes both actual engines sequentially",
+    "Measured p50/p95/throughput benchmark charts and tables rendered"
+  ],
+  "responses": [
+    {
+      "path": "/api/predict",
+      "status": 200,
+      "model": "B0",
+      "engine": "onnxruntime",
+      "score": 0.16482830760864223,
+      "threshold": 0.20367741357625985,
+      "explanation_engine": null,
+      "coherent": null
+    },
+    {
+      "path": "/api/predict/visualize",
+      "status": 200,
+      "model": "B0",
+      "engine": "onnxruntime",
+      "score": 0.16482830760864223,
+      "threshold": 0.20367741357625985,
+      "explanation_engine": "onnxruntime",
+      "coherent": null
+    },
+    {
+      "path": "/api/predict",
+      "status": 200,
+      "model": "T2",
+      "engine": "onnxruntime",
+      "score": 0.00003255931005696766,
+      "threshold": 0.00017796678002923727,
+      "explanation_engine": null,
+      "coherent": null
+    },
+    {
+      "path": "/api/predict/visualize",
+      "status": 200,
+      "model": "T2",
+      "engine": "onnxruntime",
+      "score": 0.00003255931005696766,
+      "threshold": 0.00017796678002923727,
+      "explanation_engine": "pytorch",
+      "coherent": true
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PerformanceEngineering } from './PerformanceEngineering';
 import {
   Bar,
   BarChart,
@@ -84,6 +85,7 @@ export function Analytics() {
 
   return (
     <div className="analytics-page page-stack">
+      <PerformanceEngineering/>
       <div className="analytics-filters toolbar">
         <label>
           Architecture

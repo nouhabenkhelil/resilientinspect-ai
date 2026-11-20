@@ -2709,3 +2709,4 @@ table {
   overflow-y: hidden;
   overscroll-behavior-inline: contain;
 }
+.performance-engineering pre { white-space: pre-wrap; overflow-wrap: anywhere; }

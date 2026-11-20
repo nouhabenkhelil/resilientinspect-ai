@@ -3,6 +3,12 @@ services:
   backend:
     volumes:
     - type: bind
+      source: ./artifacts/onnx
+      target: /app/artifacts/onnx
+      read_only: false
+      bind:
+        create_host_path: false
+    - type: bind
       source: ./deployment/reports/portability
       target: /evidence
       read_only: false

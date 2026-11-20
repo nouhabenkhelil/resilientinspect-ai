@@ -76,6 +76,10 @@ events.out.tfevents.*
 /reports/experiments/b0_a1_diagnostic_local/
 /reports/transfer/
 ~$*.docx
+/deployment/reports/portability/archive/
+/reports/experiments/onnx/
+/deployment/reports/portability/onnx-linux/
+/deployment/reports/portability/onnx-benchmark-linux/
 
 # Autoriser seulement les repertoires et marqueurs vides du squelette
 !/data/**/

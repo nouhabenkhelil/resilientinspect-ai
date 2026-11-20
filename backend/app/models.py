@@ -31,6 +31,8 @@ class LoadedModel:
     network: torch.nn.Module
     metadata: ModelMetadata
     lock: Lock = field(default_factory=Lock)
+    onnx_path: Path | None = None
+    onnx_cache: object | None = None
 
 
 class ModelStore:
@@ -63,6 +65,21 @@ class ModelStore:
         for variant in ("T0", "T1", "T2"):
             for category in CATEGORIES:
                 self._load_one(variant, category, lambda v=variant, c=category: self._load_transfer(v, c))
+        self.load_optional_engines()
+
+    def load_optional_engines(self):
+        from resilientinspect.export.onnx_runtime import SessionCache, admit
+        cache = SessionCache(capacity=2)
+        for loaded in self.models.values():
+            try:
+                path, proof = admit(self.settings.project_root, loaded.metadata)
+                loaded.onnx_path, loaded.onnx_cache = path, cache
+                loaded.metadata.available_engines = ["pytorch", "onnxruntime"]
+                loaded.metadata.engine_validation["onnxruntime"] = proof["status"]
+            except Exception as exc:
+                logger.info("ONNX non admis pour %s/%s: %s", loaded.metadata.model, loaded.metadata.category, exc)
+                loaded.metadata.engine_validation["onnxruntime"] = "unavailable"
+                loaded.metadata.engine_unavailable_reasons["onnxruntime"] = "Export ou preuve ONNX absent, incompatible ou invalide."
 
     def _load_one(self, variant: str, category: str, loader) -> None:
         try:

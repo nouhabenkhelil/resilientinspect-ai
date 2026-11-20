@@ -55,7 +55,7 @@ def main():
                       or not reference["environment"]["platform"].startswith("Windows")
                       or not compatible_environment(reference["environment"], environment)):
         raise ValueError("Reference versions/code/policy do not match")
-    report = {"policy": POLICY, "environment": environment, "code_sha256": hashes,
+    report = {"reference_engine": "pytorch", "dtype": "float32", "policy": POLICY, "environment": environment, "code_sha256": hashes,
               "test_executed": False, "split": "val", "models": {},
               "manifest_sha256": _sha256(settings.manifest),
               "reference_sha256": _sha256(args.reference) if args.reference else None}

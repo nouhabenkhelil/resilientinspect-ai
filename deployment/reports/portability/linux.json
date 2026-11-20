@@ -1,4 +1,6 @@
 {
+  "reference_engine": "pytorch",
+  "dtype": "float32",
   "policy": {
     "id": "deployment_windows_linux_fp32_v1",
     "atol": 1e-05,
@@ -26,12 +28,12 @@
     "backend/app/config.py": "80b6075a12e37b479320640154b8155888dec9ca1b101ebef9bf6824dcf124cc",
     "backend/app/errors.py": "495ce2516f24eeedcc69a42c5c78fa02c7ad1207b28559e71ff1569ddeb63af2",
     "backend/app/imaging.py": "6b607b9f66c830fd1f0e1eb4dff72fb666ba25a8e3dac32d9b81eff302be0d53",
-    "backend/app/inference.py": "6ce603bbd20e757860ccdd574e16ed374ea39bdd7873cd796f5e65e29d585413",
-    "backend/app/main.py": "e3b95ed9582d111861303c2168de49307b7e14f80dea3760b477f50600376867",
+    "backend/app/inference.py": "4cf63ed106ac865dcb95c9cb893d393aeefb133e6ed057a8a453662a29204e8d",
+    "backend/app/main.py": "ab005fbc08fd1e47f2cbc83601494800587bf095d9c5fcb21009a2c991bbcd77",
     "backend/app/middleware.py": "6867b85832efa4cb67832f828d81b12bbf0369e5ffee1796b232572a7b69812f",
-    "backend/app/models.py": "dbb53550bae7f9f36b99768f43e2d43423d4a804ceb02f74a675d7f18f6ee0ce",
+    "backend/app/models.py": "2cf1668d4011ca943cfa81c67374e7c01ae4493110e3b5f671b3fd456c9625de",
     "backend/app/portability.py": "c5a0b9045618811126dd9eab2d4f93de483cdfc1c7a123be99b576259c76bea3",
-    "backend/app/schemas.py": "2b572fb93cdba5739b8437ec0e272062eb731fce93395b5ec6589df5b9b84d95",
+    "backend/app/schemas.py": "0ee273966ea9c99a6141b911b13e16982db0cf148562a24efcc1fe1305ee272d",
     "src/__init__.py": "d6070c9f51f2b9f781a4b694e5536dd117e2a96f5dfa4d968fd30200ed80a946",
     "src/data/__init__.py": "d5d07fea1301b72368a2324f464a62c079ac0840103d2c3d3c857be94edbb788",
     "src/data/audit.py": "60f11e416d3231e7aab535a171bb8b090f7593a163900334282900dd49925883",
@@ -48,6 +50,8 @@
     "src/evaluation/evaluate_transfer.py": "e6e2d4d328f4cbb681510f4210e1270ce01bfd6903d2155667f8bc3f564cdff0",
     "src/evaluation/gradcam.py": "57880281159f434131270f09baf11b1f9b030e9fd2c8f6b2dd3122ae302cd0cd",
     "src/export/__init__.py": "583f5ef12f4312d729ddbc27ab3fc8c535506fecb8fa37cb9f2b88f63c95cccb",
+    "src/export/onnx_cli.py": "32f39e70202faf2b6acf69fe143a768682f02bf72a4c3df1a89ddf02b67277fb",
+    "src/export/onnx_runtime.py": "d07bb5832fbc70a88646041150277fd4f9b31bf1ba2f732cd7657c872e915841",
     "src/mlops/__init__.py": "638818b6346a9f3013355e67159b0777b68029c0207abc025e30f6c24eaecef3",
     "src/models/__init__.py": "93f95dcc7fdbb3cccdc5309c793014ddd69e672ef4838138a15f1ed2a711962f",
     "src/models/autoencoder.py": "ce604d569536ade81bc52d13a8349aa1b10d85e16cd9a6f8856ce6f4437beec7",
@@ -59,7 +63,7 @@
     "src/training/smoke_transfer.py": "2dda73e54a17d649d9fc4b64e9c95de676c7eea795eb9694ca504fc48d4a215b",
     "src/training/train_ae.py": "4ff4e8f3233c76c8a6681a40a363f98d62ce8ab365347fb5d8af183a86f4c2fc",
     "src/training/train_transfer.py": "d96470884ffc186939b1f6d628955c5cce5dcf42f20eb5a6c98e084e85b0cefe",
-    "deployment/validate_portability.py": "93b7d96333ff4a02239c5501ffd761ea55fa109442bdc787473341a9caf70f57"
+    "deployment/validate_portability.py": "a4add0e588a84955a71ca5d933dc5527a058d7a13b9eaad2c7ffc386689bf83d"
   },
   "test_executed": false,
   "split": "val",
@@ -8686,6 +8690,6 @@
     }
   },
   "manifest_sha256": "13f55c7cf7c87a3e3739e24920bb0d85cc96a39a00e30d277ddfaa1832b84522",
-  "reference_sha256": "09db2ad31ca6276fec15989246317da1d546eb39f73a8d4d4da37202792ca91d",
+  "reference_sha256": "d3038b8cf988232db23192f4072c224a80ed5868ab192c8e3d5d2efe01d68679",
   "status": "passed"
 }

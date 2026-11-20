@@ -1,0 +1,4 @@
+# Separate optional deployment/export dependencies; historical pyproject unchanged.
+onnx==1.23.2
+onnxruntime==1.32.0
+psutil==7.1.3

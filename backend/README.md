@@ -1,5 +1,38 @@
 # API CPU ResilientInspect AI
 
+## Moteurs PyTorch et ONNX Runtime
+
+Les requêtes existantes restent valides : le moteur par défaut est `pytorch`.
+Les deux POST acceptent le champ multipart facultatif `engine` avec les
+valeurs `pytorch` ou `onnxruntime`. Les réponses identifient toujours le moteur
+réellement employé. Aucun repli automatique n’est effectué.
+
+`GET /health` expose `ready_models_by_engine`. Les métadonnées fournissent
+`available_engines`, `engine_validation` et `engine_unavailable_reasons` par
+modèle. Un export absent, périmé ou en échec de parité ne retire pas son
+équivalent PyTorch et ne peut pas être choisi comme moteur ONNX.
+
+L’admission vérifie les SHA256 du graphe et de sa métadonnée, les liaisons
+checkpoint/calibration, les codes sources, le manifeste et une preuve ONNX
+produite dans l’environnement courant. Les sessions CPU utilisent deux
+threads et un cache partagé limité à deux sessions. Un moteur indisponible
+retourne HTTP 503 `onnx_unavailable` ; une valeur inconnue retourne 422.
+
+B0/A1 expliquent la reconstruction du moteur choisi. T0/T1/T2 conservent
+Grad-CAM PyTorch : une prédiction ONNX retourne alors
+`explanation_engine=pytorch`, le score PyTorch associé, l’état de cohérence
+et le temps d’explication. Une divergence hors politique retourne 409
+`explanation_divergence`. Les coordonnées letterbox et PNG sont inchangés.
+
+Installer les dépendances facultatives ONNX :
+
+```powershell
+& .\.venv\Scripts\python.exe -m pip install -r backend/requirements-onnx.txt
+```
+
+Voir `deployment/ONNX_PROTOCOL.md` pour les tolérances et
+`reports/experiments/onnx_benchmark.md` pour les mesures réelles.
+
 Depuis la racine du dépôt, avec le venv scientifique local déjà installé,
 installer les dépendances HTTP puis démarrer le service dans PowerShell.
 

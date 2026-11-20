@@ -5,6 +5,9 @@ import { health, metadata, prediction } from './test/fixtures';
 import { readHistory, recordInspection } from './studio/history';
 
 let fetcher: ReturnType<typeof vi.fn>;
+// Test navigation, not Vitest's cold transformation of the deferred chart bundle.
+// Real cold loading remains covered by the browser QA against the built app.
+beforeAll(async () => { await import('./components/Analytics'); }, 30000);
 beforeEach(() => {
   localStorage.clear();
   window.history.replaceState(null, '', '/');
@@ -29,7 +32,9 @@ test('studio defaults to Control Center and navigates through every functional w
   expect(screen.getByRole('heading', { name: 'Protocole de comparaison' })).toBeInTheDocument();
   expect(screen.getByLabelText('Image de comparaison')).toBeInTheDocument();
   await user.click(nav.getByRole('link', { name: 'Model Analytics' }));
-  await screen.findByRole('table', { name: /Valeurs archivées/ }, { timeout: 6000 });
+  // Cold lazy-module transformation on Windows can overlap VM CPU validation.
+  // Keep the same rendered-table assertion; allow scheduling delay only.
+  await screen.findByRole('table', { name: /Valeurs archivées/ }, { timeout: 15000 });
   expect(screen.getByLabelText('Métrique scientifique')).toBeInTheDocument();
   await user.click(nav.getByRole('link', { name: 'System Monitor' }));
   expect(screen.getByText('15 / 15')).toBeInTheDocument();
@@ -38,7 +43,7 @@ test('studio defaults to Control Center and navigates through every functional w
   expect(screen.getByText('Votre journal est encore vide.')).toBeInTheDocument();
   expect(nav.getByRole('link', { name: 'Historique' })).toHaveAttribute('aria-current', 'page');
   expect(window.location.hash).toBe('#history');
-}, 15000);
+}, 25000);
 
 test('light mode persists across remount and sidebar/demo controls remain operable', async () => {
   const user = userEvent.setup();

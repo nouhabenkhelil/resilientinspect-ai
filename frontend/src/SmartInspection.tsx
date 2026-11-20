@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { api, ApiError, errorMessage } from './api/client';
 import {
   CATEGORIES,
+  type Engine,
   MODEL_NAMES,
   type Category,
   type Health,
@@ -13,6 +14,7 @@ import { validateFile, validateImage } from './image';
 import { recordInspection } from './studio/history';
 import { CategoryCards, ModelCards, Pipeline } from './components/InspectionTools';
 import { Webcam } from './components/Webcam';
+import { EngineSelector } from './components/EngineSelector';
 import { Icon } from './components/Icon';
 import { Explanation, formatScore, Result } from './components/Result';
 
@@ -50,6 +52,7 @@ export default function SmartInspection() {
     }
   });
   const [preferredModel, setPreferredModel] = useState('B0');
+  const [engine, setEngine] = useState<Engine>('pytorch');
   const [upload, setUpload] = useState<Upload | null>(null);
   const [validating, setValidating] = useState(false);
   const [fileError, setFileError] = useState<unknown>(null);
@@ -164,7 +167,8 @@ export default function SmartInspection() {
 
   async function analyze(visualOnly = false) {
     if (!upload || !selected || !health || busy) return;
-    const input = { file: upload.file, category, model: selected.model };
+    if (!(selected.available_engines || ['pytorch']).includes(engine)) return;
+    const input = { file: upload.file, category, model: selected.model, engine };
     const controller = new AbortController();
     analysisController.current = controller;
     setAnalysisError(null);
@@ -329,6 +333,15 @@ export default function SmartInspection() {
                 </select>
               </div>
             </div>
+            <EngineSelector
+              model={selected}
+              value={engine}
+              disabled={busy}
+              onChange={(value) => {
+                setEngine(value);
+                clearResults();
+              }}
+            />
             <ModelCards
               category={category}
               available={available}
@@ -478,7 +491,14 @@ export default function SmartInspection() {
               </p>
               <button
                 className="primary-button"
-                disabled={!upload || !selected || !health || busy || validating}
+                disabled={
+                  !upload ||
+                  !selected ||
+                  !health ||
+                  busy ||
+                  validating ||
+                  !(selected.available_engines || ['pytorch']).includes(engine)
+                }
                 onClick={() => void analyze()}
               >
                 {busy ? <span className="spinner" /> : <Icon name="scan" />}

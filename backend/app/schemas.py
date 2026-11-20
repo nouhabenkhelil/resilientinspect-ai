@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 
 Category = Literal["bottle", "hazelnut", "leather"]
 ModelName = Literal["B0", "A1", "T0", "T1", "T2"]
+Engine = Literal["pytorch", "onnxruntime"]
 MODELS = ("B0", "A1", "T0", "T1", "T2")
 CATEGORIES = ("bottle", "hazelnut", "leather")
 
@@ -19,6 +20,12 @@ class ErrorResponse(BaseModel):
 
 
 class Prediction(BaseModel):
+    engine: Engine = "pytorch"
+    explanation_engine: Engine | None = None
+    explanation_reference_score: float | None = None
+    explanation_score_coherent: bool | None = None
+    explanation_decision_changed: bool | None = None
+    explanation_time_ms: float | None = None
     category: Category
     model: ModelName
     version: str
@@ -49,6 +56,9 @@ class VisualizedPrediction(Prediction):
 
 
 class ModelMetadata(BaseModel):
+    available_engines: list[Engine] = ["pytorch"]
+    engine_validation: dict[str, str] = {"pytorch": "validated"}
+    engine_unavailable_reasons: dict[str, str] = {}
     model: ModelName
     category: Category
     version: str
@@ -79,6 +89,7 @@ class MetadataResponse(BaseModel):
 
 
 class HealthResponse(BaseModel):
+    ready_models_by_engine: dict[str, int] = {}
     status: Literal["ok", "degraded"]
     version: str
     device: Literal["cpu"] = "cpu"
