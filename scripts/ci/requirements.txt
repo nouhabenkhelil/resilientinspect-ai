@@ -1,0 +1,9 @@
+# Hosted Linux CPU tests only; no DVC remote access or scientific data download.
+-r ../../backend/requirements-cpu.txt
+-r ../../backend/requirements-onnx.txt
+-c ../../mlops/requirements-lock.txt
+-c constraints-linux.txt
+pytest==9.2.0
+mlflow==3.16.1
+matplotlib==3.10.8
+ruff==0.17.6

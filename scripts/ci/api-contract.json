@@ -1,0 +1,1107 @@
+{
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Health"
+      }
+    },
+    "/model/metadata": {
+      "get": {
+        "operationId": "metadata_model_metadata_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "model",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "B0",
+                    "A1",
+                    "T0",
+                    "T1",
+                    "T2"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Model"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "bottle",
+                    "hazelnut",
+                    "leather"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetadataResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Metadata"
+      }
+    },
+    "/predict": {
+      "post": {
+        "operationId": "predict_route_predict_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_predict_route_predict_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Prediction"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Entity Too Large"
+          },
+          "415": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unsupported Media Type"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Predict Route"
+      }
+    },
+    "/predict/visualize": {
+      "post": {
+        "operationId": "visualize_route_predict_visualize_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_visualize_route_predict_visualize_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VisualizedPrediction"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Entity Too Large"
+          },
+          "415": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unsupported Media Type"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Visualize Route"
+      }
+    }
+  },
+  "schemas": {
+    "Body_predict_route_predict_post": {
+      "properties": {
+        "category": {
+          "enum": [
+            "bottle",
+            "hazelnut",
+            "leather"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "engine": {
+          "default": "pytorch",
+          "enum": [
+            "pytorch",
+            "onnxruntime"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "file": {
+          "contentMediaType": "application/octet-stream",
+          "title": "File",
+          "type": "string"
+        },
+        "model": {
+          "enum": [
+            "B0",
+            "A1",
+            "T0",
+            "T1",
+            "T2"
+          ],
+          "title": "Model",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file",
+        "category",
+        "model"
+      ],
+      "title": "Body_predict_route_predict_post",
+      "type": "object"
+    },
+    "Body_visualize_route_predict_visualize_post": {
+      "properties": {
+        "category": {
+          "enum": [
+            "bottle",
+            "hazelnut",
+            "leather"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "engine": {
+          "default": "pytorch",
+          "enum": [
+            "pytorch",
+            "onnxruntime"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "file": {
+          "contentMediaType": "application/octet-stream",
+          "title": "File",
+          "type": "string"
+        },
+        "model": {
+          "enum": [
+            "B0",
+            "A1",
+            "T0",
+            "T1",
+            "T2"
+          ],
+          "title": "Model",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file",
+        "category",
+        "model"
+      ],
+      "title": "Body_visualize_route_predict_visualize_post",
+      "type": "object"
+    },
+    "ErrorResponse": {
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "request_id": {
+          "format": "uuid",
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "request_id"
+      ],
+      "title": "ErrorResponse",
+      "type": "object"
+    },
+    "HTTPValidationError": {
+      "properties": {
+        "detail": {
+          "items": {
+            "$ref": "#/components/schemas/ValidationError"
+          },
+          "title": "Detail",
+          "type": "array"
+        }
+      },
+      "title": "HTTPValidationError",
+      "type": "object"
+    },
+    "HealthResponse": {
+      "properties": {
+        "device": {
+          "const": "cpu",
+          "default": "cpu",
+          "title": "Device",
+          "type": "string"
+        },
+        "expected_models": {
+          "default": 15,
+          "title": "Expected Models",
+          "type": "integer"
+        },
+        "ready_models": {
+          "title": "Ready Models",
+          "type": "integer"
+        },
+        "ready_models_by_engine": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "default": {},
+          "title": "Ready Models By Engine",
+          "type": "object"
+        },
+        "request_id": {
+          "format": "uuid",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "ok",
+            "degraded"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "version",
+        "ready_models",
+        "request_id"
+      ],
+      "title": "HealthResponse",
+      "type": "object"
+    },
+    "MetadataResponse": {
+      "properties": {
+        "models": {
+          "items": {
+            "$ref": "#/components/schemas/ModelMetadata"
+          },
+          "title": "Models",
+          "type": "array"
+        },
+        "request_id": {
+          "format": "uuid",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "unavailable": {
+          "items": {
+            "$ref": "#/components/schemas/UnavailableModel"
+          },
+          "title": "Unavailable",
+          "type": "array"
+        }
+      },
+      "required": [
+        "models",
+        "unavailable",
+        "request_id"
+      ],
+      "title": "MetadataResponse",
+      "type": "object"
+    },
+    "ModelMetadata": {
+      "properties": {
+        "available_engines": {
+          "default": [
+            "pytorch"
+          ],
+          "items": {
+            "enum": [
+              "pytorch",
+              "onnxruntime"
+            ],
+            "type": "string"
+          },
+          "title": "Available Engines",
+          "type": "array"
+        },
+        "calibration_sha256": {
+          "title": "Calibration Sha256",
+          "type": "string"
+        },
+        "category": {
+          "enum": [
+            "bottle",
+            "hazelnut",
+            "leather"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "checkpoint_sha256": {
+          "title": "Checkpoint Sha256",
+          "type": "string"
+        },
+        "compatibility_report_sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Compatibility Report Sha256"
+        },
+        "decision_rule": {
+          "const": "score > threshold",
+          "default": "score > threshold",
+          "title": "Decision Rule",
+          "type": "string"
+        },
+        "engine_unavailable_reasons": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {},
+          "title": "Engine Unavailable Reasons",
+          "type": "object"
+        },
+        "engine_validation": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {
+            "pytorch": "validated"
+          },
+          "title": "Engine Validation",
+          "type": "object"
+        },
+        "explanation": {
+          "enum": [
+            "reconstruction_error",
+            "gradcam"
+          ],
+          "title": "Explanation",
+          "type": "string"
+        },
+        "input_size": {
+          "default": [
+            256,
+            256
+          ],
+          "items": {
+            "type": "integer"
+          },
+          "title": "Input Size",
+          "type": "array"
+        },
+        "model": {
+          "enum": [
+            "B0",
+            "A1",
+            "T0",
+            "T1",
+            "T2"
+          ],
+          "title": "Model",
+          "type": "string"
+        },
+        "normalization": {
+          "title": "Normalization",
+          "type": "string"
+        },
+        "score": {
+          "title": "Score",
+          "type": "string"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Seed"
+        },
+        "serving_environment": {
+          "additionalProperties": true,
+          "title": "Serving Environment",
+          "type": "object"
+        },
+        "threshold": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Threshold",
+          "type": "number"
+        },
+        "training_environment": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Training Environment"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model",
+        "category",
+        "version",
+        "checkpoint_sha256",
+        "calibration_sha256",
+        "threshold",
+        "normalization",
+        "score",
+        "explanation",
+        "serving_environment"
+      ],
+      "title": "ModelMetadata",
+      "type": "object"
+    },
+    "Prediction": {
+      "properties": {
+        "anomaly_score": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Anomaly Score",
+          "type": "number"
+        },
+        "category": {
+          "enum": [
+            "bottle",
+            "hazelnut",
+            "leather"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "decision": {
+          "enum": [
+            "normal",
+            "anomaly"
+          ],
+          "title": "Decision",
+          "type": "string"
+        },
+        "engine": {
+          "default": "pytorch",
+          "enum": [
+            "pytorch",
+            "onnxruntime"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "explanation_decision_changed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Explanation Decision Changed"
+        },
+        "explanation_engine": {
+          "anyOf": [
+            {
+              "enum": [
+                "pytorch",
+                "onnxruntime"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Explanation Engine"
+        },
+        "explanation_reference_score": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Explanation Reference Score"
+        },
+        "explanation_score_coherent": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Explanation Score Coherent"
+        },
+        "explanation_time_ms": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Explanation Time Ms"
+        },
+        "inference_time_ms": {
+          "minimum": 0.0,
+          "title": "Inference Time Ms",
+          "type": "number"
+        },
+        "model": {
+          "enum": [
+            "B0",
+            "A1",
+            "T0",
+            "T1",
+            "T2"
+          ],
+          "title": "Model",
+          "type": "string"
+        },
+        "request_id": {
+          "format": "uuid",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "threshold": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Threshold",
+          "type": "number"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "category",
+        "model",
+        "version",
+        "anomaly_score",
+        "threshold",
+        "decision",
+        "inference_time_ms",
+        "request_id"
+      ],
+      "title": "Prediction",
+      "type": "object"
+    },
+    "UnavailableModel": {
+      "properties": {
+        "category": {
+          "enum": [
+            "bottle",
+            "hazelnut",
+            "leather"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "model": {
+          "enum": [
+            "B0",
+            "A1",
+            "T0",
+            "T1",
+            "T2"
+          ],
+          "title": "Model",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model",
+        "category",
+        "reason"
+      ],
+      "title": "UnavailableModel",
+      "type": "object"
+    },
+    "ValidationError": {
+      "properties": {
+        "ctx": {
+          "title": "Context",
+          "type": "object"
+        },
+        "input": {
+          "title": "Input"
+        },
+        "loc": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          },
+          "title": "Location",
+          "type": "array"
+        },
+        "msg": {
+          "title": "Message",
+          "type": "string"
+        },
+        "type": {
+          "title": "Error Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "loc",
+        "msg",
+        "type"
+      ],
+      "title": "ValidationError",
+      "type": "object"
+    },
+    "Visualization": {
+      "properties": {
+        "coordinate_space": {
+          "const": "letterbox_256",
+          "default": "letterbox_256",
+          "title": "Coordinate Space",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "heatmap_png_base64": {
+          "title": "Heatmap Png Base64",
+          "type": "string"
+        },
+        "height": {
+          "default": 256,
+          "title": "Height",
+          "type": "integer"
+        },
+        "image_png_base64": {
+          "title": "Image Png Base64",
+          "type": "string"
+        },
+        "is_segmentation": {
+          "default": false,
+          "title": "Is Segmentation",
+          "type": "boolean"
+        },
+        "kind": {
+          "enum": [
+            "reconstruction_error",
+            "gradcam"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "original_height_width": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Original Height Width",
+          "type": "array"
+        },
+        "overlay_png_base64": {
+          "title": "Overlay Png Base64",
+          "type": "string"
+        },
+        "padding_top_bottom_left_right": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Padding Top Bottom Left Right",
+          "type": "array"
+        },
+        "scale": {
+          "title": "Scale",
+          "type": "string"
+        },
+        "width": {
+          "default": 256,
+          "title": "Width",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind",
+        "description",
+        "padding_top_bottom_left_right",
+        "original_height_width",
+        "scale",
+        "image_png_base64",
+        "heatmap_png_base64",
+        "overlay_png_base64"
+      ],
+      "title": "Visualization",
+      "type": "object"
+    },
+    "VisualizedPrediction": {
+      "properties": {
+        "anomaly_score": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Anomaly Score",
+          "type": "number"
+        },
+        "category": {
+          "enum": [
+            "bottle",
+            "hazelnut",
+            "leather"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "decision": {
+          "enum": [
+            "normal",
+            "anomaly"
+          ],
+          "title": "Decision",
+          "type": "string"
+        },
+        "engine": {
+          "default": "pytorch",
+          "enum": [
+            "pytorch",
+            "onnxruntime"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "explanation_decision_changed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Explanation Decision Changed"
+        },
+        "explanation_engine": {
+          "anyOf": [
+            {
+              "enum": [
+                "pytorch",
+                "onnxruntime"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Explanation Engine"
+        },
+        "explanation_reference_score": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Explanation Reference Score"
+        },
+        "explanation_score_coherent": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Explanation Score Coherent"
+        },
+        "explanation_time_ms": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Explanation Time Ms"
+        },
+        "inference_time_ms": {
+          "minimum": 0.0,
+          "title": "Inference Time Ms",
+          "type": "number"
+        },
+        "model": {
+          "enum": [
+            "B0",
+            "A1",
+            "T0",
+            "T1",
+            "T2"
+          ],
+          "title": "Model",
+          "type": "string"
+        },
+        "request_id": {
+          "format": "uuid",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "threshold": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Threshold",
+          "type": "number"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        },
+        "visualization": {
+          "$ref": "#/components/schemas/Visualization"
+        }
+      },
+      "required": [
+        "category",
+        "model",
+        "version",
+        "anomaly_score",
+        "threshold",
+        "decision",
+        "inference_time_ms",
+        "request_id",
+        "visualization"
+      ],
+      "title": "VisualizedPrediction",
+      "type": "object"
+    }
+  }
+}

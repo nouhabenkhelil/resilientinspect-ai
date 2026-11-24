@@ -1,0 +1,8 @@
+target-version = "py311"
+line-length = 120
+extend-exclude = [".venv*", ".mlflow-ui", "artifacts", "data", "node_modules", "mlops/local", "mlops/dataset", "mlops/deployment", "scripts/ci/local"]
+
+[lint]
+# Fatal correctness checks across historical and new Python; no formatting/fixes.
+# Style, unused imports and complexity are intentionally outside this baseline.
+select = ["E9", "F63", "F7", "F82"]

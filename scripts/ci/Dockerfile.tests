@@ -1,0 +1,13 @@
+# Local Linux reproduction of the hosted Python command, never a serving image.
+ARG BACKEND_TEST_IMAGE=resilientinspect-ci-backend:local
+FROM ${BACKEND_TEST_IMAGE}
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+COPY . /app/
+ENV MLFLOW_DISABLE_TELEMETRY=true MLFLOW_DISABLE_AGENT_HINT=1 MPLBACKEND=Agg OMP_NUM_THREADS=2 MKL_NUM_THREADS=2
+RUN --mount=type=cache,target=/tmp/.cache/pip python -m pip install --only-binary=:all: -r scripts/ci/requirements.txt \
+    && python -m pip install --no-deps --no-build-isolation -e . \
+    && python -m pip check
+ENTRYPOINT ["python"]
+CMD ["-m", "pytest", "tests", "mlops/tests", "scripts/ci/tests", "-q", "--tb=short"]

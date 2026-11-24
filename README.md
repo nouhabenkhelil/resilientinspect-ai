@@ -1,5 +1,8 @@
 # ResilientInspect AI
 
+[![CI tests](https://github.com/nouhabenkhelil/resilientinspect-ai/actions/workflows/ci-tests.yml/badge.svg?branch=main)](https://github.com/nouhabenkhelil/resilientinspect-ai/actions/workflows/ci-tests.yml)
+[![Docker build](https://github.com/nouhabenkhelil/resilientinspect-ai/actions/workflows/docker-build.yml/badge.svg?branch=main)](https://github.com/nouhabenkhelil/resilientinspect-ai/actions/workflows/docker-build.yml)
+
 Projet de Deep Learning avancé, Axe 1 CNN et Transfer Learning. État au
 20 novembre 2026 : **15 modèles PyTorch et 14 modèles ONNX validés**, application
 React/FastAPI sur `http://localhost:18080`, versionnement DVC local et MLflow
@@ -8,6 +11,161 @@ Tracking/Registry sur `http://127.0.0.1:5000`.
 Voir [le guide MLOps](mlops/README.md), [la vérification MLOps](reports/experiments/mlops_verification.md)
 et [la finalisation ONNX](deployment/reports/onnx-finalization.md).
 Les sections historiques ci-dessous conservent le contexte des premières phases.
+
+## Démarrage et architecture actuels
+
+Les workflows sont préparés et validés localement. **Leur exécution GitHub reste
+à vérifier après publication manuelle** ; les badges pointent vers les deux
+fichiers réels, sans annoncer un résultat distant non observé.
+
+```mermaid
+flowchart LR
+  Browser[Navigateur] --> Nginx[React 2.0 / Nginx :18080]
+  Nginx --> API[FastAPI CPU :8001]
+  API --> PT[15 modèles PyTorch]
+  API --> ORT[14 modèles ONNX Runtime]
+  DVC[Livraison DVC locale / SHA256] --> Files[Checkpoints / calibrations / preuves]
+  Files --> API
+  Files -. provenance .-> MLflow[MLflow Tracking / Registry :5000]
+```
+
+Les cinq variantes B0/A1/T0/T1/T2 couvrent bottle, hazelnut et leather. T1/bottle
+reste volontairement indisponible avec ONNX, sans repli silencieux. Le service
+FastAPI ne dépend pas du démarrage de MLflow. Oracle conserve son port 8080.
+
+Prérequis pour le parcours local complet : Windows/PowerShell, Git, Docker Desktop
+avec conteneurs Linux/WSL2, **Python 3.11.9 x64**, Node **22.22.1** et les artefacts
+autorisés. La CI utilise Ubuntu 22.04, Python 3.11.9 et Node 22.22.1.
+Les roues PyTorch/Torchvision sont CPU ; CUDA n’est pas requis.
+
+Pour une nouvelle installation, préparer `.venv` avec le runtime Python exact
+avant d’installer les dépendances, sans remplacer un environnement scientifique
+déjà validé :
+
+```powershell
+# Vérifier d’abord l’interpréteur choisi ; les preuves figées exigent son runtime.
+py -3.11 -c "import sys; assert sys.version_info[:3] == (3, 11, 9)"
+py -3.11 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install torch==2.15.0+cpu torchvision==0.29.2+cpu --index-url https://download.pytorch.org/whl/cpu
+.\.venv\Scripts\python.exe -m pip install --only-binary=:all: -r scripts/ci/requirements.txt
+.\.venv\Scripts\python.exe -m pip install --no-deps --no-build-isolation -e .
+.\mlops\bootstrap.ps1
+```
+
+Consulter [le guide MLOps](mlops/README.md) pour les détails de l’environnement
+isolé. Sur une installation existante, conserver `.venv` et `.venv-mlops`.
+
+## Récupérer les artefacts et lancer les services
+
+Les pointeurs DVC et le manifeste SHA256 sont publics ; données, poids, bases
+SQLite et caches sont exclus de Git. Le remote local doit être fourni sur la
+machine de récupération. **Il n’est pas une sauvegarde cloud ou hors machine.**
+
+```powershell
+$artifactRemote = 'C:\Users\nouhe\resilientinspect-dvc-store' # Adapter au stockage réellement accessible.
+.\.venv-mlops\Scripts\python.exe -m dvc remote add --local --force --default local_store $artifactRemote
+.\.venv-mlops\Scripts\python.exe -m dvc config --local core.site_cache_dir "$((Get-Location).Path)/.dvc/site-cache"
+.\.venv-mlops\Scripts\python.exe -m dvc pull
+.\.venv-mlops\Scripts\python.exe -m dvc status
+.\.venv-mlops\Scripts\python.exe mlops/dvc_release.py verify
+```
+
+Les sorties récupérées sont `mlops/dataset/` et `mlops/deployment/`. Dans un
+**autre checkout**, la commande suivante rétablit les chemins scientifiques
+canoniques sans écraser un fichier existant différent :
+
+```powershell
+.\.venv-mlops\Scripts\python.exe mlops/dvc_release.py materialize --destination C:\recovery\resilientinspect-ai
+```
+
+Le code de ce checkout doit correspondre exactement aux empreintes des preuves.
+Les sources protégées sont enregistrées avec LF ; conserver leurs octets lors
+du clonage (`git -c core.autocrlf=false clone ...`). Les chemins locaux et versions
+de runtime doivent être compatibles ; un contrôle SHA256 en échec ne doit jamais
+être contourné. Aucun artefact n’est téléchargé depuis le remote du PC par la CI.
+
+Sur le checkout disposant des chemins canoniques :
+
+```powershell
+.\.venv\Scripts\python.exe scripts/prepare_compose.py --check
+docker compose up -d --build --wait
+docker compose ps
+# Dans une autre console, après restauration des archives :
+.\.venv-mlops\Scripts\python.exe mlops/tracking.py track
+.\.venv-mlops\Scripts\python.exe mlops/registry.py register
+.\mlops\serve.ps1
+```
+
+Le fichier de montages `docker-compose.mounts.yml` est versionné mais ses sources
+sont locales. `prepare_compose.py --check` vérifie les 273 entrées figées et refuse
+une divergence. Le démarrage Docker vérifie l’admission scientifique ; la CI de
+build emploie une configuration séparée sans ces montages.
+
+Application : **http://localhost:18080**. MLflow : **http://127.0.0.1:5000**,
+mode **Model training**. Les alias T2 `demo_candidate` sont une sélection
+rétrospective, sans validation indépendante.
+
+## CI hébergée et validation locale intégrale
+
+| Parcours | Contrôles | Accès aux artefacts réels |
+|---|---|---|
+| `ci-tests.yml` | Garde Git, métadonnées DVC, Ruff, tests CPU/ONNX/MLOps sur fixtures, contrat FastAPI/TypeScript, agrégats publics, ESLint, Vitest, build Vite | Aucun |
+| `docker-build.yml` | Dockerfile `--check`, Compose de build distinct, deux images, import CPU/ORT et syntaxe Nginx | Aucun ; aucune admission de modèle revendiquée |
+| `scripts/ci/validate-local.ps1` | SHA256 DVC, Registry par URI, Docker healthy, 15/14 moteurs, HTTP réel, navigateurs, archives scientifiques | Obligatoires |
+
+Déclenchement sur push `main`, pull request et `workflow_dispatch`, permissions
+`contents: read`, timeouts et annulation des anciennes exécutions. Actions figées
+par SHA complet ; images CI par digest. Aucune publication d’image ou de donnée.
+
+```powershell
+# Outillage de lint hors de l’environnement scientifique.
+.\.venv-mlops\Scripts\python.exe -m pip install ruff==0.17.6
+.\.venv-mlops\Scripts\python.exe scripts/ci/repository_guard.py --include-untracked
+.\.venv-mlops\Scripts\python.exe scripts/ci/check_dvc_metadata.py
+.\.venv-mlops\Scripts\python.exe scripts/ci/actionlint.py
+.\.venv-mlops\Scripts\python.exe -m ruff check --config ruff.toml src backend scripts tests mlops frontend/scripts
+.\.venv-mlops\Scripts\python.exe scripts/ci/check_api_contract.py
+.\.venv-mlops\Scripts\python.exe -m pytest tests mlops/tests scripts/ci/tests -q --tb=short
+npm.cmd --prefix frontend ci --no-audit --no-fund
+npm.cmd --prefix frontend run typecheck
+npm.cmd --prefix frontend run lint
+npm.cmd --prefix frontend run check:contracts
+npm.cmd --prefix frontend run check:data
+npm.cmd --prefix frontend test -- --maxWorkers=2
+npm.cmd --prefix frontend run build
+.\.venv-mlops\Scripts\python.exe scripts/ci/docker_build.py --service backend
+.\.venv-mlops\Scripts\python.exe scripts/ci/docker_build.py --service frontend
+# Après démarrage des services, avec les vraies archives et le Registry :
+.\scripts\ci\validate-local.ps1
+```
+
+Les fixtures unitaires sont synthétiques et ne constituent pas une preuve de
+parité des quinze modèles. Le contrôle des exports publics hébergé vérifie leur
+cohérence interne ; le parcours local vérifie leurs sources et les preuves réelles.
+Les règles de lint, la classification des tests et les limites sont détaillées
+dans [le guide CI](scripts/ci/README.md).
+
+## Démonstration et vérification distante
+
+1. Montrer les deux workflows et leur séparation entre contrôles hébergés et
+   inférence locale. Après publication manuelle, vérifier leurs runs sur GitHub.
+2. Sur 18080 : Smart Inspection PyTorch puis ONNX, Comparison Lab, Performance
+   Engineering et System Monitor ; constater le refus ONNX de T1/bottle.
+3. Dans MLflow : expériences originales/importées, métriques, artefacts,
+   Registry T2 version 1 et alias `demo_candidate`.
+4. Présenter le rapport de validation locale et les empreintes DVC/Registry.
+
+Rapport : [ci_cd_verification.md](reports/experiments/ci_cd_verification.md).
+Liste exacte à publier : [ci_cd_publish_files.txt](reports/experiments/ci_cd_publish_files.txt).
+L’environnement `.mlflow-ui` historiquement suivi est retiré de l’index sans
+suppression locale. Ses anciens blobs restent dans l’historique ; voir
+[l’audit historique](reports/experiments/ci_cd_history_audit.json). Aucun commit,
+push, déploiement distant ou nettoyage de l’historique n’est automatisé ici.
+
+## Documentation historique des premières phases
+
+Les sections suivantes conservent les décisions et commandes des phases initiales.
+Le parcours de finalisation CI/CD utilise les commandes actuelles ci-dessus.
 
 ## Référence et périmètre
 

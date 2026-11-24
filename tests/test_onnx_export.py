@@ -69,7 +69,8 @@ def test_graph_hash_and_source_calibration_cannot_be_substituted(graph,monkeypat
 def test_missing_failed_or_unbound_parity_refused(graph,monkeypatch):
     directory,_,loaded=graph
     monkeypatch.setattr(runtime,"artifact_directory",lambda *args: directory)
-    path=directory/"parity-windows.json"
+    system = "linux" if runtime.environment()["platform"].startswith("Linux") else "windows"
+    path=directory/f"parity-{system}.json"
     runtime.write_json(path,{"status":"failed"})
     with pytest.raises(ValueError,match="parity"):
         runtime.admit(ROOT,loaded.metadata)

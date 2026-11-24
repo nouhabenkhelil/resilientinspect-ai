@@ -263,18 +263,43 @@ def artifacts(synthetic_run, tmp_path_factory):
     return Settings(project_root=root), run, path
 
 
-def test_real_loaders_accept_full_artifacts_without_opening_any_dataset_image(artifacts, monkeypatch):
+def test_scientific_loaders_accept_full_fixtures_without_opening_any_dataset_image(artifacts, monkeypatch):
     settings, _, _ = artifacts
     def forbidden(*args, **kwargs):
         raise AssertionError("Ouverture d'image ou recalibration pendant le chargement")
     monkeypatch.setattr(Image, "open", forbidden)
     monkeypatch.setattr(evaluate_ae, "calibrate_records", forbidden)
     service = ModelStore(settings)
+    # This tests the scientific loaders, not admission of synthetic checkpoints
+    # as deployed models. Linux deployment evidence must never be bypassed.
+    from resilientinspect.evaluation import a1_checkpoints
+    digest = evaluate_ae.manifest_digest(settings.manifest)
+    loaded = {}
+    for variant, module in (("B0", evaluate_ae), ("A1", a1_checkpoints)):
+        selected, _ = module.discover_checkpoints(settings.project_root / f"artifacts/{variant.lower()}_runs")
+        for category, checkpoint in selected.items():
+            loaded[variant, category] = service._load_ae(variant, checkpoint, digest)
+    loaded["T0", "bottle"] = service._load_transfer("T0", "bottle")
+    assert len(loaded) == 7
+    assert loaded["T0", "bottle"].metadata.compatibility_report_sha256
+    assert loaded["A1", "leather"].metadata.threshold == 0.2
+    with pytest.raises(ValueError, match="full"):
+        service._load_transfer("T1", "bottle")
+
+
+def test_linux_startup_refuses_scientific_fixtures_without_deployment_evidence(artifacts, monkeypatch):
+    from backend.app import portability
+    settings, _, _ = artifacts
+    environment = evaluate_transfer._environment()
+    # Exercise the Linux admission branch on either host; no scientific report
+    # or environment fingerprint is rewritten and no serving check is mocked out.
+    monkeypatch.setattr(evaluate_transfer, "_environment", lambda: {**environment, "platform": "Linux-unit-fixture"})
+    service = ModelStore(settings)
     service.load()
-    assert len(service.models) == 7  # B0/A1 trois categories et T0 bottle.
-    assert ("T1", "bottle") in service.unavailable
-    assert service.models["T0", "bottle"].metadata.compatibility_report_sha256
-    assert service.models["A1", "leather"].metadata.threshold == 0.2
+    assert service.models == {}
+    assert len(service.unavailable) == 15
+    with pytest.raises(OSError):
+        portability.require_evidence(settings.project_root, None)
 
 
 @pytest.mark.parametrize("mutation", ["checkpoint", "calibration", "report", "smoke", "duplicate"])
