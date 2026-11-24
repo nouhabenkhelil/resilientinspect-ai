@@ -26,6 +26,7 @@ from portal.app import create_app
 from portal.models import Session, User, utcnow
 from portal.security import csrf, digest
 from portal.settings import Settings
+from portal.batch_config import BatchConfig
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -96,11 +97,11 @@ class Harness:
             return httpx.Response(200, json={"status": "ok", "ready_models": 15, "ready_models_by_engine": {"pytorch": 15, "onnxruntime": 14}})
         if request.url.path == "/model/metadata":
             return httpx.Response(200, json={"models": [{"model": "B0", "category": "bottle", "checkpoint_sha256": "a" * 64,
-                "calibration_sha256": "b" * 64, "available_engines": ["pytorch", "onnxruntime"]}]})
+                "calibration_sha256": "b" * 64, "threshold": 0.2, "available_engines": ["pytorch", "onnxruntime"]}]})
         if self.pause:
             await asyncio.sleep(self.pause)
         if self.upstream_status != 200:
-            return httpx.Response(self.upstream_status, json={"code": "onnx_unavailable", "message": "private internal detail"})
+            return httpx.Response(self.upstream_status, json={"code": self.upstream_code, "message": "private internal detail"})
         return httpx.Response(200, json={"model": "B0", "category": "bottle", "engine": "pytorch", "version": "a" * 64,
              "anomaly_score": 0.1, "threshold": 0.2, "decision": "normal", "inference_time_ms": 2.5, "request_id": str(uuid4())})
 
@@ -112,7 +113,7 @@ class Harness:
 
 
 @pytest_asyncio.fixture
-async def h(migrated_database):
+async def h(migrated_database, tmp_path):
     owner = create_engine(migrated_database)
     with owner.begin() as db:
         db.execute(text("TRUNCATE users, login_flows, rate_buckets, model_releases CASCADE"))
@@ -124,10 +125,12 @@ async def h(migrated_database):
                          session_secret=secrets.token_urlsafe(48), database_url=app_url.render_as_string(hide_password=False))
     h.provider = Provider()
     h.requests, h.clients, h.pause, h.upstream_status = [], [], 0, 200
+    h.upstream_code = 'onnx_unavailable'
     out = io.BytesIO()
     Image.new("RGB", (8, 8), "gray").save(out, format="PNG")
     h.png = out.getvalue()
-    h.app = create_app(h.settings, oidc_transport=httpx.MockTransport(h.provider.handle), scientific_transport=httpx.MockTransport(h.upstream))
+    h.batch_config = BatchConfig(storage_root=tmp_path, min_free_bytes=0)
+    h.app = create_app(h.settings, oidc_transport=httpx.MockTransport(h.provider.handle), scientific_transport=httpx.MockTransport(h.upstream), batch_config=h.batch_config)
     h.root = Starlette(routes=[Mount("/api", app=h.app)])
     h.client = httpx.AsyncClient(transport=httpx.ASGITransport(app=h.root), base_url=h.settings.origin)
     h.clients.append(h.client)

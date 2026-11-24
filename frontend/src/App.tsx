@@ -16,6 +16,7 @@ import {
   ShieldCheck,
   UserRound,
   ListChecks,
+  Files,
 } from 'lucide-react';
 import SmartInspection from './SmartInspection';
 import { ComparisonLab } from './components/ComparisonLab';
@@ -26,6 +27,7 @@ import { PORTAL_MODE } from './portal/session';
 import { AccessDenied, PortalProfile, usePortalAuth } from './portal/Auth';
 import { PortalHistory } from './portal/History';
 import { PortalAdmin, PortalAudit } from './portal/Admin';
+import { BatchInspection } from './portal/BatchInspection';
 const Analytics = lazy(() =>
   import('./components/Analytics').then((m) => ({ default: m.Analytics })),
 );
@@ -76,6 +78,14 @@ const pages = [
   },
   ...(PORTAL_MODE
     ? [
+        {
+          id: 'batch',
+          name: 'Batch Inspection',
+          title: 'La production, image par image.',
+          description:
+            'Analysez des lots privés, suivez leur progression et retrouvez chaque résultat.',
+          icon: Files,
+        },
         {
           id: 'profile',
           name: 'Mon profil',
@@ -357,6 +367,7 @@ export default function App() {
               {page === 'history' &&
                 (PORTAL_MODE ? <PortalHistory /> : <HistoryPage entries={history} />)}
               {page === 'profile' && <PortalProfile />}
+              {page === 'batch' && <BatchInspection />}
               {page === 'admin' && <PortalAdmin />}
               {page === 'audit' && <PortalAudit />}
             </>

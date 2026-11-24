@@ -1,3 +1,4 @@
+
 name: resilientinspect-industrial
 
 x-portal-environment: &portal-environment
@@ -10,6 +11,20 @@ x-portal-environment: &portal-environment
   PORTAL_SESSION_SECRET: ${PORTAL_SESSION_SECRET:?Required}
   DATABASE_URL: ${DATABASE_URL:?Required}
   SCIENTIFIC_URL: http://science:8000
+
+x-batch-environment: &batch-environment
+  BATCH_STORAGE_ROOT: /private/images
+  BATCH_MAX_IMAGES: ${BATCH_MAX_IMAGES:-50}
+  BATCH_MAX_FILE_BYTES: ${BATCH_MAX_FILE_BYTES:-10485760}
+  BATCH_MAX_BYTES: ${BATCH_MAX_BYTES:-104857600}
+  BATCH_MAX_PIXELS: ${BATCH_MAX_PIXELS:-20000000}
+  BATCH_MAX_ACTIVE_PER_USER: ${BATCH_MAX_ACTIVE_PER_USER:-3}
+  BATCH_IMAGE_RETENTION_HOURS: ${BATCH_IMAGE_RETENTION_HOURS:-24}
+  BATCH_RESULT_RETENTION_DAYS: ${BATCH_RESULT_RETENTION_DAYS:-30}
+  BATCH_WORKER_CONCURRENCY: ${BATCH_WORKER_CONCURRENCY:-1}
+  BATCH_MAX_ATTEMPTS: ${BATCH_MAX_ATTEMPTS:-3}
+  BATCH_RETRY_SECONDS: ${BATCH_RETRY_SECONDS:-5}
+  BATCH_LEASE_SECONDS: ${BATCH_LEASE_SECONDS:-120}
 
 services:
   postgres:
@@ -87,14 +102,18 @@ services:
   portal:
     image: resilientinspect-portal:local
     build: {context: ../../services/portal, target: runtime}
-    environment: *portal-environment
+    environment:
+      <<: [*portal-environment, *batch-environment]
+    volumes:
+      - batch-images:/private
     depends_on:
       migrate: {condition: service_completed_successfully}
       science: {condition: service_healthy}
       idp: {condition: service_started}
+      batch-storage-init: {condition: service_completed_successfully}
     networks: [edge, database, inference]
     read_only: true
-    tmpfs: ["/tmp:rw,noexec,nosuid,size=64m"]
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=192m"]
     mem_limit: 512m
     cpus: 1
     security_opt: [no-new-privileges:true]
@@ -104,6 +123,45 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+
+  batch-storage-init:
+    image: resilientinspect-portal:local
+    user: '0'
+    command: [python, -m, portal.batch_storage_init]
+    volumes: ["batch-images:/private"]
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    cap_add: [CHOWN]
+    security_opt: [no-new-privileges:true]
+
+  worker:
+    image: resilientinspect-portal:local
+    build: {context: ../../services/portal, target: runtime}
+    command: [python, -m, portal.batch_worker]
+    environment:
+      <<: *batch-environment
+      DATABASE_URL: ${DATABASE_URL:?Required}
+      SCIENTIFIC_URL: http://science:8000
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      science: {condition: service_healthy}
+      batch-storage-init: {condition: service_completed_successfully}
+    volumes: ["batch-images:/private"]
+    networks: [database, inference]
+    restart: unless-stopped
+    read_only: true
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=32m"]
+    mem_limit: 256m
+    cpus: 1
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: [CMD, python, -m, portal.batch_worker, --health]
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 5
 
   web:
     image: resilientinspect-industrial-web:local
@@ -129,7 +187,7 @@ services:
     image: resilientinspect-portal-tests:local
     environment:
       TEST_DATABASE_URL: ${TEST_DATABASE_URL:?Required}
-      PORTAL_DB_PASSWORD: ${PORTAL_DB_PASSWORD:?Required}
+      PORTAL_DB_PASSWORD:
     command: [python, -m, pytest, tests, -q, --tb=short]
     depends_on:
       postgres: {condition: service_healthy}
@@ -143,3 +201,4 @@ networks:
 volumes:
   postgres-data: {}
   idp-data: {}
+  batch-images: {}
