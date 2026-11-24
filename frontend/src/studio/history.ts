@@ -1,4 +1,5 @@
 import type { Prediction } from '../api/contracts';
+import { PORTAL_MODE, portalRequest } from '../portal/session';
 
 export type HistoryEntry = Prediction & {
   recorded_at: string;
@@ -8,7 +9,30 @@ export type HistoryEntry = Prediction & {
 };
 const KEY = 'ri.inspections.v2';
 export const SESSION = crypto.randomUUID();
+let portalHistory: HistoryEntry[] = [];
+let portalHistoryEpoch = 0;
+export function clearPortalHistory() {
+  portalHistoryEpoch++;
+  portalHistory = [];
+  window.dispatchEvent(new CustomEvent('ri-history'));
+}
+export async function refreshPortalHistory() {
+  if (!PORTAL_MODE) return;
+  const epoch = portalHistoryEpoch;
+  const data = await portalRequest<{
+    items: (Prediction & { created_at: string; gateway_time_ms: number; status: string })[];
+  }>('/api/inspections?limit=100&status=completed');
+  if (epoch !== portalHistoryEpoch) return;
+  portalHistory = data.items.map((r) => ({
+    ...r,
+    recorded_at: r.created_at,
+    round_trip_ms: r.gateway_time_ms,
+    session: 'persistent',
+  }));
+  window.dispatchEvent(new CustomEvent('ri-history'));
+}
 export function readHistory(): HistoryEntry[] {
+  if (PORTAL_MODE) return portalHistory;
   try {
     const entries: unknown = JSON.parse(localStorage.getItem(KEY) || '[]');
     if (!Array.isArray(entries)) return [];
@@ -39,6 +63,12 @@ export function recordInspection(
   elapsed: number,
   endpoint: '/predict' | '/predict/visualize' = '/predict',
 ) {
+  if (PORTAL_MODE) {
+    void refreshPortalHistory().catch(() =>
+      window.dispatchEvent(new CustomEvent('ri-history-error')),
+    );
+    return;
+  }
   const entry: HistoryEntry = {
     ...result,
     recorded_at: new Date().toISOString(),

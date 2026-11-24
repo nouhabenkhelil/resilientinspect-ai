@@ -1,0 +1,145 @@
+name: resilientinspect-industrial
+
+x-portal-environment: &portal-environment
+  PORTAL_MODE: ${PORTAL_MODE:?Required}
+  PORTAL_ORIGIN: ${PORTAL_ORIGIN:?Required}
+  OIDC_ISSUER: ${OIDC_ISSUER:?Required}
+  OIDC_INTERNAL_URL: ${OIDC_INTERNAL_URL:?Required}
+  OIDC_CLIENT_ID: ${OIDC_CLIENT_ID:?Required}
+  OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET:?Required}
+  PORTAL_SESSION_SECRET: ${PORTAL_SESSION_SECRET:?Required}
+  DATABASE_URL: ${DATABASE_URL:?Required}
+  SCIENTIFIC_URL: http://science:8000
+
+services:
+  postgres:
+    image: postgres:17.7-alpine@sha256:bb377b7239d2774ac8cc76f481596ce96c5a6b5e9d141f6d0a0ee371a6e7c0f2
+    environment:
+      POSTGRES_USER: ri_migrator
+      POSTGRES_DB: portal
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Required}
+      PORTAL_DB_PASSWORD: ${PORTAL_DB_PASSWORD:?Required}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./01-roles.sh:/docker-entrypoint-initdb.d/01-roles.sh:ro
+    networks: [database]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U ri_migrator -d portal"]
+      interval: 5s
+      retries: 20
+    mem_limit: 384m
+    security_opt: [no-new-privileges:true]
+
+  idp:
+    image: quay.io/keycloak/keycloak:26.8.2@sha256:7e66a96e4739239070aeaf72e4c5decf0f7f682cfc725b9f7ea2b336eaba38b3
+    command: [start-dev, --import-realm, --http-access-log-enabled=false]
+    environment:
+      KC_HOSTNAME: http://localhost:18585
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME:?Required}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?Required}
+      JAVA_OPTS_KC_HEAP: -Xms128m -Xmx512m
+    ports: ["127.0.0.1:18585:8080"]
+    volumes:
+      - idp-data:/opt/keycloak/data
+      - ./local/realm.json:/opt/keycloak/data/import/resilientinspect.json:ro
+    networks: [edge]
+    mem_limit: 768m
+    security_opt: [no-new-privileges:true]
+
+  migrate:
+    build: {context: ../../services/portal, target: runtime}
+    image: resilientinspect-portal:local
+    environment:
+      MIGRATION_DATABASE_URL: ${MIGRATION_DATABASE_URL:?Required}
+    command: [alembic, -c, /app/alembic.ini, upgrade, head]
+    depends_on:
+      postgres: {condition: service_healthy}
+    networks: [database]
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+
+  science:
+    extends:
+      file: ../../docker-compose.mounts.yml
+      service: scientific_files
+    image: resilientinspect-backend:cpu
+    build: {context: ../.., dockerfile: backend/Dockerfile}
+    volumes:
+      - ../../artifacts/onnx:/app/artifacts/onnx:ro
+      - ../reports/portability:/app/deployment/reports/portability:ro
+    read_only: true
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=128m"]
+    environment: {OMP_NUM_THREADS: '2', MKL_NUM_THREADS: '2'}
+    networks: [inference]
+    healthcheck:
+      test: [CMD, python, /app/deployment/healthcheck.py]
+      interval: 10s
+      timeout: 5s
+      start_period: 120s
+      retries: 10
+    mem_limit: 1536m
+    cpus: 2
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+
+  portal:
+    image: resilientinspect-portal:local
+    build: {context: ../../services/portal, target: runtime}
+    environment: *portal-environment
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      science: {condition: service_healthy}
+      idp: {condition: service_started}
+    networks: [edge, database, inference]
+    read_only: true
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=64m"]
+    mem_limit: 512m
+    cpus: 1
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health',timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  web:
+    image: resilientinspect-industrial-web:local
+    build:
+      context: ../../frontend
+      dockerfile: ../deployment/industrial/Dockerfile.frontend
+    depends_on:
+      portal: {condition: service_healthy}
+    ports: ["127.0.0.1:18180:8080"]
+    networks: [edge]
+    read_only: true
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=64m"]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    healthcheck:
+      test: [CMD-SHELL, "wget -q -O /dev/null http://127.0.0.1:8080/nginx-health || exit 1"]
+      interval: 10s
+      retries: 10
+
+  tests:
+    profiles: [test]
+    build: {context: ../../services/portal, target: test}
+    image: resilientinspect-portal-tests:local
+    environment:
+      TEST_DATABASE_URL: ${TEST_DATABASE_URL:?Required}
+      PORTAL_DB_PASSWORD: ${PORTAL_DB_PASSWORD:?Required}
+    command: [python, -m, pytest, tests, -q, --tb=short]
+    depends_on:
+      postgres: {condition: service_healthy}
+    networks: [database]
+    tmpfs: [/tmp]
+
+networks:
+  edge: {}
+  database: {internal: true}
+  inference: {internal: true}
+volumes:
+  postgres-data: {}
+  idp-data: {}

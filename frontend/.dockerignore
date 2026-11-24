@@ -7,6 +7,7 @@
 !vite.config.ts
 !vitest.config.ts
 !nginx.conf
+!nginx.portal.conf
 !src/
 !src/**/
 !src/**/*.ts

@@ -36,7 +36,25 @@ jobs:
       - run: python scripts/ci/repository_guard.py
       - run: python scripts/ci/check_dvc_metadata.py
       - run: python scripts/ci/actionlint.py
-      - run: python -m ruff check --config ruff.toml src backend scripts tests mlops frontend/scripts
+      - run: python -m ruff check --config ruff.toml src backend scripts tests mlops frontend/scripts services/portal deployment/industrial
+
+  portal:
+    name: Industrial gateway isolated PostgreSQL security tests
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.11.9'
+      - name: Generate ephemeral development fixtures without printing secrets
+        run: python deployment/industrial/init-dev.py
+      - name: Build the isolated gateway test image
+        run: docker compose --env-file deployment/industrial/local/.env -f deployment/industrial/compose.yml build tests
+      - name: Migrate and test portal_tests; no real models or OIDC accounts
+        run: docker compose --env-file deployment/industrial/local/.env -f deployment/industrial/compose.yml run --rm tests
 
   backend:
     name: Python CPU unit and contract tests
@@ -90,3 +108,8 @@ jobs:
       - run: npm run check:data
       - run: npm test -- --maxWorkers=2
       - run: npm run build
+      - name: Build the authenticated industrial frontend
+        run: npm run build
+        env:
+          VITE_PORTAL_MODE: 'true'
+          VITE_API_BASE_URL: /api

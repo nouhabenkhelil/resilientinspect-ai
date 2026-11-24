@@ -1,0 +1,14 @@
+**
+!requirements.txt
+!requirements-test.txt
+!pytest.ini
+!portal/
+!portal/*.py
+!migrations/
+!migrations/*.py
+!migrations/*.mako
+!migrations/versions/
+!migrations/versions/*.py
+!alembic.ini
+!tests/
+!tests/*.py

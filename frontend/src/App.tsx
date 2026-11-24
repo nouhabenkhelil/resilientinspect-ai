@@ -13,12 +13,19 @@ import {
   Sun,
   Presentation,
   RefreshCw,
+  ShieldCheck,
+  UserRound,
+  ListChecks,
 } from 'lucide-react';
 import SmartInspection from './SmartInspection';
 import { ComparisonLab } from './components/ComparisonLab';
 import { Dashboard, HistoryPage, SystemMonitor } from './components/StudioPages';
 import { readHistory, type HistoryEntry } from './studio/history';
 import { useSystem } from './studio/useSystem';
+import { PORTAL_MODE } from './portal/session';
+import { AccessDenied, PortalProfile, usePortalAuth } from './portal/Auth';
+import { PortalHistory } from './portal/History';
+import { PortalAdmin, PortalAudit } from './portal/Admin';
 const Analytics = lazy(() =>
   import('./components/Analytics').then((m) => ({ default: m.Analytics })),
 );
@@ -62,9 +69,36 @@ const pages = [
     id: 'history',
     name: 'Historique',
     title: 'Chaque inspection, documentée.',
-    description: 'Un journal local léger. Vos images ne sont pas enregistrées.',
+    description: PORTAL_MODE
+      ? 'Un journal persistant dans votre périmètre autorisé. Vos images ne sont pas enregistrées.'
+      : 'Un journal local léger. Vos images ne sont pas enregistrées.',
     icon: History,
   },
+  ...(PORTAL_MODE
+    ? [
+        {
+          id: 'profile',
+          name: 'Mon profil',
+          title: 'Votre identité professionnelle.',
+          description: 'Profil et session à accès contrôlé.',
+          icon: UserRound,
+        },
+        {
+          id: 'admin',
+          name: 'Administration',
+          title: 'Les accès, sous contrôle.',
+          description: 'Comptes provisionnés et révocation des sessions.',
+          icon: ShieldCheck,
+        },
+        {
+          id: 'audit',
+          name: 'Audit',
+          title: 'La trace des opérations.',
+          description: 'Événements de votre périmètre autorisé.',
+          icon: ListChecks,
+        },
+      ]
+    : []),
 ];
 function stored(key: string, fallback: string) {
   try {
@@ -78,6 +112,7 @@ function pageFromHash() {
   return pages.some((p) => p.id === hash) ? hash : 'dashboard';
 }
 export default function App() {
+  const auth = usePortalAuth();
   const [page, setPage] = useState(pageFromHash);
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -87,6 +122,18 @@ export default function App() {
   const [notice, setNotice] = useState('');
   const system = useSystem();
   const current = pages.find((p) => p.id === page)!;
+  const allowed = (id: string) =>
+    !PORTAL_MODE ||
+    (!!auth &&
+      (id === 'admin'
+        ? auth.user.permissions.includes('admin')
+        : id === 'audit'
+          ? auth.user.permissions.includes('audit')
+          : id === 'monitor'
+            ? auth.user.permissions.includes('readiness')
+            : ['inspection', 'comparison'].includes(id)
+              ? auth.user.permissions.includes('inspect')
+              : true));
   useEffect(() => {
     function navigate() {
       setPage(pageFromHash());
@@ -153,22 +200,24 @@ export default function App() {
           </span>
         </a>
         <span className="workspace-label">
-          WORKSPACE <span>2.0</span>
+          WORKSPACE <span>{PORTAL_MODE ? '3.0' : '2.0'}</span>
         </span>
         <nav aria-label="Navigation principale">
-          {pages.map((p) => (
-            <a
-              key={p.id}
-              href={`#${p.id}`}
-              aria-current={page === p.id ? 'page' : undefined}
-              title={collapsed ? p.name : undefined}
-              onClick={() => navigate(p.id)}
-            >
-              <p.icon size={19} />
-              <span>{p.name}</span>
-              {p.id === 'comparison' && <small>LAB</small>}
-            </a>
-          ))}
+          {pages
+            .filter((p) => allowed(p.id))
+            .map((p) => (
+              <a
+                key={p.id}
+                href={`#${p.id}`}
+                aria-current={page === p.id ? 'page' : undefined}
+                title={collapsed ? p.name : undefined}
+                onClick={() => navigate(p.id)}
+              >
+                <p.icon size={19} />
+                <span>{p.name}</span>
+                {p.id === 'comparison' && <small>LAB</small>}
+              </a>
+            ))}
         </nav>
         <div className="sidebar-bottom">
           <div className="local-engine">
@@ -215,6 +264,12 @@ export default function App() {
             <strong>{current.name}</strong>
           </div>
           <div className="toolbar">
+            {auth && (
+              <a className="portal-user" href="#profile">
+                <strong>{auth.user.name}</strong>
+                <span className="badge">{auth.user.role}</span>
+              </a>
+            )}
             <div
               role="status"
               className={`api-status ${system.health?.status === 'ok' ? 'online' : system.health ? 'degraded' : 'offline'}`}
@@ -259,7 +314,11 @@ export default function App() {
                 {current.name.toUpperCase()}
               </div>
               <h1>{current.title}</h1>
-              <p>{current.description}</p>
+              <p>
+                {PORTAL_MODE && page === 'history'
+                  ? 'Un historique persistant, limité à votre périmètre autorisé.'
+                  : current.description}
+              </p>
             </div>
             <span className="environment">
               <span className="status-dot" />
@@ -274,24 +333,34 @@ export default function App() {
               </button>
             </div>
           )}
-          {page === 'dashboard' && (
-            <Dashboard system={system} history={history} navigate={navigate} />
+          {!allowed(page) ? (
+            <AccessDenied />
+          ) : (
+            <>
+              {page === 'dashboard' && (
+                <Dashboard system={system} history={history} navigate={navigate} />
+              )}
+              {page === 'inspection' && <SmartInspection />}
+              {page === 'comparison' && <ComparisonLab metadata={system.metadata} />}
+              {page === 'analytics' && (
+                <Suspense
+                  fallback={
+                    <div className="skeleton panel" role="status">
+                      Chargement des mesures officielles…
+                    </div>
+                  }
+                >
+                  <Analytics />
+                </Suspense>
+              )}
+              {page === 'monitor' && <SystemMonitor system={system} />}
+              {page === 'history' &&
+                (PORTAL_MODE ? <PortalHistory /> : <HistoryPage entries={history} />)}
+              {page === 'profile' && <PortalProfile />}
+              {page === 'admin' && <PortalAdmin />}
+              {page === 'audit' && <PortalAudit />}
+            </>
           )}
-          {page === 'inspection' && <SmartInspection />}
-          {page === 'comparison' && <ComparisonLab metadata={system.metadata} />}
-          {page === 'analytics' && (
-            <Suspense
-              fallback={
-                <div className="skeleton panel" role="status">
-                  Chargement des mesures officielles…
-                </div>
-              }
-            >
-              <Analytics />
-            </Suspense>
-          )}
-          {page === 'monitor' && <SystemMonitor system={system} />}
-          {page === 'history' && <HistoryPage entries={history} />}
           <footer className="page-footer">
             <span>
               ResilientInspect AI <span>·</span> Vision industrielle explicable

@@ -19,7 +19,7 @@ guard = module("repository_guard")
 docker = module("docker_build")
 
 
-@pytest.mark.parametrize("name", ["weights/a.pt", "model.onnx", "tracking.sqlite", ".env.local", ".dvc/cache/a", ".mlflow-ui/lib/a.py", "mlops/local/db.txt", "frontend/reports/screenshots/inspection.png"])
+@pytest.mark.parametrize("name", ["weights/a.pt", "model.onnx", "tracking.sqlite", ".env.local", ".dvc/cache/a", ".mlflow-ui/lib/a.py", "mlops/local/db.txt", "frontend/reports/screenshots/inspection.png", "deployment/industrial/local/accounts.json", "services/portal/local/sessions.json", ".venv-portal/pyvenv.cfg"])
 def test_private_paths_are_blocked(name):
     assert guard.path_problem(name)
 

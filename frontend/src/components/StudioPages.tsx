@@ -21,6 +21,7 @@ import CountUp from './reactbits/CountUp';
 import ShinyText from './reactbits/ShinyText';
 import AnimatedList from './reactbits/AnimatedList';
 import experiments from '../data/experiments.json';
+import { PORTAL_MODE } from '../portal/session';
 
 const stamp = (value: string) =>
   new Date(value).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'medium' });
@@ -65,7 +66,7 @@ export function Dashboard({
   history: HistoryEntry[];
   navigate: (id: string) => void;
 }) {
-  const session = history.filter((r) => r.session === SESSION);
+  const session = PORTAL_MODE ? history : history.filter((r) => r.session === SESSION);
   const alerts = session.filter((r) => r.decision === 'anomaly').length;
   const mean = session.length
     ? session.reduce((sum, r) => sum + r.inference_time_ms, 0) / session.length
@@ -81,14 +82,16 @@ export function Dashboard({
       note: 'Disponibilité retournée par l’API',
     },
     {
-      label: 'Inspections de session',
+      label: PORTAL_MODE ? 'Inspections accessibles' : 'Inspections de session',
       value: session.length,
       suffix: '',
       icon: ScanLine,
-      note: 'Analyses réellement terminées',
+      note: PORTAL_MODE
+        ? '100 dernières analyses terminées au maximum'
+        : 'Analyses réellement terminées',
     },
     {
-      label: 'Alertes de session',
+      label: PORTAL_MODE ? 'Alertes du journal' : 'Alertes de session',
       value: alerts,
       suffix: '',
       icon: AlertTriangle,
@@ -256,7 +259,9 @@ export function Dashboard({
         <section className="panel activity-panel">
           <div className="panel-heading">
             <div>
-              <span className="eyebrow">JOURNAL DU NAVIGATEUR</span>
+              <span className="eyebrow">
+                {PORTAL_MODE ? 'JOURNAL PERSISTANT' : 'JOURNAL DU NAVIGATEUR'}
+              </span>
               <h2>Dernières inspections</h2>
             </div>
             <button className="text-button" onClick={() => navigate('history')}>

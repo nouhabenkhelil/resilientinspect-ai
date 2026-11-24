@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[2]
 MAX_BYTES = 5 * 1024 * 1024
 FORBIDDEN_SUFFIXES = {".pt", ".pth", ".ckpt", ".onnx", ".safetensors", ".h5", ".hdf5", ".npy", ".npz", ".pkl", ".pickle", ".joblib", ".db", ".sqlite", ".sqlite3"}
 PRIVATE_DIRS = {"mlruns", "mlartifacts", "node_modules", ".venv", ".venv-mlops", ".mlflow-ui", "__pycache__", ".aws", ".secrets", "secrets", "datasets", "mvtec_ad"}
-PRIVATE_PREFIXES = ("artifacts/", "data/", ".dvc/cache/", ".dvc/tmp/", ".dvc/site-cache/", "mlops/local/", "mlops/dataset/", "mlops/deployment/", "scripts/ci/local/", "frontend/reports/screenshots/")
+PRIVATE_PREFIXES = ("artifacts/", "data/", ".dvc/cache/", ".dvc/tmp/", ".dvc/site-cache/", "mlops/local/", "mlops/dataset/", "mlops/deployment/", "scripts/ci/local/", "frontend/reports/screenshots/", "deployment/industrial/local/", "services/portal/local/")
 SECRET_PATTERNS = [
     re.compile(rb"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
     re.compile(rb"\b(?:AKIA|ASIA)[A-Z0-9]{16}\b"),

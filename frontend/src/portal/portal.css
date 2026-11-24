@@ -1,0 +1,85 @@
+.portal-auth {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: 1fr minmax(320px, 520px);
+  align-items: center;
+  gap: 6vw;
+  padding: clamp(24px, 7vw, 100px);
+  background: radial-gradient(ellipse at 20% 50%, #22d3ee10, transparent 55%), var(--bg);
+}
+.portal-login {
+  padding: clamp(28px, 4vw, 56px);
+  display: grid;
+  gap: 24px;
+}
+.portal-login .brand {
+  margin-bottom: 24px;
+}
+.portal-login h1 {
+  font-size: clamp(32px, 4vw, 52px);
+  line-height: 1.08;
+  margin: 0;
+  letter-spacing: -0.04em;
+}
+.portal-login p {
+  line-height: 1.7;
+}
+.portal-login-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-decoration: none;
+  padding: 16px 20px;
+}
+.portal-login .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.portal-auth-art {
+  min-height: 400px;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+.portal-auth-art > span {
+  font: 11px var(--font-mono, monospace);
+  color: var(--muted);
+  letter-spacing: 0.25em;
+}
+.portal-orbit {
+  width: min(30vw, 320px);
+  aspect-ratio: 1;
+  border: 1px solid #22d3ee40;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 40px #22d3ee06,
+    0 0 0 80px #22d3ee03;
+  background: url('/logo.svg') center / 45% no-repeat;
+}
+.portal-profile,
+.portal-denied {
+  display: grid;
+  gap: 20px;
+}
+.portal-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.portal-user strong {
+  color: var(--text);
+}
+@media (max-width: 900px) {
+  .portal-auth {
+    grid-template-columns: minmax(0, 520px);
+    justify-content: center;
+  }
+  .portal-auth-art {
+    display: none;
+  }
+  .portal-user strong {
+    display: none;
+  }
+}

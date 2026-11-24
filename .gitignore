@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 .venv/
 .venv-mlops/
+.venv-portal/
+/deployment/industrial/local/
+/services/portal/local/
 .mlflow-ui/
 /mlops/local/
 /mlops/dataset/

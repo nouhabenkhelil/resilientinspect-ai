@@ -5,6 +5,7 @@ import type {
   Prediction,
   VisualizedPrediction,
 } from './contracts';
+import { authHeaders, expired, PORTAL_MODE } from '../portal/session';
 
 export class ApiError extends Error {
   constructor(
@@ -34,8 +35,15 @@ async function request<T>(
   try {
     const response = await fetch(`${API_BASE_URL}${path}`, {
       ...options,
+      ...(PORTAL_MODE
+        ? {
+            credentials: 'same-origin',
+            headers: { ...authHeaders(options.method), ...options.headers },
+          }
+        : {}),
       signal: controller.signal,
     });
+    if (PORTAL_MODE && response.status === 401) expired();
     const body = await response.json().catch(() => null);
     // /health documente une réponse HealthResponse en HTTP 503.
     const isDegraded = degradedHealth && response.status === 503 && body?.status === 'degraded';
@@ -74,7 +82,8 @@ function multipart(input: InspectionInput): FormData {
 }
 
 export const api = {
-  health: (signal?: AbortSignal) => request<Health>('/health', { signal }, true),
+  health: (signal?: AbortSignal) =>
+    request<Health>(PORTAL_MODE ? '/status' : '/health', { signal }, true),
   metadata: (signal?: AbortSignal) => request<Metadata>('/model/metadata', { signal }),
   predict: (input: InspectionInput, signal?: AbortSignal) =>
     request<Prediction>('/predict', {
