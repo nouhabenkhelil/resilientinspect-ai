@@ -1,0 +1,85 @@
+{
+  "uid": "ri-engines",
+  "title": "06 \u00b7 Moteurs scientifiques",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": false,
+  "timezone": "browser",
+  "refresh": "10s",
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "tags": [
+    "resilientinspect",
+    "real-measurements"
+  ],
+  "panels": [
+    {
+      "id": 1,
+      "title": "Disponibilit\u00e9 backend",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_science_up",
+          "legendFormat": "{{__name__}} {{engine}} {{route}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "Mod\u00e8les admis par moteur",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_models_available",
+          "legendFormat": "{{__name__}} {{engine}} {{route}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      }
+    }
+  ]
+}

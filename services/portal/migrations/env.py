@@ -3,6 +3,8 @@ import os
 from alembic import context
 from sqlalchemy import create_engine, pool
 from portal.models import Base
+import portal.batch_models  # Register the independent batch tables for Alembic.
+import portal.operations_models
 
 configuration = context.config
 url = os.environ.get("MIGRATION_DATABASE_URL") or os.environ["DATABASE_URL"]

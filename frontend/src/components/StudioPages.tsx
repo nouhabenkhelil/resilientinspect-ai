@@ -16,6 +16,7 @@ import { clearHistory, exportHistory, SESSION, type HistoryEntry } from '../stud
 import { CATEGORIES, MODEL_NAMES } from '../api/contracts';
 import { categoryIcons, categoryLabels } from './InspectionTools';
 import { Result } from './Result';
+import { Operations } from '../portal/Operations';
 import SpotlightCard from './reactbits/SpotlightCard';
 import CountUp from './reactbits/CountUp';
 import ShinyText from './reactbits/ShinyText';
@@ -342,6 +343,7 @@ export function SystemMonitor({ system }: { system: SystemState }) {
           : 'Hors ligne';
   return (
     <div className="page-stack">
+      {PORTAL_MODE && <Operations />}
       <div className="toolbar">
         <span className={`badge ${health?.status === 'ok' ? 'normal' : 'warning'}`}>
           API · {status}

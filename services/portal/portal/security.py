@@ -8,6 +8,7 @@ from uuid import UUID, uuid4
 from sqlalchemy import delete, func, or_, select, text, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from sqlalchemy.pool import NullPool
 
 from .models import AuditEvent, Inspection, InspectionGrant, RateBucket, Session, User, WorkLease, utcnow
 
@@ -26,8 +27,14 @@ class PublicError(Exception):
 
 
 class Database:
-    def __init__(self, settings):
-        self.engine = create_async_engine(settings.database_url, pool_pre_ping=True, pool_size=8, max_overflow=2, echo=False)
+    def __init__(self, settings, *, observational=False):
+        if observational:
+            # A scrape must not wait for cancellation/recovery of a stale pooled connection.
+            self.engine=create_async_engine(settings.database_url,poolclass=NullPool,echo=False,
+                connect_args={'connect_timeout':2,'tcp_user_timeout':3000,
+                              'options':'-c statement_timeout=2000 -c lock_timeout=1000'})
+        else:
+            self.engine = create_async_engine(settings.database_url, pool_pre_ping=True, pool_size=8, max_overflow=2, echo=False)
         self.sessions = async_sessionmaker(self.engine, expire_on_commit=False)
 
 
@@ -50,8 +57,9 @@ async def audit(db, request, action, outcome, actor=None, resource=None):
         session.add(AuditEvent(actor_id=actor.id if actor else None, resource_id=resource,
                                action=action, outcome=outcome, request_id=request.state.request_id))
         await session.commit()
-    logger.info("action=%s outcome=%s request_id=%s actor=%s resource=%s", action, outcome,
-                request.state.request_id, actor.id if actor else "anonymous", resource or "none")
+    from .telemetry import emit
+    emit('security.audit', action=action, outcome=outcome, request_id=request.state.request_id,
+         correlation_id=getattr(request.state, 'correlation_id', request.state.request_id))
 
 
 async def principal(request):

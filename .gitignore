@@ -4,6 +4,7 @@ __pycache__/
 .venv/
 .venv-mlops/
 .venv-portal/
+.venv-ops/
 /deployment/industrial/local/
 /services/portal/local/
 .mlflow-ui/

@@ -1,0 +1,8 @@
+failed_recent: 3
+latency_for: 120s
+latency_seconds: 5
+min_storage_bytes: 268435456
+queue_age_seconds: 180
+queue_for: 60s
+unavailable_for: 30s
+worker_for: 30s

@@ -12,3 +12,4 @@ alembic==1.20.1
 psycopg[binary]==3.3.9
 Pillow==13.0.0
 python-multipart==0.0.34
+prometheus-client==0.26.0

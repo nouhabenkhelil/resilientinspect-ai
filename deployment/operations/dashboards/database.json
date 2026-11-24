@@ -1,0 +1,118 @@
+{
+  "uid": "ri-database",
+  "title": "05 \u00b7 PostgreSQL et stockage",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": false,
+  "timezone": "browser",
+  "refresh": "10s",
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "tags": [
+    "resilientinspect",
+    "real-measurements"
+  ],
+  "panels": [
+    {
+      "id": 1,
+      "title": "Disponibilit\u00e9 SQL",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_database_up",
+          "legendFormat": "{{__name__}} {{engine}} {{route}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "Temps SELECT 1",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_database_probe_seconds",
+          "legendFormat": "{{__name__}} {{engine}} {{route}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "Espace libre filesystem priv\u00e9",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_storage_free_bytes",
+          "legendFormat": "{{__name__}} {{engine}} {{route}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      }
+    }
+  ]
+}

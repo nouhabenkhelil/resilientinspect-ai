@@ -1,0 +1,61 @@
+groups:
+- name: resilientinspect
+  rules:
+  - alert: ScientificBackendUnavailable
+    expr: ri_science_up == 0
+    for: 30s
+    labels:
+      severity: warning
+    annotations:
+      summary: "Le backend scientifique ne r\xE9pond pas au healthcheck"
+  - alert: GatewayUnavailable
+    expr: ri_gateway_up == 0 or up{job="portal"} == 0
+    for: 30s
+    labels:
+      severity: warning
+    annotations:
+      summary: Gateway indisponible
+  - alert: WorkerInactive
+    expr: ri_worker_up == 0
+    for: 30s
+    labels:
+      severity: warning
+    annotations:
+      summary: Heartbeat worker absent ou trop ancien
+  - alert: BatchQueueStalled
+    expr: ri_batch_pending > 0 and ri_batch_oldest_pending_seconds > 180
+    for: 60s
+    labels:
+      severity: warning
+    annotations:
+      summary: "File batch bloqu\xE9e"
+  - alert: RepeatedTaskFailures
+    expr: ri_batch_failed_recent >= 3
+    for: 30s
+    labels:
+      severity: warning
+    annotations:
+      summary: "\xC9checs r\xE9p\xE9t\xE9s des t\xE2ches sur les quinze derni\xE8\
+        res minutes"
+  - alert: HighGatewayLatency
+    expr: histogram_quantile(0.95, sum by (le) (rate(ri_http_request_duration_seconds_bucket[5m])))
+      > 5
+    for: 120s
+    labels:
+      severity: warning
+    annotations:
+      summary: "Latence p95 \xE9lev\xE9e sur les requ\xEAtes mesur\xE9es"
+  - alert: PostgreSQLUnavailable
+    expr: ri_database_up == 0
+    for: 30s
+    labels:
+      severity: warning
+    annotations:
+      summary: "PostgreSQL ne r\xE9pond pas \xE0 SELECT 1"
+  - alert: PrivateStorageLow
+    expr: ri_storage_free_bytes < 268435456
+    for: 30s
+    labels:
+      severity: warning
+    annotations:
+      summary: "Espace disponible faible dans le filesystem du volume priv\xE9 Docker"

@@ -26,10 +26,11 @@ from .security import (Database, PERMISSIONS, PublicError, acquire_lease, audit,
                        inspection_for, permission, principal, protect_write, rate_limit, release_lease, scope_for)
 from .settings import Settings
 from .uploads import validate_image
+from .telemetry import HTTPMetrics, configure_logging
 
 MODELS = {"B0", "A1", "T0", "T1", "T2"}
 CATEGORIES = {"bottle", "hazelnut", "leather"}
-for name in ("httpx", "httpcore", "authlib", "sqlalchemy.engine"):
+for name in ("httpx", "httpx2", "httpcore", "httpcore2", "authlib", "sqlalchemy.engine"):
     logging.getLogger(name).setLevel(logging.WARNING)
 
 
@@ -44,13 +45,19 @@ class EnabledChange(BaseModel):
 
 
 class BodyLimit:
-    def __init__(self, app, max_bytes):
-        self.app, self.max_bytes = app, max_bytes
+    def __init__(self, app, max_bytes, batch_bytes):
+        self.app, self.max_bytes, self.batch_bytes = app, max_bytes, batch_bytes
 
     async def __call__(self, scope, receive, send):
         if scope["type"] != "http":
             return await self.app(scope, receive, send)
         scope.setdefault("state", {})["request_id"] = uuid4()
+        try: scope['state']['correlation_id'] = UUID(dict(scope.get('headers', [])).get(b'x-correlation-id', b'').decode())
+        except (ValueError, UnicodeError): scope['state']['correlation_id'] = scope['state']['request_id']
+        began = time.perf_counter()
+        status = 503
+        route = scope['path'].removeprefix(scope.get('root_path', ''))
+        limit = self.batch_bytes if route == '/batches' and scope['method'] == 'POST' else self.max_bytes
         size = 0
         started = False
         async def bounded():
@@ -58,28 +65,32 @@ class BodyLimit:
             message = await receive()
             if message["type"] == "http.request":
                 size += len(message.get("body", b""))
-                if size > self.max_bytes:
+                if size > limit:
                     raise PublicError(413, "body_too_large", "Le corps de la requête dépasse la limite.")
             return message
         async def secured(message):
-            nonlocal started
+            nonlocal started, status
             if message["type"] == "http.response.start":
                 started = True
+                status = message['status']
                 headers = list(message.get("headers", []))
                 if not any(k.lower() == b"x-request-id" for k, _ in headers):
                     headers.append((b"x-request-id", str(scope["state"]["request_id"]).encode()))
                 headers.extend([(b"cache-control", b"no-store"), (b"x-content-type-options", b"nosniff"),
-                                (b"referrer-policy", b"no-referrer")])
+                                (b"referrer-policy", b"no-referrer"), (b'x-correlation-id', str(scope['state']['correlation_id']).encode())])
                 message["headers"] = headers
             await send(message)
         length = dict(scope.get("headers", [])).get(b"content-length", b"0")
         try:
-            oversized = int(length) > self.max_bytes
+            oversized = int(length) > limit
         except ValueError:
             oversized = True
         if oversized:
-            return await JSONResponse({"code": "body_too_large", "message": "Requête trop volumineuse.",
+            response = JSONResponse({"code": "body_too_large", "message": "Requête trop volumineuse.",
                                        "request_id": str(scope["state"]["request_id"])}, status_code=413)(scope, receive, secured)
+            await response
+            scope['app'].state.http_metrics.observe(scope, status, time.perf_counter() - began)
+            return
         try:
             await self.app(scope, bounded, secured)
         except Exception:
@@ -88,10 +99,13 @@ class BodyLimit:
             if not started:
                 await JSONResponse({"code": "service_unavailable", "message": "Le service est temporairement indisponible.",
                                     "request_id": str(scope["state"]["request_id"])}, status_code=503)(scope, receive, secured)
+        finally:
+            scope['app'].state.http_metrics.observe(scope, status, time.perf_counter() - began)
 
 
-def create_app(settings=None, *, oidc_transport=None, scientific_transport=None):
+def create_app(settings=None, *, oidc_transport=None, scientific_transport=None, batch_config=None):
     settings = settings or Settings.from_env()
+    configure_logging('portal')
     db = Database(settings)
     oidc = OIDC(settings, oidc_transport)
     upstream = httpx.AsyncClient(base_url=settings.scientific_url, timeout=settings.inference_timeout,
@@ -109,7 +123,13 @@ def create_app(settings=None, *, oidc_transport=None, scientific_transport=None)
     app = FastAPI(title="ResilientInspect Industrial Portal", lifespan=lifespan,
                   docs_url=None, redoc_url=None, openapi_url=None)
     app.state.settings, app.state.db, app.state.oidc, app.state.upstream = settings, db, oidc, upstream
-    app.add_middleware(BodyLimit, max_bytes=settings.max_file_bytes + 64 * 1024)
+    app.state.http_metrics = HTTPMetrics()
+    from .batch_api import register_batches
+    register_batches(app, batch_config)
+    from .operations import register_operations
+    register_operations(app)
+    app.add_middleware(BodyLimit, max_bytes=settings.max_file_bytes + 64 * 1024,
+                       batch_bytes=app.state.batch_config.max_batch_bytes + 1024 * 1024)
 
     @app.exception_handler(PublicError)
     async def denied(request, error):

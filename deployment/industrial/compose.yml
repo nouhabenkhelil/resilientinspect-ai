@@ -28,6 +28,7 @@ x-batch-environment: &batch-environment
 
 services:
   postgres:
+    restart: unless-stopped
     image: postgres:17.7-alpine@sha256:bb377b7239d2774ac8cc76f481596ce96c5a6b5e9d141f6d0a0ee371a6e7c0f2
     environment:
       POSTGRES_USER: ri_migrator
@@ -46,6 +47,7 @@ services:
     security_opt: [no-new-privileges:true]
 
   idp:
+    restart: unless-stopped
     image: quay.io/keycloak/keycloak:26.8.2@sha256:7e66a96e4739239070aeaf72e4c5decf0f7f682cfc725b9f7ea2b336eaba38b3
     command: [start-dev, --import-realm, --http-access-log-enabled=false]
     environment:
@@ -76,6 +78,7 @@ services:
     cap_drop: [ALL]
 
   science:
+    restart: unless-stopped
     extends:
       file: ../../docker-compose.mounts.yml
       service: scientific_files
@@ -100,12 +103,16 @@ services:
     cap_drop: [ALL]
 
   portal:
+    restart: unless-stopped
+    stop_grace_period: 110s
     image: resilientinspect-portal:local
     build: {context: ../../services/portal, target: runtime}
     environment:
       <<: [*portal-environment, *batch-environment]
+      METRICS_TOKEN_FILE: /run/secrets/metrics_token
     volumes:
       - batch-images:/private
+      - ./local/observability/secrets/metrics_token:/run/secrets/metrics_token:ro
     depends_on:
       migrate: {condition: service_completed_successfully}
       science: {condition: service_healthy}
@@ -136,6 +143,7 @@ services:
     security_opt: [no-new-privileges:true]
 
   worker:
+    stop_grace_period: 110s
     image: resilientinspect-portal:local
     build: {context: ../../services/portal, target: runtime}
     command: [python, -m, portal.batch_worker]
@@ -164,6 +172,7 @@ services:
       retries: 5
 
   web:
+    restart: unless-stopped
     image: resilientinspect-industrial-web:local
     build:
       context: ../../frontend

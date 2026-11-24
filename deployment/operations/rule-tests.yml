@@ -1,0 +1,112 @@
+rule_files:
+- /rules/alerts.yml
+evaluation_interval: 10s
+tests:
+- interval: 10s
+  input_series:
+  - series: ri_science_up
+    values: 0+0x30 1+0x70
+  - series: ri_gateway_up
+    values: 0+0x30 1+0x70
+  - series: ri_worker_up
+    values: 0+0x30 1+0x70
+  - series: ri_batch_pending
+    values: 2+0x30 0+0x70
+  - series: ri_batch_oldest_pending_seconds
+    values: 200+0x30 0+0x70
+  - series: ri_batch_failed_recent
+    values: 3+0x30 0+0x70
+  - series: ri_database_up
+    values: 0+0x30 1+0x70
+  - series: ri_storage_free_bytes
+    values: 1+0x30 999999999+0x70
+  - series: ri_http_request_duration_seconds_bucket{le="1"}
+    values: 0+0x30 10+10x70
+  - series: ri_http_request_duration_seconds_bucket{le="5"}
+    values: 0+0x30 10+10x70
+  - series: ri_http_request_duration_seconds_bucket{le="10"}
+    values: 0+10x101
+  - series: ri_http_request_duration_seconds_bucket{le="+Inf"}
+    values: 0+10x101
+  alert_rule_test:
+  - eval_time: 3m
+    alertname: ScientificBackendUnavailable
+    exp_alerts:
+    - exp_labels:
+        severity: warning
+      exp_annotations:
+        summary: "Le backend scientifique ne r\xE9pond pas au healthcheck"
+  - eval_time: 15m
+    alertname: ScientificBackendUnavailable
+    exp_alerts: []
+  - eval_time: 3m
+    alertname: GatewayUnavailable
+    exp_alerts:
+    - exp_labels:
+        severity: warning
+      exp_annotations:
+        summary: Gateway indisponible
+  - eval_time: 15m
+    alertname: GatewayUnavailable
+    exp_alerts: []
+  - eval_time: 3m
+    alertname: WorkerInactive
+    exp_alerts:
+    - exp_labels:
+        severity: warning
+      exp_annotations:
+        summary: Heartbeat worker absent ou trop ancien
+  - eval_time: 15m
+    alertname: WorkerInactive
+    exp_alerts: []
+  - eval_time: 3m
+    alertname: BatchQueueStalled
+    exp_alerts:
+    - exp_labels:
+        severity: warning
+      exp_annotations:
+        summary: "File batch bloqu\xE9e"
+  - eval_time: 15m
+    alertname: BatchQueueStalled
+    exp_alerts: []
+  - eval_time: 3m
+    alertname: RepeatedTaskFailures
+    exp_alerts:
+    - exp_labels:
+        severity: warning
+      exp_annotations:
+        summary: "\xC9checs r\xE9p\xE9t\xE9s des t\xE2ches sur les quinze derni\xE8\
+          res minutes"
+  - eval_time: 15m
+    alertname: RepeatedTaskFailures
+    exp_alerts: []
+  - eval_time: 3m
+    alertname: HighGatewayLatency
+    exp_alerts:
+    - exp_labels:
+        severity: warning
+      exp_annotations:
+        summary: "Latence p95 \xE9lev\xE9e sur les requ\xEAtes mesur\xE9es"
+  - eval_time: 15m
+    alertname: HighGatewayLatency
+    exp_alerts: []
+  - eval_time: 3m
+    alertname: PostgreSQLUnavailable
+    exp_alerts:
+    - exp_labels:
+        severity: warning
+      exp_annotations:
+        summary: "PostgreSQL ne r\xE9pond pas \xE0 SELECT 1"
+  - eval_time: 15m
+    alertname: PostgreSQLUnavailable
+    exp_alerts: []
+  - eval_time: 3m
+    alertname: PrivateStorageLow
+    exp_alerts:
+    - exp_labels:
+        severity: warning
+      exp_annotations:
+        summary: "Espace disponible faible dans le filesystem du volume priv\xE9 Docker"
+  - eval_time: 15m
+    alertname: PrivateStorageLow
+    exp_alerts: []

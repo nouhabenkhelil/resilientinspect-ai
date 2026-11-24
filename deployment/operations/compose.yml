@@ -1,0 +1,74 @@
+name: resilientinspect-observability
+services:
+  observer:
+    image: resilientinspect-portal:local
+    command: [uvicorn, 'portal.operations:observer_app', --factory, --host, 0.0.0.0, --port, '8000', --no-access-log]
+    environment:
+      OBSERVER_DATABASE_URL_FILE: /run/secrets/observer_database_url
+      METRICS_TOKEN_FILE: /run/secrets/metrics_token
+      SCIENTIFIC_URL: http://science:8000
+      GATEWAY_URL: http://portal:8000
+    volumes:
+      - ../industrial/local/observability/secrets:/run/secrets:ro
+      - batch-images:/private:ro
+    networks: [monitor, edge, database, inference]
+    read_only: true
+    tmpfs: [/tmp]
+    restart: unless-stopped
+    mem_limit: 192m
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/health',timeout=3)"]
+      interval: 10s
+      retries: 5
+  prometheus:
+    image: prom/prometheus:v3.16.0@sha256:e04987641b57704f408e31f6373ba4138ecf27cb4a165d24aabb6c38fddd0f06
+    command: [--config.file=/etc/prometheus/prometheus.yml, --web.config.file=/etc/prometheus/web.yml, --storage.tsdb.retention.time=7d]
+    ports: ['127.0.0.1:19090:9090']
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../industrial/local/observability/prometheus-web.yml:/etc/prometheus/web.yml:ro
+      - ./alerts.yml:/etc/prometheus/alerts.yml:ro
+      - ../industrial/local/observability/secrets:/run/secrets:ro
+      - prometheus-data:/prometheus
+    networks: [monitor, edge]
+    restart: unless-stopped
+    mem_limit: 384m
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+  grafana:
+    image: grafana/grafana:13.3.2@sha256:81556409ba48b2b922e0adb69a2511337d8ba7578f11962eefa6149a2d815101
+    environment:
+      GF_SECURITY_ADMIN_USER: ri-admin
+      GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/grafana_password
+      GF_AUTH_ANONYMOUS_ENABLED: 'false'
+      GF_USERS_ALLOW_SIGN_UP: 'false'
+      GF_ANALYTICS_REPORTING_ENABLED: 'false'
+      GF_ANALYTICS_CHECK_FOR_UPDATES: 'false'
+      GF_ANALYTICS_CHECK_FOR_PLUGIN_UPDATES: 'false'
+      GF_PLUGINS_PREINSTALL_DISABLED: 'true'
+      GF_PLUGINS_PUBLIC_KEY_RETRIEVAL_DISABLED: 'true'
+      GF_SECURITY_COOKIE_SAMESITE: strict
+    ports: ['127.0.0.1:13000:3000']
+    volumes:
+      - ../industrial/local/observability/secrets:/run/secrets:ro
+      - ../industrial/local/observability/datasource.yml:/etc/grafana/provisioning/datasources/ri.yml:ro
+      - ./dashboard-provider.yml:/etc/grafana/provisioning/dashboards/ri.yml:ro
+      - ./dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    networks: [monitor, ui]
+    restart: unless-stopped
+    mem_limit: 384m
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+networks:
+  monitor: {internal: true}
+  ui: {}
+  edge: {external: true, name: resilientinspect-industrial_edge}
+  database: {external: true, name: resilientinspect-industrial_database}
+  inference: {external: true, name: resilientinspect-industrial_inference}
+volumes:
+  batch-images: {external: true, name: resilientinspect-industrial_batch-images}
+  prometheus-data: {}
+  grafana-data: {}
