@@ -1,0 +1,276 @@
+{
+  "uid": "ri-mlops-api",
+  "title": "MLOps \u00b7 API Performance",
+  "schemaVersion": 41,
+  "version": 1,
+  "editable": true,
+  "tags": [
+    "resilientinspect",
+    "mlops"
+  ],
+  "description": "Portal metrics cover portal traffic. Optional proxy metrics cover /science/* calls only; direct internal science requests bypass the proxy. Quantiles require sufficient observations; empty is not zero.",
+  "refresh": "10s",
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "templating": {
+    "list": []
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "HTTP requests per second (portal + optional science proxy)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by (job,route,method) (rate({__name__=~\"ri_http_requests_total|ri_mon_http_requests_total\"}[5m]))",
+          "legendFormat": "{{job}} {{route}} {{method}} {{engine}} {{container}} {{status_class}}"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Science proxy status classes",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by (route,status_class) (increase(ri_mon_http_requests_total[5m]))",
+          "legendFormat": "{{job}} {{route}} {{method}} {{engine}} {{container}} {{status_class}}"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Portal status classes",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by (route,status_class) (increase(ri_http_requests_total[5m]))",
+          "legendFormat": "{{job}} {{route}} {{method}} {{engine}} {{container}} {{status_class}}"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Mean duration (optional proxy)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by (route) (rate(ri_mon_http_request_duration_seconds_sum[5m])) / sum by (route) (rate(ri_mon_http_request_duration_seconds_count[5m]))",
+          "legendFormat": "{{job}} {{route}} {{method}} {{engine}} {{container}} {{status_class}}"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "5xx ratio (optional proxy)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_mon_api_error_ratio{source=\"production\"}",
+          "legendFormat": "{{job}} {{route}} {{method}} {{engine}} {{container}} {{status_class}}"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Ready models (real health)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_mon_models_ready{source=\"production\"}",
+          "legendFormat": "{{job}} {{route}} {{method}} {{engine}} {{container}} {{status_class}}"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Proxy p50 (minimum 20 observations/5m)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "histogram_quantile(0.5, sum by (route,le) (rate(ri_mon_http_request_duration_seconds_bucket[5m]))) and on(route) (sum by(route) (increase(ri_mon_http_request_duration_seconds_count[5m])) >= 20)",
+          "legendFormat": "{{job}} {{route}} {{method}} {{engine}} {{container}} {{status_class}}"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Proxy p95 (minimum 40 observations/5m)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "histogram_quantile(0.95, sum by (route,le) (rate(ri_mon_http_request_duration_seconds_bucket[5m]))) and on(route) (sum by(route) (increase(ri_mon_http_request_duration_seconds_count[5m])) >= 40)",
+          "legendFormat": "{{job}} {{route}} {{method}} {{engine}} {{container}} {{status_class}}"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Proxy p99 (minimum 100 observations/5m)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "histogram_quantile(0.99, sum by (route,le) (rate(ri_mon_http_request_duration_seconds_bucket[5m]))) and on(route) (sum by(route) (increase(ri_mon_http_request_duration_seconds_count[5m])) >= 100)",
+          "legendFormat": "{{job}} {{route}} {{method}} {{engine}} {{container}} {{status_class}}"
+        }
+      ]
+    }
+  ]
+}

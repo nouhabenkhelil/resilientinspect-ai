@@ -1,0 +1,53 @@
+name: resilientinspect-mlops-monitoring
+services:
+  metadata-init:
+    image: resilientinspect-portal:local
+    user: '0:0'
+    command: [python, -c, "import os,pwd; uid=pwd.getpwnam('portal').pw_uid; os.stat('/store').st_uid == uid or (os.chmod('/store',0o700),os.chown('/store',uid,uid))"]
+    volumes: [metadata:/store]
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    cap_add: [CHOWN]
+    security_opt: [no-new-privileges:true]
+  collector:
+    image: resilientinspect-portal:local
+    command: [python, -m, mlops.monitoring.exporter]
+    working_dir: /monitor
+    depends_on:
+      metadata-init: {condition: service_completed_successfully}
+    environment:
+      PYTHONDONTWRITEBYTECODE: '1'
+      MONITOR_DATA: /data
+      MONITOR_STORE: /store/predictions.sqlite3
+      MONITOR_SECRETS: /run/secrets
+      SCIENTIFIC_URL: http://science:8000
+    ports: ['127.0.0.1:19108:9108']
+    volumes:
+      - .:/monitor/mlops/monitoring:ro
+      - ../local/monitoring/runtime:/data
+      - ../local/monitoring/secrets:/run/secrets:ro
+      - metadata:/store
+    networks:
+      monitor:
+        aliases: [mlops-monitoring]
+      database: {}
+      inference: {}
+      local: {}
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 192m
+    restart: unless-stopped
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:9108/health',timeout=3)"]
+      interval: 10s
+      retries: 5
+networks:
+  local: {}
+  monitor: {external: true, name: resilientinspect-observability_monitor}
+  database: {external: true, name: resilientinspect-industrial_database}
+  inference: {external: true, name: resilientinspect-industrial_inference}
+volumes:
+  metadata: {}

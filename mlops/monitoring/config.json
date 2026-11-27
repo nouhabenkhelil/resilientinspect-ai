@@ -1,0 +1,16 @@
+{
+  "retention_days": 7,
+  "window_hours": 24,
+  "min_samples": 30,
+  "ks_distance": 0.3,
+  "anomaly_rate_delta": 0.2,
+  "collect_seconds": 10,
+  "freshness_seconds": 180,
+  "alerts": {
+    "for": "20s",
+    "error_ratio": 0.05,
+    "p95_seconds": 5,
+    "cpu_ratio": 0.9,
+    "memory_ratio": 0.9
+  }
+}

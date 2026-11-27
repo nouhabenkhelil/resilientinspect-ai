@@ -1,0 +1,690 @@
+{
+  "verified_at_epoch": 1795788227.00056,
+  "status": "operational_local_with_documented_scope",
+  "versions": {
+    "python_host": "3.11.9",
+    "psutil": "7.2.2",
+    "PyYAML": "6.0.4",
+    "prometheus": "3.16.0",
+    "grafana": "13.3.2",
+    "collector": {
+      "python": "3.11.9",
+      "psycopg": "3.3.9",
+      "prometheus-client": "0.26.0"
+    },
+    "prefect": "3.9.5"
+  },
+  "collector_image_id": "sha256:37c540d6df7038e40fb21f7023639007f44f0aedfde9b8952b4c72862d22a69d",
+  "existing_file_changes": [
+    ".gitignore",
+    "deployment/operations/alerts.yml",
+    "deployment/operations/prometheus.yml"
+  ],
+  "new_files": [
+    "deployment/operations/dashboards/ri-mlops-api.json",
+    "deployment/operations/dashboards/ri-mlops-infrastructure.json",
+    "deployment/operations/dashboards/ri-mlops-models.json",
+    "mlops/monitoring/README.md",
+    "mlops/monitoring/__init__.py",
+    "mlops/monitoring/bootstrap.ps1",
+    "mlops/monitoring/browser-qa.mjs",
+    "mlops/monitoring/compose.yml",
+    "mlops/monitoring/config.json",
+    "mlops/monitoring/configure.py",
+    "mlops/monitoring/core.py",
+    "mlops/monitoring/dashboards.py",
+    "mlops/monitoring/dashboards/ri-mlops-api.json",
+    "mlops/monitoring/dashboards/ri-mlops-infrastructure.json",
+    "mlops/monitoring/dashboards/ri-mlops-models.json",
+    "mlops/monitoring/demo.py",
+    "mlops/monitoring/drift.py",
+    "mlops/monitoring/exporter.py",
+    "mlops/monitoring/finalize.py",
+    "mlops/monitoring/flow.py",
+    "mlops/monitoring/host.py",
+    "mlops/monitoring/reference.py",
+    "mlops/monitoring/requirements-lock.txt",
+    "mlops/monitoring/requirements.txt",
+    "mlops/monitoring/rules/alerts.yml",
+    "mlops/monitoring/rules/rule-tests.yml",
+    "mlops/monitoring/tests/test_monitoring.py",
+    "mlops/monitoring/verify_preservation.py",
+    "mlops/monitoring/verify_runtime.py",
+    "reports/experiments/monitoring_verification.json",
+    "reports/experiments/monitoring_verification.md"
+  ],
+  "evidence": {
+    "inference": {
+      "targets": [
+        {
+          "job": "mlops-monitoring",
+          "health": "up"
+        },
+        {
+          "job": "observer",
+          "health": "up"
+        },
+        {
+          "job": "portal",
+          "health": "up"
+        }
+      ],
+      "http_counter_delta": 143.0,
+      "actual_validation_predictions": 31,
+      "t1_bottle_onnx_refused": true,
+      "engines": [
+        "pytorch",
+        "onnxruntime"
+      ],
+      "status_classes": [
+        "2xx",
+        "4xx",
+        "5xx"
+      ],
+      "anonymous_denied": true,
+      "validation_drift": {
+        "model": "B0",
+        "category": "bottle",
+        "version": "b70366819fdbd9043eb78e8865ca39cebadf5cb251ff7a9c0e94817c3c0593e4",
+        "engine": "pytorch",
+        "source": "validation",
+        "reference_count": 42,
+        "window_count": 30,
+        "input_feature_drift": "unavailable: image features are not collected",
+        "ground_truth_metrics": "unavailable",
+        "status": "stable",
+        "ks_distance": 0.11904761904761907,
+        "reference_anomaly_rate": 0.047619047619047616,
+        "window_anomaly_rate": 0.0,
+        "anomaly_rate_delta": 0.047619047619047616,
+        "score_drift": false,
+        "anomaly_rate_drift": false
+      },
+      "store_rows": 71,
+      "privacy_allowlist": true
+    },
+    "alert": {
+      "stable": {
+        "action": "stable",
+        "source": "synthetic",
+        "controlled_rows": 42,
+        "groups": [
+          {
+            "model": "B0",
+            "category": "bottle",
+            "version": "b70366819fdbd9043eb78e8865ca39cebadf5cb251ff7a9c0e94817c3c0593e4",
+            "engine": "pytorch",
+            "source": "synthetic",
+            "reference_count": 42,
+            "window_count": 42,
+            "input_feature_drift": "unavailable: image features are not collected",
+            "ground_truth_metrics": "unavailable",
+            "status": "stable",
+            "ks_distance": 0.0,
+            "reference_anomaly_rate": 0.047619047619047616,
+            "window_anomaly_rate": 0.047619047619047616,
+            "anomaly_rate_delta": 0.0,
+            "score_drift": false,
+            "anomaly_rate_drift": false
+          }
+        ]
+      },
+      "shifted": {
+        "action": "alerts",
+        "source": "synthetic",
+        "controlled_rows": 42,
+        "groups": [
+          {
+            "model": "B0",
+            "category": "bottle",
+            "version": "b70366819fdbd9043eb78e8865ca39cebadf5cb251ff7a9c0e94817c3c0593e4",
+            "engine": "pytorch",
+            "source": "synthetic",
+            "reference_count": 42,
+            "window_count": 42,
+            "input_feature_drift": "unavailable: image features are not collected",
+            "ground_truth_metrics": "unavailable",
+            "status": "drift",
+            "ks_distance": 1.0,
+            "reference_anomaly_rate": 0.047619047619047616,
+            "window_anomaly_rate": 1.0,
+            "anomaly_rate_delta": 0.9523809523809523,
+            "score_drift": true,
+            "anomaly_rate_drift": true
+          }
+        ]
+      },
+      "fired": [
+        {
+          "rule": "MLOpsAnomalyRateDrift",
+          "labels": {
+            "__name__": "ALERTS",
+            "alertname": "MLOpsAnomalyRateDrift",
+            "alertstate": "firing",
+            "category": "bottle",
+            "engine": "pytorch",
+            "instance": "mlops-monitoring:9108",
+            "job": "mlops-monitoring",
+            "model": "B0",
+            "scope": "mlops",
+            "severity": "warning",
+            "source": "synthetic",
+            "version": "b70366819fdbd9043eb78e8865ca39cebadf5cb251ff7a9c0e94817c3c0593e4"
+          }
+        },
+        {
+          "rule": "MLOpsControlStale",
+          "labels": {
+            "__name__": "ALERTS",
+            "alertname": "MLOpsControlStale",
+            "alertstate": "firing",
+            "instance": "mlops-monitoring:9108",
+            "job": "mlops-monitoring",
+            "scope": "mlops",
+            "severity": "warning",
+            "source": "synthetic"
+          }
+        },
+        {
+          "rule": "MLOpsHighCPU",
+          "labels": {
+            "__name__": "ALERTS",
+            "alertname": "MLOpsHighCPU",
+            "alertstate": "firing",
+            "instance": "mlops-monitoring:9108",
+            "job": "mlops-monitoring",
+            "scope": "mlops",
+            "severity": "warning",
+            "source": "synthetic"
+          }
+        },
+        {
+          "rule": "MLOpsHighErrorRate",
+          "labels": {
+            "__name__": "ALERTS",
+            "alertname": "MLOpsHighErrorRate",
+            "alertstate": "firing",
+            "instance": "mlops-monitoring:9108",
+            "job": "mlops-monitoring",
+            "scope": "mlops",
+            "severity": "warning",
+            "source": "synthetic"
+          }
+        },
+        {
+          "rule": "MLOpsHighLatency",
+          "labels": {
+            "__name__": "ALERTS",
+            "alertname": "MLOpsHighLatency",
+            "alertstate": "firing",
+            "instance": "mlops-monitoring:9108",
+            "job": "mlops-monitoring",
+            "scope": "mlops",
+            "severity": "warning",
+            "source": "synthetic"
+          }
+        },
+        {
+          "rule": "MLOpsHighRAM",
+          "labels": {
+            "__name__": "ALERTS",
+            "alertname": "MLOpsHighRAM",
+            "alertstate": "firing",
+            "instance": "mlops-monitoring:9108",
+            "job": "mlops-monitoring",
+            "scope": "mlops",
+            "severity": "warning",
+            "source": "synthetic"
+          }
+        },
+        {
+          "rule": "MLOpsModelsNotReady",
+          "labels": {
+            "__name__": "ALERTS",
+            "alertname": "MLOpsModelsNotReady",
+            "alertstate": "firing",
+            "engine": "pytorch",
+            "instance": "mlops-monitoring:9108",
+            "job": "mlops-monitoring",
+            "scope": "mlops",
+            "severity": "warning",
+            "source": "synthetic"
+          }
+        },
+        {
+          "rule": "MLOpsScienceUnavailable",
+          "labels": {
+            "__name__": "ALERTS",
+            "alertname": "MLOpsScienceUnavailable",
+            "alertstate": "firing",
+            "instance": "mlops-monitoring:9108",
+            "job": "mlops-monitoring",
+            "scope": "mlops",
+            "severity": "warning",
+            "source": "synthetic"
+          }
+        },
+        {
+          "rule": "MLOpsScoreDrift",
+          "labels": {
+            "__name__": "ALERTS",
+            "alertname": "MLOpsScoreDrift",
+            "alertstate": "firing",
+            "category": "bottle",
+            "engine": "pytorch",
+            "instance": "mlops-monitoring:9108",
+            "job": "mlops-monitoring",
+            "model": "B0",
+            "scope": "mlops",
+            "severity": "warning",
+            "source": "synthetic",
+            "version": "b70366819fdbd9043eb78e8865ca39cebadf5cb251ff7a9c0e94817c3c0593e4"
+          }
+        },
+        {
+          "rule": "MLOpsScrapeUnavailable",
+          "labels": {
+            "__name__": "ALERTS",
+            "alertname": "MLOpsScrapeUnavailable",
+            "alertstate": "firing",
+            "instance": "mlops-monitoring:9108",
+            "job": "mlops-monitoring",
+            "scope": "mlops",
+            "severity": "warning",
+            "source": "synthetic"
+          }
+        }
+      ],
+      "resolved": [
+        "MLOpsAnomalyRateDrift",
+        "MLOpsControlStale",
+        "MLOpsHighCPU",
+        "MLOpsHighErrorRate",
+        "MLOpsHighLatency",
+        "MLOpsHighRAM",
+        "MLOpsModelsNotReady",
+        "MLOpsScienceUnavailable",
+        "MLOpsScoreDrift",
+        "MLOpsScrapeUnavailable"
+      ],
+      "external_notifications": false,
+      "production_state_overridden": false
+    },
+    "rule": {
+      "cases": 12,
+      "trigger_and_resolution_assertions": 24,
+      "exit_code": 0,
+      "output": "Processing test file: rule-tests.yml\n  SUCCESS\n\n"
+    },
+    "browser": {
+      "at": "2026-11-27T13:57:00.453Z",
+      "dashboards": [
+        {
+          "uid": "ri-mlops-infrastructure",
+          "title": "MLOps \u00c2\u00b7 Infrastructure",
+          "visible_panels": 8,
+          "panels_with_measurements": 8,
+          "panels": [
+            {
+              "title": "Windows CPU",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Windows RAM",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Container memory",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Container CPU (per core)",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Container running",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Science availability",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Host collection age",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Monitoring alerts (source visible)",
+              "query_ok": true,
+              "measured_data": true
+            }
+          ]
+        },
+        {
+          "uid": "ri-mlops-api",
+          "title": "MLOps \u00c2\u00b7 API Performance",
+          "visible_panels": 9,
+          "panels_with_measurements": 9,
+          "panels": [
+            {
+              "title": "HTTP requests per second (portal + optional science proxy)",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Science proxy status classes",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Portal status classes",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Mean duration (optional proxy)",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "5xx ratio (optional proxy)",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Ready models (real health)",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Proxy p50 (minimum 20 observations/5m)",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Proxy p95 (minimum 40 observations/5m)",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Proxy p99 (minimum 100 observations/5m)",
+              "query_ok": true,
+              "measured_data": true
+            }
+          ]
+        },
+        {
+          "uid": "ri-mlops-models",
+          "title": "MLOps \u00c2\u00b7 Model Monitoring",
+          "visible_panels": 10,
+          "panels_with_measurements": 10,
+          "panels": [
+            {
+              "title": "Prediction observations in window",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Mean anomaly score",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Anomaly decision ratio",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Scientific inference mean",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Score distribution (cumulative bins)",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "KS distance (only enough data)",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Absolute anomaly-rate shift",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Drift evaluable (0 = insufficient/missing/invalid)",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Drift computation age",
+              "query_ok": true,
+              "measured_data": true
+            },
+            {
+              "title": "Metadata SQL collector up",
+              "query_ok": true,
+              "measured_data": true
+            }
+          ]
+        }
+      ],
+      "page_errors": [],
+      "datasource_health": "OK"
+    },
+    "persistence": {
+      "before": {
+        "count": 296,
+        "sha256": "fad49bc9e813cd180592b287963940a3b61e9a8e588f90deec0a9cf9993b8c73"
+      },
+      "after": {
+        "count": 296,
+        "sha256": "fad49bc9e813cd180592b287963940a3b61e9a8e588f90deec0a9cf9993b8c73"
+      },
+      "collector_only_restarted": true,
+      "scrape_restored": true,
+      "dashboards": [
+        "ri-mlops-api",
+        "ri-mlops-infrastructure",
+        "ri-mlops-models"
+      ],
+      "prometheus_grafana_restart": "not performed: existing services preserved; existing TSDB/Grafana named volumes retained"
+    },
+    "privacy": {
+      "view_select": true,
+      "users_select": false,
+      "inspections_select": false,
+      "batch_update": false,
+      "read_only": "on",
+      "collector_logs_checked_bytes": 8480,
+      "known_secrets_absent_from_logs_and_new_public_files": true,
+      "new_public_candidates_checked": 31,
+      "no_image_payload_or_filename_in_collector_logs": true
+    },
+    "preservation": {
+      "protected_files": 1944,
+      "all_sha256_unchanged": true,
+      "allowed_existing_file_edits": [
+        ".gitignore",
+        "deployment/operations/alerts.yml",
+        "deployment/operations/prometheus.yml"
+      ],
+      "preexisting_containers_not_restarted": [
+        "resilientinspect-industrial-web-1",
+        "resilientinspect-industrial-portal-1",
+        "resilientinspect-industrial-worker-1",
+        "resilientinspect-observability-observer-1",
+        "resilientinspect-observability-grafana-1",
+        "resilientinspect-observability-prometheus-1",
+        "resilientinspect-industrial-postgres-1",
+        "resilientinspect-industrial-science-1",
+        "resilientinspect-industrial-idp-1",
+        "nodemanager",
+        "resourcemanager",
+        "historyserver",
+        "namenode",
+        "datanode",
+        "toxiscan-frontend",
+        "toxiscan-backend"
+      ],
+      "branch": "feature/mlops-prefect-orchestration",
+      "commit": "630da12a552ab02d2e39c7fea764fb831cf25a58",
+      "no_commit_push_merge": true
+    }
+  },
+  "live_observations": {
+    "ri_mon_host_memory_ratio{source=\"production\"}": [
+      {
+        "metric": {
+          "__name__": "ri_mon_host_memory_ratio",
+          "instance": "mlops-monitoring:9108",
+          "job": "mlops-monitoring",
+          "source": "production"
+        },
+        "value": [
+          1795788220.756,
+          "0.905"
+        ]
+      }
+    ],
+    "ri_mon_host_cpu_ratio{source=\"production\"}": [
+      {
+        "metric": {
+          "__name__": "ri_mon_host_cpu_ratio",
+          "instance": "mlops-monitoring:9108",
+          "job": "mlops-monitoring",
+          "source": "production"
+        },
+        "value": [
+          1795788220.763,
+          "0.239"
+        ]
+      }
+    ],
+    "ri_mon_models_ready{source=\"production\"}": [
+      {
+        "metric": {
+          "__name__": "ri_mon_models_ready",
+          "engine": "pytorch",
+          "instance": "mlops-monitoring:9108",
+          "job": "mlops-monitoring",
+          "source": "production"
+        },
+        "value": [
+          1795788220.77,
+          "15"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "ri_mon_models_ready",
+          "engine": "onnxruntime",
+          "instance": "mlops-monitoring:9108",
+          "job": "mlops-monitoring",
+          "source": "production"
+        },
+        "value": [
+          1795788220.77,
+          "14"
+        ]
+      }
+    ],
+    "ri_mon_sql_up": [
+      {
+        "metric": {
+          "__name__": "ri_mon_sql_up",
+          "instance": "mlops-monitoring:9108",
+          "job": "mlops-monitoring",
+          "source": "production"
+        },
+        "value": [
+          1795788220.779,
+          "1"
+        ]
+      }
+    ],
+    "ri_mon_drift_age_seconds": [
+      {
+        "metric": {
+          "__name__": "ri_mon_drift_age_seconds",
+          "instance": "mlops-monitoring:9108",
+          "job": "mlops-monitoring",
+          "source": "production"
+        },
+        "value": [
+          1795788220.785,
+          "2.818108320236206"
+        ]
+      }
+    ],
+    "ri_mon_host_collection_age_seconds": [
+      {
+        "metric": {
+          "__name__": "ri_mon_host_collection_age_seconds",
+          "instance": "mlops-monitoring:9108",
+          "job": "mlops-monitoring",
+          "source": "production"
+        },
+        "value": [
+          1795788220.793,
+          "7.2041637897491455"
+        ]
+      }
+    ]
+  },
+  "live_alerts": [],
+  "prefect": {
+    "monitoring_deployment_id": "8cc83311-c231-435d-a932-866f6204eb7f",
+    "interval_seconds": 60,
+    "latest_completed_run": "01a21d3e-3722-72b2-8551-f45dc63f24e3",
+    "existing_flow_interval_seconds": 3600,
+    "visible_failed_setup_runs": 4
+  },
+  "tests": {
+    "monitoring": 18,
+    "orchestration": 19,
+    "backend_portability_mlops": 66,
+    "existing_ci_policy": 20,
+    "monitoring_output": "..................                                                       [100%]\n18 passed in 0.88s\n",
+    "earlier_terminal_observations": [
+      {
+        "command": ".venv-prefect/Scripts/python.exe -m pytest mlops/orchestration/tests -q",
+        "exit_code": 0,
+        "result": "19 passed in 56.39s"
+      },
+      {
+        "command": ".venv-mlops/Scripts/python.exe -m pytest tests/test_backend_api.py tests/test_deployment_portability.py tests/test_compose_deployment.py mlops/tests -q",
+        "exit_code": 0,
+        "result": "66 passed, 1 warning in 76.56s"
+      },
+      {
+        "command": ".venv-mlops/Scripts/python.exe -m pytest scripts/ci/tests -q",
+        "exit_code": 0,
+        "result": "20 passed in 0.42s"
+      }
+    ],
+    "promtool_scenarios": 12,
+    "promtool_trigger_resolution_assertions": 24,
+    "grafana_dashboards": 3,
+    "grafana_panels": 27
+  },
+  "limits": [
+    "Optional proxy observes only its own traffic; portal metrics remain separate.",
+    "No production ground truth, no accuracy/AUROC/F1; no image feature drift.",
+    "Reference is frozen normal validation; product mix can explain score shifts.",
+    "Legacy 18080/8001/5000 were not serving initially; industrial UI remains on 18180.",
+    "Existing Prometheus/Grafana not restarted; dedicated metadata restart persistence verified.",
+    "Local runners must remain running; no OS boot service installed.",
+    "No remote CI run or external notification configured."
+  ]
+}

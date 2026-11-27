@@ -1,0 +1,222 @@
+rule_files:
+- alerts.yml
+evaluation_interval: 10s
+tests:
+- interval: 10s
+  input_series:
+  - series: ri_mon_service_up{source="synthetic"}
+    values: 0 0 0 0 1 1 1 1 1
+  alert_rule_test:
+  - eval_time: 30s
+    alertname: MLOpsScienceUnavailable
+    exp_alerts:
+    - exp_labels:
+        source: synthetic
+        severity: warning
+        scope: mlops
+      exp_annotations:
+        summary: "MLOpsScienceUnavailable \u2014 inspect source label before interpreting;\
+          \ no external notifications"
+  - eval_time: 70s
+    alertname: MLOpsScienceUnavailable
+    exp_alerts: []
+- interval: 10s
+  input_series:
+  - series: up{source="synthetic",job="mlops-monitoring"}
+    values: 0 0 0 0 1 1 1 1 1
+  alert_rule_test:
+  - eval_time: 30s
+    alertname: MLOpsScrapeUnavailable
+    exp_alerts:
+    - exp_labels:
+        source: synthetic
+        job: mlops-monitoring
+        severity: warning
+        scope: mlops
+      exp_annotations:
+        summary: "MLOpsScrapeUnavailable \u2014 inspect source label before interpreting;\
+          \ no external notifications"
+  - eval_time: 70s
+    alertname: MLOpsScrapeUnavailable
+    exp_alerts: []
+- interval: 10s
+  input_series:
+  - series: ri_mon_api_error_ratio{source="synthetic"}
+    values: 1 1 1 1 0 0 0 0 0
+  alert_rule_test:
+  - eval_time: 30s
+    alertname: MLOpsHighErrorRate
+    exp_alerts:
+    - exp_labels:
+        source: synthetic
+        severity: warning
+        scope: mlops
+      exp_annotations:
+        summary: "MLOpsHighErrorRate \u2014 inspect source label before interpreting;\
+          \ no external notifications"
+  - eval_time: 70s
+    alertname: MLOpsHighErrorRate
+    exp_alerts: []
+- interval: 10s
+  input_series:
+  - series: ri_mon_api_p95_seconds{source="synthetic"}
+    values: 15 15 15 15 0 0 0 0 0
+  alert_rule_test:
+  - eval_time: 30s
+    alertname: MLOpsHighLatency
+    exp_alerts:
+    - exp_labels:
+        source: synthetic
+        severity: warning
+        scope: mlops
+      exp_annotations:
+        summary: "MLOpsHighLatency \u2014 inspect source label before interpreting;\
+          \ no external notifications"
+  - eval_time: 70s
+    alertname: MLOpsHighLatency
+    exp_alerts: []
+- interval: 10s
+  input_series:
+  - series: ri_mon_host_cpu_ratio{source="synthetic"}
+    values: 1 1 1 1 0 0 0 0 0
+  alert_rule_test:
+  - eval_time: 30s
+    alertname: MLOpsHighCPU
+    exp_alerts:
+    - exp_labels:
+        source: synthetic
+        severity: warning
+        scope: mlops
+      exp_annotations:
+        summary: "MLOpsHighCPU \u2014 inspect source label before interpreting; no\
+          \ external notifications"
+  - eval_time: 70s
+    alertname: MLOpsHighCPU
+    exp_alerts: []
+- interval: 10s
+  input_series:
+  - series: ri_mon_host_memory_ratio{source="synthetic"}
+    values: 1 1 1 1 0 0 0 0 0
+  alert_rule_test:
+  - eval_time: 30s
+    alertname: MLOpsHighRAM
+    exp_alerts:
+    - exp_labels:
+        source: synthetic
+        severity: warning
+        scope: mlops
+      exp_annotations:
+        summary: "MLOpsHighRAM \u2014 inspect source label before interpreting; no\
+          \ external notifications"
+  - eval_time: 70s
+    alertname: MLOpsHighRAM
+    exp_alerts: []
+- interval: 10s
+  input_series:
+  - series: ri_mon_models_ready{source="synthetic",engine="pytorch"}
+    values: 0 0 0 0 15 15 15 15 15
+  alert_rule_test:
+  - eval_time: 30s
+    alertname: MLOpsModelsNotReady
+    exp_alerts:
+    - exp_labels:
+        source: synthetic
+        engine: pytorch
+        severity: warning
+        scope: mlops
+      exp_annotations:
+        summary: "MLOpsModelsNotReady \u2014 inspect source label before interpreting;\
+          \ no external notifications"
+  - eval_time: 70s
+    alertname: MLOpsModelsNotReady
+    exp_alerts: []
+- interval: 10s
+  input_series:
+  - series: ri_mon_drift_ks_distance{source="synthetic"}
+    values: 1 1 1 1 0 0 0 0 0
+  alert_rule_test:
+  - eval_time: 30s
+    alertname: MLOpsScoreDrift
+    exp_alerts:
+    - exp_labels:
+        source: synthetic
+        severity: warning
+        scope: mlops
+      exp_annotations:
+        summary: "MLOpsScoreDrift \u2014 inspect source label before interpreting;\
+          \ no external notifications"
+  - eval_time: 70s
+    alertname: MLOpsScoreDrift
+    exp_alerts: []
+- interval: 10s
+  input_series:
+  - series: ri_mon_drift_anomaly_rate_delta{source="synthetic"}
+    values: 1 1 1 1 0 0 0 0 0
+  alert_rule_test:
+  - eval_time: 30s
+    alertname: MLOpsAnomalyRateDrift
+    exp_alerts:
+    - exp_labels:
+        source: synthetic
+        severity: warning
+        scope: mlops
+      exp_annotations:
+        summary: "MLOpsAnomalyRateDrift \u2014 inspect source label before interpreting;\
+          \ no external notifications"
+  - eval_time: 70s
+    alertname: MLOpsAnomalyRateDrift
+    exp_alerts: []
+- interval: 10s
+  input_series:
+  - series: ri_mon_control_age_seconds{source="synthetic"}
+    values: 999 999 999 999 0 0 0 0 0
+  alert_rule_test:
+  - eval_time: 30s
+    alertname: MLOpsControlStale
+    exp_alerts:
+    - exp_labels:
+        source: synthetic
+        severity: warning
+        scope: mlops
+      exp_annotations:
+        summary: "MLOpsControlStale \u2014 inspect source label before interpreting;\
+          \ no external notifications"
+  - eval_time: 70s
+    alertname: MLOpsControlStale
+    exp_alerts: []
+- interval: 10s
+  input_series:
+  - series: ri_mon_host_collection_up{source="synthetic"}
+    values: 0 0 0 0 1 1 1 1 1
+  alert_rule_test:
+  - eval_time: 30s
+    alertname: MLOpsControlStale
+    exp_alerts:
+    - exp_labels:
+        source: synthetic
+        severity: warning
+        scope: mlops
+      exp_annotations:
+        summary: "MLOpsControlStale \u2014 inspect source label before interpreting;\
+          \ no external notifications"
+  - eval_time: 70s
+    alertname: MLOpsControlStale
+    exp_alerts: []
+- interval: 10s
+  input_series:
+  - series: ri_mon_drift_report_up{source="synthetic"}
+    values: 0 0 0 0 1 1 1 1 1
+  alert_rule_test:
+  - eval_time: 30s
+    alertname: MLOpsControlStale
+    exp_alerts:
+    - exp_labels:
+        source: synthetic
+        severity: warning
+        scope: mlops
+      exp_annotations:
+        summary: "MLOpsControlStale \u2014 inspect source label before interpreting;\
+          \ no external notifications"
+  - eval_time: 70s
+    alertname: MLOpsControlStale
+    exp_alerts: []
