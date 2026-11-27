@@ -1,0 +1,16 @@
+data:
+  seed: 123
+  image_size: 32
+  train_samples: 96
+  calibration_samples: 32
+  test_normal_samples: 32
+  test_anomaly_samples: 32
+training:
+  seed: 42
+  epochs: 6
+  batch_size: 16
+  learning_rate: 0.01
+  channels: 4
+  cpu_threads: 1
+evaluation:
+  normal_quantile: 0.95

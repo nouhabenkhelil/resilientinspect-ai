@@ -1,0 +1,12 @@
+{
+  "python": "3.11.9",
+  "packages": {
+    "numpy": "2.3.5",
+    "torch": "2.15.0+cpu",
+    "PyYAML": "6.0.3",
+    "dvc": "3.67.1",
+    "mlflow": "3.16.1"
+  },
+  "device": "cpu",
+  "reproducibility": "Bitwise results verified in the recorded Windows CPU environment; cross-platform identity is not asserted"
+}

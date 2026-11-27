@@ -1,0 +1,47 @@
+stages:
+  preprocessing:
+    cmd: python -m mlops.dvc_pipeline.preprocess
+    deps:
+      - mlops/dvc_pipeline/__init__.py
+      - mlops/dvc_pipeline/common.py
+      - mlops/dvc_pipeline/preprocess.py
+      - mlops/dvc_pipeline/recipe.json
+      - mlops/dvc_pipeline/environment.json
+    params:
+      - data
+    outs:
+      - mlops/dvc_pipeline/work/prepared
+  training:
+    cmd: python -m mlops.dvc_pipeline.train
+    deps:
+      - mlops/dvc_pipeline/__init__.py
+      - mlops/dvc_pipeline/common.py
+      - mlops/dvc_pipeline/model.py
+      - mlops/dvc_pipeline/train.py
+      - mlops/dvc_pipeline/environment.json
+      - mlops/dvc_pipeline/work/prepared/train.npy
+      - mlops/dvc_pipeline/work/prepared/manifest.json
+    params:
+      - training
+    outs:
+      - mlops/dvc_pipeline/work/trained
+  evaluation:
+    cmd: python -m mlops.dvc_pipeline.evaluate
+    deps:
+      - mlops/dvc_pipeline/__init__.py
+      - mlops/dvc_pipeline/common.py
+      - mlops/dvc_pipeline/model.py
+      - mlops/dvc_pipeline/evaluate.py
+      - mlops/dvc_pipeline/environment.json
+      - mlops/dvc_pipeline/work/trained
+      - mlops/dvc_pipeline/work/prepared/calibration.npy
+      - mlops/dvc_pipeline/work/prepared/test.npy
+      - mlops/dvc_pipeline/work/prepared/test_labels.npy
+      - mlops/dvc_pipeline/work/prepared/manifest.json
+    params:
+      - evaluation
+    outs:
+      - mlops/dvc_pipeline/work/evaluation/report.json
+    metrics:
+      - mlops/dvc_pipeline/work/evaluation/metrics.json:
+          cache: true

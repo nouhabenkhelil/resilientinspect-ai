@@ -1,0 +1,143 @@
+schema: '2.0'
+stages:
+  preprocessing:
+    cmd: python -m mlops.dvc_pipeline.preprocess
+    deps:
+    - path: mlops/dvc_pipeline/__init__.py
+      hash: md5
+      md5: fdf191684abe6535da91c94788dbf9fc
+      size: 82
+    - path: mlops/dvc_pipeline/common.py
+      hash: md5
+      md5: 7751918b770826feb9d66869b356b58c
+      size: 3964
+    - path: mlops/dvc_pipeline/environment.json
+      hash: md5
+      md5: 5acf66204ce65f18ec540b9bdb435a9b
+      size: 311
+    - path: mlops/dvc_pipeline/preprocess.py
+      hash: md5
+      md5: 5e6b176d1fb94c3fd52c79c61f9cb99f
+      size: 3706
+    - path: mlops/dvc_pipeline/recipe.json
+      hash: md5
+      md5: 99afe789e7fa171b8d887a662232fbb5
+      size: 430
+    params:
+      params.yaml:
+        data:
+          seed: 123
+          image_size: 32
+          train_samples: 96
+          calibration_samples: 32
+          test_normal_samples: 32
+          test_anomaly_samples: 32
+    outs:
+    - path: mlops/dvc_pipeline/work/prepared
+      hash: md5
+      md5: 22636a3d58517ee9a4d84ad86a42f356.dir
+      size: 821171
+      nfiles: 6
+  training:
+    cmd: python -m mlops.dvc_pipeline.train
+    deps:
+    - path: mlops/dvc_pipeline/__init__.py
+      hash: md5
+      md5: fdf191684abe6535da91c94788dbf9fc
+      size: 82
+    - path: mlops/dvc_pipeline/common.py
+      hash: md5
+      md5: 7751918b770826feb9d66869b356b58c
+      size: 3964
+    - path: mlops/dvc_pipeline/environment.json
+      hash: md5
+      md5: 5acf66204ce65f18ec540b9bdb435a9b
+      size: 311
+    - path: mlops/dvc_pipeline/model.py
+      hash: md5
+      md5: 31345864292802bf4e19cf6408aa1241
+      size: 1849
+    - path: mlops/dvc_pipeline/train.py
+      hash: md5
+      md5: 6e9e01a9ce29c6ace1abdcf65485f384
+      size: 2626
+    - path: mlops/dvc_pipeline/work/prepared/manifest.json
+      hash: md5
+      md5: e8a9f73ba6da7a772271370023a6095e
+      size: 33786
+    - path: mlops/dvc_pipeline/work/prepared/train.npy
+      hash: md5
+      md5: 4c9de81bf763eec80da0feeb7ea08989
+      size: 393344
+    params:
+      params.yaml:
+        training:
+          seed: 42
+          epochs: 6
+          batch_size: 16
+          learning_rate: 0.01
+          channels: 4
+          cpu_threads: 1
+    outs:
+    - path: mlops/dvc_pipeline/work/trained
+      hash: md5
+      md5: ba86ac6ad24dd7bfbc936b4a043d5ac9.dir
+      size: 12841
+      nfiles: 2
+  evaluation:
+    cmd: python -m mlops.dvc_pipeline.evaluate
+    deps:
+    - path: mlops/dvc_pipeline/__init__.py
+      hash: md5
+      md5: fdf191684abe6535da91c94788dbf9fc
+      size: 82
+    - path: mlops/dvc_pipeline/common.py
+      hash: md5
+      md5: 7751918b770826feb9d66869b356b58c
+      size: 3964
+    - path: mlops/dvc_pipeline/environment.json
+      hash: md5
+      md5: 5acf66204ce65f18ec540b9bdb435a9b
+      size: 311
+    - path: mlops/dvc_pipeline/evaluate.py
+      hash: md5
+      md5: 6d67eefe20a0a7dc8d4bd484941ee500
+      size: 2769
+    - path: mlops/dvc_pipeline/model.py
+      hash: md5
+      md5: 31345864292802bf4e19cf6408aa1241
+      size: 1849
+    - path: mlops/dvc_pipeline/work/prepared/calibration.npy
+      hash: md5
+      md5: 3ad8ccb8b4b6dee1fa0480542d18f130
+      size: 131200
+    - path: mlops/dvc_pipeline/work/prepared/manifest.json
+      hash: md5
+      md5: e8a9f73ba6da7a772271370023a6095e
+      size: 33786
+    - path: mlops/dvc_pipeline/work/prepared/test.npy
+      hash: md5
+      md5: 3d78be35ada36bb7d2f85f048f02d8e2
+      size: 262272
+    - path: mlops/dvc_pipeline/work/prepared/test_labels.npy
+      hash: md5
+      md5: 5bbf3d753ba3d66945fb7d44e59ace17
+      size: 192
+    - path: mlops/dvc_pipeline/work/trained
+      hash: md5
+      md5: ba86ac6ad24dd7bfbc936b4a043d5ac9.dir
+      size: 12841
+      nfiles: 2
+    params:
+      params.yaml:
+        evaluation:
+          normal_quantile: 0.95
+    outs:
+    - path: mlops/dvc_pipeline/work/evaluation/metrics.json
+      hash: md5
+      md5: 186dc396d690a5b35f77cb3307bd470a
+      size: 241
+    - path: mlops/dvc_pipeline/work/evaluation/report.json
+      hash: md5
+      md5: 06015a6f54bc91f8e404eef4073ef7f6
+      size: 8447

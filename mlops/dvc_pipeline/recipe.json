@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "generator": "procedural_grayscale_stripes_v1",
+  "authorization": "Generated locally for this development demonstration; no external dataset or MVTec input",
+  "scope": "development_demo_only",
+  "split_seed_offsets": {"train": 0, "calibration": 1000000, "test": 2000000},
+  "anomaly": "Bright square on an independently generated test texture",
+  "normalization": "uint8 / 255 -> float32 [N,1,H,W]"
+}
