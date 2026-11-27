@@ -9,3 +9,9 @@ scrape_configs:
   - job_name: observer
     authorization: {type: Bearer, credentials_file: /run/secrets/metrics_token}
     static_configs: [{targets: ['observer:8000']}]
+# BEGIN MLOPS MONITORING (managed by mlops.monitoring.configure)
+  - job_name: mlops-monitoring
+    honor_labels: true
+    authorization: {type: Bearer, credentials_file: /run/secrets/metrics_token}
+    scrape_timeout: 8s
+    static_configs: [{targets: ['mlops-monitoring:9108'], labels: {source: production}}]

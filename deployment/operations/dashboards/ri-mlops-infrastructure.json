@@ -1,0 +1,250 @@
+{
+  "uid": "ri-mlops-infrastructure",
+  "title": "MLOps \u00b7 Infrastructure",
+  "schemaVersion": 41,
+  "version": 1,
+  "editable": true,
+  "tags": [
+    "resilientinspect",
+    "mlops"
+  ],
+  "description": "Windows CPU/RAM via psutil; container CPU: one core = 100%. Stale host samples disappear; freshness remains visible.",
+  "refresh": "10s",
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "templating": {
+    "list": []
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Windows CPU",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_mon_host_cpu_ratio{source=\"production\"}",
+          "legendFormat": "{{job}} {{route}} {{method}} {{engine}} {{container}} {{status_class}}"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Windows RAM",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_mon_host_memory_ratio{source=\"production\"}",
+          "legendFormat": "{{job}} {{route}} {{method}} {{engine}} {{container}} {{status_class}}"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Container memory",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_mon_container_memory_bytes{source=\"production\"}",
+          "legendFormat": "{{job}} {{route}} {{method}} {{engine}} {{container}} {{status_class}}"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Container CPU (per core)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_mon_container_cpu_ratio{source=\"production\"}",
+          "legendFormat": "{{job}} {{route}} {{method}} {{engine}} {{container}} {{status_class}}"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Container running",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_mon_container_up{source=\"production\"}",
+          "legendFormat": "{{job}} {{route}} {{method}} {{engine}} {{container}} {{status_class}}"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Science availability",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_mon_service_up{source=\"production\"}",
+          "legendFormat": "{{job}} {{route}} {{method}} {{engine}} {{container}} {{status_class}}"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Host collection age",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_mon_host_collection_age_seconds",
+          "legendFormat": "{{job}} {{route}} {{method}} {{engine}} {{container}} {{status_class}}"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Monitoring alerts (source visible)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ALERTS{alertname=~\"MLOps.*\",alertstate=\"firing\"}",
+          "legendFormat": "{{alertname}} / {{source}}"
+        }
+      ]
+    }
+  ]
+}

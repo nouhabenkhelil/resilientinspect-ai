@@ -1,0 +1,316 @@
+{
+  "uid": "ri-mlops-models",
+  "title": "MLOps \u00b7 Model Monitoring",
+  "schemaVersion": 41,
+  "version": 1,
+  "editable": true,
+  "tags": [
+    "resilientinspect",
+    "mlops"
+  ],
+  "description": "24-hour metadata window, 7-day retention. Every series separates release SHA, model, category, engine and origin. No accuracy/AUROC/F1 or image feature drift without measurements/labels. Reference is frozen normal validation.",
+  "refresh": "10s",
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "templating": {
+    "list": [
+      {
+        "name": "source",
+        "type": "custom",
+        "query": "production,validation,synthetic,historical",
+        "current": {
+          "text": "production",
+          "value": "production"
+        }
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Prediction observations in window",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_mon_prediction_window_count{source=\"$source\"}",
+          "legendFormat": "{{model}} / {{category}} / {{engine}} / {{source}} / {{version}}"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Mean anomaly score",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_mon_score_window_mean{source=\"$source\"}",
+          "legendFormat": "{{model}} / {{category}} / {{engine}} / {{source}} / {{version}}"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Anomaly decision ratio",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_mon_anomaly_window_ratio{source=\"$source\"}",
+          "legendFormat": "{{model}} / {{category}} / {{engine}} / {{source}} / {{version}}"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Scientific inference mean",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_mon_inference_window_mean_seconds{source=\"$source\"}",
+          "legendFormat": "{{model}} / {{category}} / {{engine}} / {{source}} / {{version}}"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Score distribution (cumulative bins)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_mon_score_window_bucket{source=\"$source\"}",
+          "legendFormat": "{{model}} / {{category}} / {{engine}} / {{source}} / {{version}} / le={{le}}"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "KS distance (only enough data)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_mon_drift_ks_distance{source=\"$source\"}",
+          "legendFormat": "{{model}} / {{category}} / {{engine}} / {{source}} / {{version}}"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Absolute anomaly-rate shift",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_mon_drift_anomaly_rate_delta{source=\"$source\"}",
+          "legendFormat": "{{model}} / {{category}} / {{engine}} / {{source}} / {{version}}"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Drift evaluable (0 = insufficient/missing/invalid)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_mon_drift_evaluable{source=\"$source\"}",
+          "legendFormat": "{{model}} / {{category}} / {{engine}} / {{source}} / {{version}}"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Drift computation age",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_mon_drift_age_seconds",
+          "legendFormat": "{{model}} / {{category}} / {{engine}} / {{source}} / {{version}}"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Metadata SQL collector up",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ri-prom"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 32,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ri_mon_sql_up",
+          "legendFormat": "{{model}} / {{category}} / {{engine}} / {{source}} / {{version}}"
+        }
+      ]
+    }
+  ]
+}

@@ -59,3 +59,100 @@ groups:
       severity: warning
     annotations:
       summary: "Espace disponible faible dans le filesystem du volume priv\xE9 Docker"
+# BEGIN MLOPS MONITORING (managed by mlops.monitoring.configure)
+- name: ri-mlops-monitoring
+  rules:
+  - alert: MLOpsScienceUnavailable
+    expr: ri_mon_service_up == 0
+    for: 20s
+    labels:
+      severity: warning
+      scope: mlops
+    annotations:
+      summary: "MLOpsScienceUnavailable \u2014 inspect source label before interpreting;\
+        \ no external notifications"
+  - alert: MLOpsScrapeUnavailable
+    expr: up{job="mlops-monitoring"} == 0 or ri_mon_scrape_probe_up == 0
+    for: 20s
+    labels:
+      severity: warning
+      scope: mlops
+    annotations:
+      summary: "MLOpsScrapeUnavailable \u2014 inspect source label before interpreting;\
+        \ no external notifications"
+  - alert: MLOpsHighErrorRate
+    expr: ri_mon_api_error_ratio > 0.05
+    for: 20s
+    labels:
+      severity: warning
+      scope: mlops
+    annotations:
+      summary: "MLOpsHighErrorRate \u2014 inspect source label before interpreting;\
+        \ no external notifications"
+  - alert: MLOpsHighLatency
+    expr: ri_mon_api_p95_seconds > 5
+    for: 20s
+    labels:
+      severity: warning
+      scope: mlops
+    annotations:
+      summary: "MLOpsHighLatency \u2014 inspect source label before interpreting;\
+        \ no external notifications"
+  - alert: MLOpsHighCPU
+    expr: ri_mon_host_cpu_ratio > 0.9
+    for: 20s
+    labels:
+      severity: warning
+      scope: mlops
+    annotations:
+      summary: "MLOpsHighCPU \u2014 inspect source label before interpreting; no external\
+        \ notifications"
+  - alert: MLOpsHighRAM
+    expr: ri_mon_host_memory_ratio > 0.9
+    for: 20s
+    labels:
+      severity: warning
+      scope: mlops
+    annotations:
+      summary: "MLOpsHighRAM \u2014 inspect source label before interpreting; no external\
+        \ notifications"
+  - alert: MLOpsModelsNotReady
+    expr: ri_mon_models_ready{engine="pytorch"} < 15 or ri_mon_models_ready{engine="onnxruntime"}
+      < 14
+    for: 20s
+    labels:
+      severity: warning
+      scope: mlops
+    annotations:
+      summary: "MLOpsModelsNotReady \u2014 inspect source label before interpreting;\
+        \ no external notifications"
+  - alert: MLOpsScoreDrift
+    expr: ri_mon_drift_ks_distance > 0.3
+    for: 20s
+    labels:
+      severity: warning
+      scope: mlops
+    annotations:
+      summary: "MLOpsScoreDrift \u2014 inspect source label before interpreting; no\
+        \ external notifications"
+  - alert: MLOpsAnomalyRateDrift
+    expr: ri_mon_drift_anomaly_rate_delta > 0.2
+    for: 20s
+    labels:
+      severity: warning
+      scope: mlops
+    annotations:
+      summary: "MLOpsAnomalyRateDrift \u2014 inspect source label before interpreting;\
+        \ no external notifications"
+  - alert: MLOpsControlStale
+    expr: ri_mon_control_age_seconds > 180 or ri_mon_host_collection_age_seconds >
+      180 or ri_mon_drift_age_seconds > 180 or ri_mon_sql_up == 0 or ri_mon_collection_truncated
+      > 0 or ri_mon_host_collection_up == 0 or ri_mon_drift_report_up == 0 or ri_mon_invalid_rows
+      > 0
+    for: 20s
+    labels:
+      severity: warning
+      scope: mlops
+    annotations:
+      summary: "MLOpsControlStale \u2014 inspect source label before interpreting;\
+        \ no external notifications"
