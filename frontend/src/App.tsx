@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import {
   Activity,
   BarChart3,
@@ -17,6 +17,9 @@ import {
   UserRound,
   ListChecks,
   Files,
+  X,
+  LogOut,
+  ArrowUpRight,
 } from 'lucide-react';
 import SmartInspection from './SmartInspection';
 import { ComparisonLab } from './components/ComparisonLab';
@@ -110,6 +113,9 @@ const pages = [
       ]
     : []),
 ];
+const roleLabels: Record<string, string> = {
+  admin: 'Administrateur', ai_engineer: 'Ingénieur IA', operator: 'Opérateur', auditor: 'Auditeur',
+};
 function stored(key: string, fallback: string) {
   try {
     return localStorage.getItem(key) || fallback;
@@ -126,12 +132,46 @@ export default function App() {
   const [page, setPage] = useState(pageFromHash);
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia?.('(max-width: 1000px)').matches ?? false);
+  const sidebar = useRef<HTMLElement>(null);
+  const menuButton = useRef<HTMLButtonElement>(null);
   const [theme, setTheme] = useState(() => stored('ri.theme', 'dark'));
   const [demo, setDemo] = useState(false);
   const [history, setHistory] = useState<HistoryEntry[]>(readHistory);
   const [notice, setNotice] = useState('');
   const system = useSystem();
   const current = pages.find((p) => p.id === page)!;
+  useEffect(() => {
+    const media = window.matchMedia?.('(max-width: 1000px)');
+    if (!media) return;
+    const change = () => { setIsMobile(media.matches); setMobileOpen(false); };
+    media.addEventListener('change', change);
+    return () => media.removeEventListener('change', change);
+  }, []);
+  useEffect(() => {
+    if (!mobileOpen || !isMobile) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const controls = () => Array.from(sidebar.current?.querySelectorAll<HTMLElement>(':is(a[href], button:not(:disabled))') ?? [])
+      .filter((element) => element.getClientRects().length > 0);
+    controls()[0]?.focus();
+    function keyboard(event: KeyboardEvent) {
+      if (event.key === 'Escape') { event.preventDefault(); setMobileOpen(false); }
+      if (event.key !== 'Tab') return;
+      const list = controls(), first = list[0], last = list.at(-1);
+      if (event.shiftKey && (document.activeElement === first || !sidebar.current?.contains(document.activeElement))) {
+        event.preventDefault(); last?.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !sidebar.current?.contains(document.activeElement))) {
+        event.preventDefault(); first?.focus();
+      }
+    }
+    document.addEventListener('keydown', keyboard);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', keyboard);
+      menuButton.current?.focus();
+    };
+  }, [mobileOpen, isMobile]);
   const allowed = (id: string) =>
     !PORTAL_MODE ||
     (!!auth &&
@@ -173,6 +213,8 @@ export default function App() {
   }, []);
   useEffect(() => {
     document.title = `${current.name} · ResilientInspect AI`;
+    // New page entries must be visible even after scrolling a long inspection.
+    document.scrollingElement?.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, [current.name]);
   const status =
     system.health?.status === 'ok'
@@ -189,7 +231,11 @@ export default function App() {
   }
   return (
     <div
-      className={`app-shell ${collapsed ? 'sidebar-collapsed' : ''} ${mobileOpen ? 'mobile-nav-open' : ''} ${demo ? 'demo-mode' : ''}`}
+      data-ui-revision="restore-v3"
+      data-motion-revision="visible-v3"
+      data-visual-revision="role-themes-v3"
+      data-role={PORTAL_MODE && auth ? auth.user.role : undefined}
+      className={`app-shell ${collapsed && !isMobile ? 'sidebar-collapsed' : ''} ${mobileOpen ? 'mobile-nav-open' : ''} ${demo ? 'demo-mode' : ''}`}
     >
       <a
         className="skip-link"
@@ -201,7 +247,12 @@ export default function App() {
       >
         Aller au contenu
       </a>
-      <aside className="sidebar">
+      <aside className="sidebar" id="workspace-navigation" ref={sidebar}
+        role={mobileOpen && isMobile ? 'dialog' : undefined}
+        aria-modal={mobileOpen && isMobile ? true : undefined}
+        aria-label={mobileOpen && isMobile ? 'Navigation du studio' : undefined}
+        inert={isMobile && !mobileOpen}>
+        <button className="icon-button mobile-nav-close" aria-label="Fermer la navigation" onClick={() => setMobileOpen(false)}><X size={19} /></button>
         <a className="brand" href="#dashboard" onClick={() => navigate('dashboard')}>
           <img src="/logo.svg" alt="" width="44" height="44" />
           <span>
@@ -213,21 +264,20 @@ export default function App() {
           WORKSPACE <span>{PORTAL_MODE ? '3.0' : '2.0'}</span>
         </span>
         <nav aria-label="Navigation principale">
-          {pages
-            .filter((p) => allowed(p.id))
-            .map((p) => (
+          {pages.filter((p) => allowed(p.id)).map((p) => (
               <a
                 key={p.id}
                 href={`#${p.id}`}
                 aria-current={page === p.id ? 'page' : undefined}
                 title={collapsed ? p.name : undefined}
+                aria-label={p.name}
                 onClick={() => navigate(p.id)}
               >
-                <p.icon size={19} />
+                <p.icon size={18} aria-hidden="true" />
                 <span>{p.name}</span>
                 {p.id === 'comparison' && <small>LAB</small>}
               </a>
-            ))}
+          ))}
         </nav>
         <div className="sidebar-bottom">
           <div className="local-engine">
@@ -237,11 +287,17 @@ export default function App() {
               <small>CPU · données sous contrôle</small>
             </div>
           </div>
-          <p>
-            Décision assistée.
-            <br />
-            L’expertise humaine reste centrale.
-          </p>
+          {auth && <div className="sidebar-account">
+            <a href="#profile" aria-label="Ouvrir mon profil" className="account-identity">
+              <span className="user-avatar" aria-hidden="true">{auth.user.name.trim().slice(0, 2).toUpperCase()}</span>
+              <span><strong>{auth.user.name}</strong><small>{roleLabels[auth.user.role] ?? auth.user.role}</small></span>
+              <ArrowUpRight size={14} aria-hidden="true" />
+            </a>
+            <button className="icon-button sidebar-logout" aria-label="Déconnexion du portail" title="Déconnexion"
+              onClick={() => void auth.logout().catch(() => setNotice('La session locale est fermée. Vérifiez votre connexion.'))}>
+              <LogOut size={17} />
+            </button>
+          </div>}
           <button
             className="text-button collapse-button"
             onClick={() => setCollapsed((c) => !c)}
@@ -255,16 +311,19 @@ export default function App() {
       {mobileOpen && (
         <button
           className="nav-backdrop"
-          aria-label="Fermer la navigation"
+          aria-label="Fermer le panneau de navigation"
           onClick={() => setMobileOpen(false)}
         />
       )}
-      <div className="main-shell">
+      <div className="main-shell" inert={mobileOpen && isMobile}>
         <header className="topbar">
           <div className="breadcrumb">
             <button
               className="icon-button mobile-menu"
               aria-label="Ouvrir la navigation"
+              aria-expanded={mobileOpen}
+              aria-controls="workspace-navigation"
+              ref={menuButton}
               onClick={() => setMobileOpen((v) => !v)}
             >
               <Menu size={20} />
@@ -277,7 +336,7 @@ export default function App() {
             {auth && (
               <a className="portal-user" href="#profile">
                 <strong>{auth.user.name}</strong>
-                <span className="badge">{auth.user.role}</span>
+                <span className="badge role-identity">{roleLabels[auth.user.role] ?? auth.user.role}</span>
               </a>
             )}
             <div
@@ -309,7 +368,6 @@ export default function App() {
               title="Mode démonstration : agrandir, sans données simulées"
               onClick={() => {
                 setDemo((d) => !d);
-                setCollapsed(true);
               }}
             >
               <Presentation size={19} />
@@ -317,7 +375,7 @@ export default function App() {
           </div>
         </header>
         <main id="main-content" tabIndex={-1}>
-          <div className="page-heading">
+          <div className="page-heading" key={page}>
             <div>
               <div className="eyebrow accent">
                 INDUSTRIAL INTELLIGENCE STUDIO <span className="heading-separator">/</span>{' '}
@@ -348,7 +406,7 @@ export default function App() {
           ) : (
             <>
               {page === 'dashboard' && (
-                <Dashboard system={system} history={history} navigate={navigate} />
+                <Dashboard system={system} history={history} navigate={navigate} canInspect={allowed('inspection')} />
               )}
               {page === 'inspection' && <SmartInspection />}
               {page === 'comparison' && <ComparisonLab metadata={system.metadata} />}

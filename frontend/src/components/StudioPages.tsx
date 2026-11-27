@@ -10,6 +10,7 @@ import {
   History,
   ScanLine,
   Trash2,
+  ArrowUpRight,
 } from 'lucide-react';
 import type { SystemState } from '../studio/useSystem';
 import { clearHistory, exportHistory, SESSION, type HistoryEntry } from '../studio/history';
@@ -23,6 +24,8 @@ import ShinyText from './reactbits/ShinyText';
 import AnimatedList from './reactbits/AnimatedList';
 import experiments from '../data/experiments.json';
 import { PORTAL_MODE } from '../portal/session';
+import { RevealSection } from './RevealSection';
+import { IndustrialHero } from './IndustrialHero';
 
 const stamp = (value: string) =>
   new Date(value).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'medium' });
@@ -62,10 +65,12 @@ export function Dashboard({
   system,
   history,
   navigate,
+  canInspect = true,
 }: {
   system: SystemState;
   history: HistoryEntry[];
   navigate: (id: string) => void;
+  canInspect?: boolean;
 }) {
   const session = PORTAL_MODE ? history : history.filter((r) => r.session === SESSION);
   const alerts = session.filter((r) => r.decision === 'anomaly').length;
@@ -122,14 +127,15 @@ export function Dashboard({
             une explication visuelle traçable.
           </p>
           <div className="toolbar">
-            <button className="primary" onClick={() => navigate('inspection')}>
+            {canInspect ? <button className="primary" onClick={() => navigate('inspection')}>
               <ScanLine size={18} />
               Nouvelle inspection
-            </button>
-            <button className="secondary" onClick={() => navigate('comparison')}>
+              <ArrowUpRight size={16} />
+            </button> : <button className="primary" onClick={() => navigate('history')}><History size={18} />Consulter mon historique</button>}
+            {canInspect && <button className="secondary" onClick={() => navigate('comparison')}>
               <FlaskConical size={18} />
               Ouvrir le laboratoire
-            </button>
+            </button>}
           </div>
           <div className="hero-footnote">
             <span>3 catégories</span>
@@ -137,65 +143,15 @@ export function Dashboard({
             <span>{system.health?.device === 'cpu' ? 'Inférence CPU' : 'Moteur à confirmer'}</span>
           </div>
         </div>
-        <div className="architecture-graphic">
-          <svg
-            viewBox="0 0 420 300"
-            role="img"
-            aria-label="Schéma abstrait du pipeline : image, réseaux neuronaux, score et explication. Aucune image de données représentée."
-          >
-            <defs>
-              <pattern id="studio-grid" width="24" height="24" patternUnits="userSpaceOnUse">
-                <path d="M24 0H0V24" fill="none" stroke="currentColor" strokeOpacity=".12" />
-              </pattern>
-            </defs>
-            <rect width="420" height="300" fill="url(#studio-grid)" />
-            <g fill="none" stroke="currentColor">
-              <path
-                d="M60 80h35m-35 0v35m0 70v35h35m90-140h-35m35 0v35m0 70v35h-35"
-                strokeWidth="2"
-              />
-              <rect x="76" y="96" width="92" height="108" rx="4" strokeOpacity=".5" />
-              <path d="M85 180l25-43 17 23 14-16 19 36z" strokeOpacity=".5" />
-              <path d="M185 150h48m52-52 44 52-44 52-44-52z" strokeDasharray="4 5" />
-              <path d="M329 150h30v-45h30m-30 45v45h30" />
-              <circle cx="389" cy="105" r="6" />
-              <circle cx="389" cy="195" r="6" />
-              {[116, 150, 184].map((cy, i) => (
-                <g key={cy}>
-                  <circle cx="260" cy={cy} r="5" />
-                  <circle cx="309" cy={cy} r="5" />
-                  <path
-                    d={`M265 ${cy}L304 ${116 + (2 - i) * 34}M265 ${cy}L304 150`}
-                    strokeOpacity=".35"
-                  />
-                </g>
-              ))}
-            </g>
-            <g fill="currentColor" fontSize="11" fontFamily="monospace">
-              <text x="89" y="250">
-                IMAGE RGB
-              </text>
-              <text x="245" y="250">
-                MODÈLES
-              </text>
-              <text x="342" y="80">
-                SCORE
-              </text>
-              <text x="336" y="227">
-                EXPLICATION
-              </text>
-            </g>
-          </svg>
-          <span className="eyebrow">SCHÉMA DE FONCTIONNEMENT</span>
-        </div>
+        <IndustrialHero />
       </section>
 
       <div className="stat-grid">
-        {stats.map((stat) => (
+        {stats.map((stat, index) => (
           <SpotlightCard
             key={stat.label}
+            reveal
             className="stat-card"
-            spotlightColor="rgba(34, 211, 238, 0.10)"
           >
             <div className="stat-label">
               <span>{stat.label}</span>
@@ -205,7 +161,7 @@ export function Dashboard({
               {stat.value === undefined ? (
                 <span>—</span>
               ) : (
-                <CountUp to={stat.value} duration={0.65} />
+                <CountUp to={stat.value} duration={0.75} delay={.11 + index * .09} />
               )}
               <small>{stat.value === undefined ? '' : stat.suffix}</small>
             </div>
@@ -230,6 +186,7 @@ export function Dashboard({
               return (
                 <button
                   className={`category-tile ${category}`}
+                  disabled={!canInspect}
                   key={category}
                   onClick={() => {
                     try {
@@ -281,14 +238,14 @@ export function Dashboard({
             <div className="empty-state compact">
               <History size={28} />
               <h3>Votre prochaine observation commence ici.</h3>
-              <p>Aucune inspection enregistrée dans ce navigateur.</p>
-              <button className="text-button" onClick={() => navigate('inspection')}>
+              <p>{PORTAL_MODE ? 'Aucune inspection accessible dans votre périmètre.' : 'Aucune inspection enregistrée dans ce navigateur.'}</p>
+              {canInspect && <button className="text-button" onClick={() => navigate('inspection')}>
                 Analyser une image
-              </button>
+              </button>}
             </div>
           )}
         </section>
-        <section className="panel official-summary">
+        <RevealSection className="panel official-summary">
           <div className="panel-heading">
             <div>
               <span className="eyebrow">RÉSULTATS EXPÉRIMENTAUX OFFICIELS</span>
@@ -316,7 +273,7 @@ export function Dashboard({
             Distincte des statistiques de session. Test déjà consulté, sans validation indépendante
             après sélection.
           </p>
-        </section>
+        </RevealSection>
       </div>
       {system.error && (
         <div role="alert" className="notice warning">

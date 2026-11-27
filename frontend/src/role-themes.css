@@ -1,0 +1,155 @@
+/* Identity follows the authenticated shell; scientific semantic tokens stay independent. */
+.app-shell {
+  --hero-secondary: #3b82f6;
+  --hero-metal-light: #344c6a;
+  --hero-metal-dark: #102034;
+  --hero-line: #456184;
+  --spotlight-color: color-mix(in srgb, var(--accent) 18%, transparent);
+  position: relative;
+  isolation: isolate;
+  min-height: 100dvh;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background-color 260ms ease, color 260ms ease;
+}
+.app-shell[data-role='ai_engineer'] {
+  --bg: #081422;
+  --nav: #0b192a;
+  --surface: #101f32;
+  --raised: #182d45;
+  --border: #294563;
+  --border-strong: #557a9b;
+  --accent: #22d3ee;
+  --accent2: #2dd4bf;
+  --accent-soft: #22d3ee10;
+  --focus: #89ecfa;
+  --on-accent: #06202c;
+}
+.app-shell[data-role='admin'] {
+  --bg: #151122;
+  --nav: #1a1529;
+  --surface: #211a30;
+  --raised: #2c2440;
+  --border: #493b60;
+  --border-strong: #817098;
+  --accent: #b49aff;
+  --accent2: #a5adff;
+  --accent-soft: #a78bfa12;
+  --focus: #d6c8ff;
+  --on-accent: #211333;
+  --hero-secondary: #ec4899;
+  --hero-metal-light: #514368;
+  --hero-metal-dark: #241c36;
+  --hero-line: #786293;
+}
+:root[data-theme='light'] .app-shell {
+  --hero-metal-light: #dce8f6;
+  --hero-metal-dark: #b8cbe0;
+  --hero-line: #7b94af;
+}
+:root[data-theme='light'] .app-shell[data-role='ai_engineer'] {
+  --bg: #edf5fc;
+  --nav: #f7fbff;
+  --surface: #fff;
+  --raised: #e3eef9;
+  --border: #c3d6e8;
+  --border-strong: #7e9dbb;
+  --accent: #08758a;
+  --accent2: #087d70;
+  --accent-soft: #08758a0d;
+  --focus: #075c78;
+  --on-accent: #fff;
+  --hero-secondary: #2563eb;
+}
+:root[data-theme='light'] .app-shell[data-role='admin'] {
+  --bg: #f5f0fb;
+  --nav: #fcfaff;
+  --surface: #fff;
+  --raised: #eee6f7;
+  --border: #d9cbe9;
+  --border-strong: #a08ab8;
+  --accent: #7043b4;
+  --accent2: #5457ac;
+  --accent-soft: #7043b40c;
+  --focus: #63349e;
+  --on-accent: #fff;
+  --hero-secondary: #be2875;
+  --hero-metal-light: #e8dff4;
+  --hero-metal-dark: #cfbfdf;
+  --hero-line: #a18bb8;
+}
+/* Static ambient lighting and circuit traces: no moving full-screen layer. */
+.app-shell[data-role='admin']::before,
+.app-shell[data-role='ai_engineer']::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 92% 9%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 45%),
+    radial-gradient(ellipse at 28% 88%, color-mix(in srgb, var(--hero-secondary) 5%, transparent), transparent 40%),
+    linear-gradient(135deg, transparent 70%, color-mix(in srgb, var(--accent) 3%, transparent));
+}
+.app-shell[data-role='ai_engineer'] .main-shell {
+  background-image: linear-gradient(90deg, transparent 99.6%, color-mix(in srgb, var(--accent) 4%, transparent) 99.6%), linear-gradient(transparent 99.6%, color-mix(in srgb, var(--accent) 4%, transparent) 99.6%);
+  background-size: 88px 88px;
+}
+.app-shell[data-role='admin'] .main-shell {
+  background-image: repeating-linear-gradient(135deg, transparent 0 119px, color-mix(in srgb, var(--accent) 3%, transparent) 119px 120px);
+}
+.main-shell { min-width: 0; }
+.app-shell .role-identity { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 35%, var(--border)); background: var(--accent-soft); }
+.app-shell .primary:not(.danger), .app-shell .primary-button:not(.danger) {
+  background-image: linear-gradient(115deg, transparent, color-mix(in srgb, var(--accent2) 22%, transparent));
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 17%, transparent);
+}
+.app-shell .stat-label > svg { color: var(--accent); }
+.app-shell .stat-card { border-top-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+.app-shell .card-spotlight { --spotlight-color: color-mix(in srgb, var(--accent) 18%, transparent); }
+.app-shell .model-cards button[aria-pressed='true'], .app-shell .comparison-models label.chosen,
+.app-shell .segmented button[aria-pressed='true'] { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent); }
+.app-shell .batch-progress-track > span { background: linear-gradient(90deg, var(--accent2), var(--accent)); }
+.app-shell .hero-copy h2 > .accent { color: var(--accent); }
+/* Closed scientific surfaces: ambient patterns and hero effects never overlay maps. */
+.app-shell .visual-frame, .app-shell .viewer-dialog { background: var(--bg); background-image: none; }
+.industrial-hero.architecture-graphic {
+  display: flex;
+  padding: 8px 12px 17px;
+  min-width: 0;
+  min-height: 300px;
+  gap: 0;
+  background: radial-gradient(ellipse at 55% 42%, color-mix(in srgb, var(--accent) 6%, var(--surface)), var(--surface) 76%);
+}
+.industrial-hero.architecture-graphic::before { display: none; }
+.industrial-hero-art {
+  width: 100%;
+  max-width: 600px;
+  min-width: 0;
+  animation: industrial-hero-enter 450ms 120ms ease-out backwards;
+  transition: transform 220ms ease;
+}
+.industrial-hero-art > svg { display: block; width: 100%; height: auto; }
+.industrial-hero figcaption { display: grid; gap: 4px; text-align: center; color: var(--accent); font: 10px var(--mono); letter-spacing: .1em; }
+.industrial-hero figcaption small { color: var(--muted); font: 11px/1.5 Inter, 'Segoe UI', sans-serif; letter-spacing: 0; }
+.hero-node-pulse { animation: industrial-node-pulse 1800ms ease-in-out 3; }
+.hero-scan-line { animation: industrial-hero-scan 2400ms ease-in-out 2 alternate; }
+@keyframes industrial-hero-enter { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes industrial-node-pulse { 0%, 100% { opacity: .4; } 50% { opacity: 1; } }
+@keyframes industrial-hero-scan { from { transform: translateY(-22px); } to { transform: translateY(35px); } }
+@media (hover: hover) and (pointer: fine) {
+  .industrial-hero:hover .industrial-hero-art { transform: translateY(-3px); }
+}
+@media (max-width: 1000px) {
+  .industrial-hero.architecture-graphic { min-height: 260px; padding-inline: 5px; }
+}
+@media (max-width: 720px) {
+  .app-shell .hero-panel { grid-template-columns: minmax(0, 1fr); }
+  .industrial-hero.architecture-graphic { display: flex; border-left: 0; border-top: 1px solid var(--border); min-height: 0; padding: 8px 16px 18px; }
+  .industrial-hero-art { max-width: 420px; }
+  .industrial-hero figcaption small { font-size: 11px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .industrial-hero-art, .hero-node-pulse, .hero-scan-line { animation: none !important; }
+  .industrial-hero:hover .industrial-hero-art { transform: none; }
+}

@@ -522,7 +522,7 @@ export default function SmartInspection() {
           {analysisError != null && (
             <ErrorNotice error={analysisError} title="L’analyse n’a pas abouti" />
           )}
-          {prediction && <Result result={prediction} elapsed={elapsed} />}
+          {prediction && <Result key={prediction.request_id} result={prediction} elapsed={elapsed} />}
         </div>
         <section className="panel visualization-panel" aria-labelledby="visualization-title">
           <div className="panel-heading">
@@ -550,7 +550,7 @@ export default function SmartInspection() {
               </h3>
               <p>
                 {busy
-                  ? 'Le modèle traite votre image sur CPU. Cette opération peut prendre quelques instants.'
+                  ? 'Requête en cours sur CPU. Le balayage est un effet d’attente, pas une représentation du CNN.'
                   : 'Après l’analyse, explorez la heatmap de reconstruction ou l’attribution Grad-CAM du modèle.'}
               </p>
               {busy && (

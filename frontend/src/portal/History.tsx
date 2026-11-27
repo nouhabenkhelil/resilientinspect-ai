@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { portalRequest, type PortalUser } from './session';
 import { usePortalAuth } from './Auth';
+import { StatusBadge } from '../components/StatusBadge';
 
 interface Inspection {
   id: string;
@@ -142,7 +143,7 @@ export function PortalHistory() {
                       {r.model} / {r.category}
                     </td>
                     <td>{r.engine}</td>
-                    <td>{r.status}</td>
+                    <td><StatusBadge value={r.status} label={r.status === 'completed' ? 'Terminée' : r.status === 'processing' ? 'En cours' : r.status === 'failed' ? 'Refusée / échec' : r.status} /></td>
                     <td>
                       {r.anomaly_score === null
                         ? '—'

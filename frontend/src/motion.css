@@ -1,0 +1,107 @@
+/* Motion only: preserve the restored V3 layout, colours and semantic values. */
+@keyframes studio-reveal {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes studio-soft-in {
+  from { opacity: .25; transform: translateY(7px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes studio-image-in { from { opacity: .25; } to { opacity: 1; } }
+@keyframes studio-select {
+  0% { transform: scale(.97); }
+  65% { transform: scale(1.015); }
+  100% { transform: none; }
+}
+@keyframes studio-attention {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; }
+  50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--warning) 14%, transparent); }
+}
+@keyframes studio-scan {
+  from { transform: translateY(-50%); opacity: .25; }
+  20%, 80% { opacity: .9; }
+  to { transform: translateY(50%); opacity: .25; }
+}
+@keyframes studio-chart-in { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes studio-turn { to { transform: rotate(360deg); } }
+body, .sidebar, .topbar, .panel, .hero-panel, .stat-card, .visual-frame, .scores > div,
+.category-tile, .table-scroll, .table-scroll th, select, .ui-status {
+  transition-property: background-color, color, border-color, box-shadow;
+  transition-duration: 240ms;
+  transition-timing-function: ease;
+}
+.page-heading { animation: studio-reveal 360ms cubic-bezier(.16,1,.3,1) backwards; }
+.dashboard-page > .hero-panel { animation: studio-reveal 420ms 70ms cubic-bezier(.16,1,.3,1) backwards; }
+.stat-grid > .stat-card { animation: studio-reveal 440ms cubic-bezier(.16,1,.3,1) backwards; }
+.stat-grid > .stat-card:nth-child(1) { animation-delay: 110ms; }
+.stat-grid > .stat-card:nth-child(2) { animation-delay: 200ms; }
+.stat-grid > .stat-card:nth-child(3) { animation-delay: 290ms; }
+.stat-grid > .stat-card:nth-child(4) { animation-delay: 380ms; }
+.viewport-reveal { animation: studio-reveal 380ms cubic-bezier(.16,1,.3,1) backwards; }
+/* Keep the first frame until the real element reaches the viewport. Once only. */
+[data-motion-visible='false'],
+[data-motion-visible='false'] :is(.decision, .scores > div, .metric-track > span, .gauge-track > div) {
+  animation-play-state: paused !important;
+}
+.stat-card { transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease, background-color 240ms ease; }
+.stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px #0002, 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent); border-color: var(--accent); }
+.card-spotlight::before { transition: opacity 180ms ease; }
+.card-spotlight:hover::before { opacity: 1; }
+.hero-copy .primary:active, .primary-button:active, .secondary:active { transform: scale(.975); }
+.dashboard-page .bento-grid { animation: studio-soft-in 400ms 220ms backwards; }
+.metric-track > span { transition: width 380ms ease-out; }
+.official-summary .metric-track > span, .result-panel .gauge-track > div {
+  transform-origin: left;
+  animation: studio-chart-in 420ms 100ms ease-out backwards;
+}
+.sidebar nav a { transition: background-color 180ms ease, color 180ms ease, box-shadow 180ms ease; }
+.sidebar nav a > svg { transition: transform 180ms ease; }
+.sidebar nav a:hover > svg { transform: translateX(3px); }
+.sidebar nav a[aria-current='page']:before { animation: studio-soft-in 220ms backwards; }
+.inspection-workspace, .comparison-page, main > .page-stack:not(.dashboard-page),
+main > .portal-profile, main > .panel { animation: studio-soft-in 260ms backwards; }
+.drop-zone, .batch-drop { transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease, transform 180ms ease; }
+.drop-zone:hover, .batch-drop:hover, .drop-zone:focus-within, .batch-drop:focus-within { border-color: var(--accent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent); }
+.drop-zone.dragging, .batch-drop.is-dragging { transform: scale(1.012); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 12%, transparent); }
+.local-preview { animation: studio-reveal 320ms backwards; }
+.preview-grid.is-analyzing::after {
+  top: 0; height: 100%; pointer-events: none;
+  background: linear-gradient(180deg, transparent 42%, color-mix(in srgb, var(--accent) 15%, transparent) 49%, var(--accent) 50%, transparent 51%);
+  box-shadow: none;
+  animation: studio-scan 1100ms ease-in-out infinite alternate;
+}
+.scan-placeholder.scanning > span { position: absolute; inset: 12px; border: 2px solid transparent; border-top-color: var(--accent); border-right-color: var(--accent); border-radius: 50%; animation: studio-turn 1100ms linear infinite; }
+.processing-label { border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; background: var(--raised); animation: studio-soft-in 220ms backwards; }
+.result-panel .decision { animation: studio-reveal 380ms backwards; }
+.result-panel .scores > div { animation: studio-reveal 360ms 100ms backwards; }
+.result-panel .scores > div + div { animation-delay: 180ms; }
+.zoom-canvas { animation: studio-image-in 240ms backwards; }
+.comparison-models label.chosen, .model-cards button[aria-pressed='true'] { animation: studio-select 260ms ease-out backwards; }
+.comparison-result { animation: studio-reveal 380ms backwards; transition: border-color 200ms, box-shadow 200ms; }
+.comparison-result:hover { border-color: var(--accent); box-shadow: 0 5px 20px #0001; }
+.comparison-models label { transition: border-color 180ms, background-color 240ms, box-shadow 180ms; }
+.comparison-models label:focus-within { box-shadow: 0 0 0 2px var(--accent); }
+.comparison-verdict.warning { animation: studio-reveal 320ms backwards, studio-attention 650ms 200ms 2; }
+.batch-previews figure { animation: studio-reveal 320ms backwards; }
+.batch-previews figure:nth-child(2) { animation-delay: 60ms; }
+.batch-previews figure:nth-child(3) { animation-delay: 120ms; }
+.batch-previews figure:nth-child(4) { animation-delay: 180ms; }
+.batch-previews figure:nth-child(n+5) { animation-delay: 220ms; }
+.batch-progress-track { height: 9px; border-radius: 9px; background: var(--raised); overflow: hidden; position: relative; }
+.batch-progress-track > span { display: block; height: 100%; width: 100%; background: var(--accent); border-radius: inherit; transform-origin: left; transition: transform 380ms ease-out; }
+.batch-detail tbody tr { animation: studio-soft-in 260ms backwards; }
+.ui-status, .batch-state-title, .batch-feedback { animation: studio-soft-in 220ms backwards; }
+.batch-feedback { color: var(--accent); }
+@media (max-width: 1000px) {
+  .app-shell .sidebar { transition: transform 260ms cubic-bezier(.16,1,.3,1); }
+  .nav-backdrop { animation: studio-image-in 180ms backwards; }
+}
+@media (max-width: 700px), (pointer: coarse) {
+  .stat-card:hover { transform: none; }
+  .drop-zone.dragging, .batch-drop.is-dragging { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; transition-delay: 0ms !important; }
+  .preview-grid.is-analyzing::after, .scan-placeholder.scanning > span { display: none; }
+  .stat-card:hover, .sidebar nav a:hover > svg { transform: none; }
+}

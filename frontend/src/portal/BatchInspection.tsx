@@ -4,6 +4,7 @@ import { Explanation } from '../components/Result';
 import type { Metadata, VisualizedPrediction } from '../api/contracts';
 import { portalRequest } from './session';
 import { usePortalAuth } from './Auth';
+import { StatusBadge } from '../components/StatusBadge';
 import {
   batchStatus,
   checkBatchFiles,
@@ -20,6 +21,11 @@ export function BatchInspection() {
   const auth = usePortalAuth();
   const canInspect = !!auth?.user.permissions.includes('inspect');
   const [limits, setLimits] = useState<BatchLimits | null>(null);
+  const [dragging, setDragging] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const [feedback, setFeedback] = useState('');
+  const dragDepth = useRef(0);
   const [metadata, setMetadata] = useState<Metadata | null>(null);
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
@@ -185,13 +191,31 @@ export function BatchInspection() {
       )
     )
       return;
+    setCancelling(true);
+    setFeedback('');
     try {
       setSelected(
         await portalRequest<Batch>(`/api/batches/${selected.id}/cancel`, { method: 'POST' }),
       );
       setRevision((n) => n + 1);
+      setFeedback('Annulation demandée. Les compteurs affichés restent ceux du serveur.');
     } catch (e) {
       setError((e as Error).message);
+    } finally {
+      setCancelling(false);
+    }
+  }
+  async function exportCsv() {
+    if (!selected || exporting) return;
+    setExporting(true);
+    setFeedback('');
+    try {
+      await exportBatch(selected.id);
+      setFeedback('CSV prêt : le téléchargement a été déclenché.');
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setExporting(false);
     }
   }
   async function explain(item: BatchItem) {
@@ -234,27 +258,33 @@ export function BatchInspection() {
       {canInspect && (
         <section className="panel batch-upload" aria-label="Préparer un lot">
           <div className="panel-heading">
-            <h2>Préparer un lot</h2>
+            <div><span className="eyebrow">NOUVELLE SÉRIE D’INSPECTIONS</span><h2>Préparer un lot</h2></div>
             <span className="badge">
               {files.length} image{files.length > 1 ? 's' : ''}
             </span>
           </div>
           <label
-            className="batch-drop"
+            className={`batch-drop ${dragging ? 'is-dragging' : ''}`}
+            onDragEnter={(e) => { e.preventDefault(); dragDepth.current++; if (!busy && !validating) setDragging(true); }}
+            onDragLeave={() => { dragDepth.current = Math.max(0, dragDepth.current - 1); if (!dragDepth.current) setDragging(false); }}
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => {
               e.preventDefault();
+              dragDepth.current = 0;
+              setDragging(false);
               if (!busy && !validating) void selectFiles(e.dataTransfer.files);
             }}
           >
-            <UploadCloud size={30} />
+            <span className="batch-upload-icon"><UploadCloud size={28} /></span>
             <strong>Déposez vos images, ou parcourez vos fichiers.</strong>
+            <span className="batch-file-prompt">Choisir des images</span>
             <span>
               PNG / JPEG · {limits?.max_images ?? '…'} images · 10 Mio par image · 100 Mio par lot
               maximum
             </span>
             <input
               type="file"
+              className="batch-file-input"
               multiple
               accept=".png,.jpg,.jpeg,image/png,image/jpeg"
               aria-label="Images du lot"
@@ -286,6 +316,9 @@ export function BatchInspection() {
                 {files.length > 8 ? '8 aperçus affichés.' : ''} Le serveur vérifie à nouveau les
                 contenus.
               </p>
+              <details className="batch-file-list"><summary>Consulter les {files.length} fichiers sélectionnés</summary>
+                <ul>{files.map((file, index) => <li key={`${index}-${file.name}`}><span>{file.name}</span><small>{(file.size / 1048576).toFixed(2)} Mio</small></li>)}</ul>
+              </details>
             </>
           )}
           <div className="toolbar batch-selectors">
@@ -368,7 +401,7 @@ export function BatchInspection() {
           </p>
         </section>
       )}
-      <section className="panel">
+      <section className="panel batch-history">
         <div className="panel-heading">
           <h2>Historique des lots</h2>
           <button className="secondary" onClick={() => setRevision((n) => n + 1)}>
@@ -410,7 +443,7 @@ export function BatchInspection() {
                     <td>
                       {b.model} · {b.category} · {b.engine}
                     </td>
-                    <td>{batchStatus[b.status] || b.status}</td>
+                    <td><StatusBadge value={b.status} label={batchStatus[b.status] || b.status} /></td>
                     <td>
                       {b.processed} / {b.total}
                     </td>
@@ -454,36 +487,44 @@ export function BatchInspection() {
           <div className="panel-heading">
             <div>
               <span className="eyebrow">LOT {selected.id.slice(0, 8)}</span>
-              <h2>{batchStatus[selected.status] || selected.status}</h2>
+              <h2 key={selected.status} className="batch-state-title">{batchStatus[selected.status] || selected.status}</h2>
             </div>
             <div className="toolbar">
               <button
                 className="secondary"
-                onClick={() => void exportBatch(selected.id).catch((e) => setError(e.message))}
+                onClick={() => void exportCsv()}
+                disabled={exporting}
+                aria-busy={exporting}
               >
-                <Download size={15} /> Exporter CSV
+                {exporting ? <LoaderCircle className="spin" size={15} /> : <Download size={15} />}
+                {exporting ? 'Préparation du CSV…' : 'Exporter CSV'}
               </button>
               {canInspect && !terminalBatch(selected.status) && (
-                <button className="secondary danger" onClick={() => void cancel()}>
-                  Annuler le lot
+                <button className="secondary danger" disabled={cancelling} aria-busy={cancelling} onClick={() => void cancel()}>
+                  {cancelling && <LoaderCircle className="spin" size={15} />}
+                  {cancelling ? 'Annulation en cours…' : 'Annuler le lot'}
                 </button>
               )}
             </div>
           </div>
-          <progress
+          {feedback && <p className="batch-feedback" role="status">{feedback}</p>}
+          <div className="batch-progress-track">
+          <progress className="sr-only"
             aria-label="Progression réelle du lot"
             max={selected.total}
             value={selected.processed}
           />
+          <span aria-hidden="true" style={{ transform: `scaleX(${selected.processed / Math.max(1, selected.total)})` }} />
+          </div>
           <p className="small">
             {selected.processed} / {selected.total} images terminées · les annulations et erreurs
             sont comptées séparément des analyses.
           </p>
           <div className="batch-counts">
-            <span className="normal">{selected.normal_count} normales</span>
-            <span className="anomaly">{selected.anomaly_count} anormales</span>
-            <span>{selected.error_count} erreurs</span>
-            <span>{selected.cancelled_count} annulées</span>
+            <span className="normal"><strong>{selected.normal_count}</strong> normales</span>
+            <span className="anomaly"><strong>{selected.anomaly_count}</strong> anormales</span>
+            <span><strong>{selected.error_count}</strong> erreurs</span>
+            <span><strong>{selected.cancelled_count}</strong> annulées</span>
           </div>
           <label>
             Résultats
@@ -521,7 +562,7 @@ export function BatchInspection() {
                       {item.position}. {item.filename}
                     </td>
                     <td>
-                      {batchStatus[item.status] || item.status}
+                      <StatusBadge value={item.status} label={batchStatus[item.status] || item.status} />
                       {item.error && <p className="small warning">{item.error.code}</p>}
                     </td>
                     <td className="mono">
@@ -529,11 +570,11 @@ export function BatchInspection() {
                       {item.threshold === null ? '—' : item.threshold.toPrecision(8)}
                     </td>
                     <td>
-                      {item.decision === 'normal'
+                      <StatusBadge value={item.decision ?? undefined} label={item.decision === 'normal'
                         ? 'Normal'
                         : item.decision === 'anomaly'
                           ? 'Anormal'
-                          : '—'}
+                          : '—'} />
                     </td>
                     <td>
                       {item.inference_time_ms === null

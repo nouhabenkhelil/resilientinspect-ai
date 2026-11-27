@@ -2,6 +2,7 @@
 import React, { useRef } from 'react';
 import './SpotlightCard.css';
 import { useReducedEffects } from './useReducedEffects';
+import { useRevealOnce } from '../RevealSection';
 
 interface Position {
   x: number;
@@ -11,14 +12,18 @@ interface Position {
 interface SpotlightCardProps extends React.PropsWithChildren {
   className?: string;
   spotlightColor?: `rgba(${number}, ${number}, ${number}, ${number})`;
+  reveal?: boolean;
 }
 
 const SpotlightCard: React.FC<SpotlightCardProps> = ({
   children,
   className = '',
-  spotlightColor = 'rgba(255, 255, 255, 0.25)',
+  spotlightColor,
+  reveal = false,
 }) => {
-  const divRef = useRef<HTMLDivElement>(null);
+  const visibility = useRevealOnce<HTMLDivElement>();
+  const staticRef = useRef<HTMLDivElement>(null);
+  const divRef = reveal ? visibility.ref : staticRef;
   const reduced = useReducedEffects();
 
   const handleMouseMove: React.MouseEventHandler<HTMLDivElement> = (e) => {
@@ -30,12 +35,13 @@ const SpotlightCard: React.FC<SpotlightCardProps> = ({
 
     divRef.current.style.setProperty('--mouse-x', `${x}px`);
     divRef.current.style.setProperty('--mouse-y', `${y}px`);
-    divRef.current.style.setProperty('--spotlight-color', spotlightColor);
+    if (spotlightColor) divRef.current.style.setProperty('--spotlight-color', spotlightColor);
   };
 
   return (
     <div
       ref={divRef}
+      data-motion-visible={reveal ? visibility['data-motion-visible'] : undefined}
       onMouseMove={reduced ? undefined : handleMouseMove}
       className={`card-spotlight ${className}`}
     >

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useReducedMotion } from 'motion/react';
 import { PerformanceEngineering } from './PerformanceEngineering';
 import {
   Bar,
@@ -13,7 +14,7 @@ import {
 import experiments from '../data/experiments.json';
 
 const categories = { bottle: 'Bouteille', hazelnut: 'Noisette', leather: 'Cuir' };
-const colors = { B0: '#22D3EE', A1: '#A78BFA', T0: '#FBBF24', T1: '#2DD4BF', T2: '#FB7185' };
+const colors = { B0: 'var(--chart-b0)', A1: 'var(--chart-a1)', T0: 'var(--chart-t0)', T1: 'var(--chart-t1)', T2: 'var(--chart-t2)' };
 const metrics = {
   auroc: {
     label: 'AUROC image',
@@ -55,6 +56,7 @@ const tooltipStyle = {
 };
 
 export function Analytics() {
+  const reducedMotion = useReducedMotion();
   const [category, setCategory] = useState('all');
   const [architecture, setArchitecture] = useState('all');
   const [metric, setMetric] = useState<Metric>('auroc');
@@ -189,7 +191,7 @@ export function Analytics() {
                   fill={colors[model as Model]}
                   radius={[4, 4, 0, 0]}
                   maxBarSize={42}
-                  isAnimationActive={false}
+                  isAnimationActive={!reducedMotion} animationDuration={380} animationEasing="ease-out"
                 />
               ))}
             </BarChart>
@@ -386,14 +388,14 @@ export function Analytics() {
                   <Bar
                     dataKey="validation"
                     name="AUROC val synthétique"
-                    fill="#2DD4BF"
-                    isAnimationActive={false}
+                    fill="var(--accent2)"
+                    isAnimationActive={!reducedMotion} animationDuration={380} animationEasing="ease-out"
                   />
                   <Bar
                     dataKey="test"
                     name="AUROC test réel"
-                    fill="#A78BFA"
-                    isAnimationActive={false}
+                    fill="var(--chart-a1)"
+                    isAnimationActive={!reducedMotion} animationDuration={380} animationEasing="ease-out"
                   />
                 </BarChart>
               </ResponsiveContainer>
@@ -459,14 +461,14 @@ export function Analytics() {
               <Bar
                 dataKey="total"
                 name="Paramètres totaux"
-                fill="#22D3EE"
-                isAnimationActive={false}
+                fill="var(--accent)"
+                isAnimationActive={!reducedMotion} animationDuration={380} animationEasing="ease-out"
               />
               <Bar
                 dataKey="trainable"
                 name="Paramètres entraînables"
-                fill="#2DD4BF"
-                isAnimationActive={false}
+                fill="var(--accent2)"
+                isAnimationActive={!reducedMotion} animationDuration={380} animationEasing="ease-out"
               />
             </BarChart>
           </ResponsiveContainer>

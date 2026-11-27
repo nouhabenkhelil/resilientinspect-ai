@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 420" fill="none" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="iv-metal" x1="155" y1="80" x2="355" y2="340" gradientUnits="userSpaceOnUse">
+      <stop style="stop-color:var(--hero-metal-light,#344c6a)"/>
+      <stop offset="1" style="stop-color:var(--hero-metal-dark,#102034)"/>
+    </linearGradient>
+    <linearGradient id="iv-glass" x1="199" y1="150" x2="283" y2="295" gradientUnits="userSpaceOnUse">
+      <stop style="stop-color:var(--accent,#22d3ee)" stop-opacity=".38"/>
+      <stop offset=".45" style="stop-color:var(--surface,#101f32)" stop-opacity=".9"/>
+      <stop offset="1" style="stop-color:var(--accent2,#2dd4bf)" stop-opacity=".32"/>
+    </linearGradient>
+    <linearGradient id="iv-beam" x1="171" y1="132" x2="249" y2="276" gradientUnits="userSpaceOnUse">
+      <stop style="stop-color:var(--accent,#22d3ee)" stop-opacity=".28"/>
+      <stop offset="1" style="stop-color:var(--accent,#22d3ee)" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="iv-glow">
+      <stop style="stop-color:var(--accent,#22d3ee)" stop-opacity=".18"/>
+      <stop offset="1" style="stop-color:var(--accent,#22d3ee)" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="iv-region">
+      <stop style="stop-color:var(--hero-secondary,#3b82f6)" stop-opacity=".9"/>
+      <stop offset=".42" style="stop-color:var(--accent2,#2dd4bf)" stop-opacity=".7"/>
+      <stop offset="1" style="stop-color:var(--accent,#22d3ee)" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="iv-grid" width="30" height="30" patternUnits="userSpaceOnUse" patternTransform="skewY(-28)">
+      <path d="M30 0H0V30" style="stroke:var(--accent,#22d3ee)" stroke-opacity=".1" stroke-width=".7"/>
+    </pattern>
+  </defs>
+  <ellipse cx="280" cy="225" rx="250" ry="182" fill="url(#iv-glow)"/>
+  <path d="M25 276 303 117 583 277 305 413Z" fill="url(#iv-grid)"/>
+  <!-- Machined inspection conveyor: top, front edge and rollers. -->
+  <path d="M38 276 290 132 532 271 280 416 38 276Z" style="fill:var(--hero-metal-dark,#102034)" fill-opacity=".45"/>
+  <path d="m54 277 224 128 238-136v-24L278 381 54 253Z" style="fill:var(--hero-metal-dark,#102034);stroke:var(--hero-line,#456184)"/>
+  <path d="m54 253 238-137 224 129-238 136Z" fill="url(#iv-metal)" style="stroke:var(--hero-line,#456184)"/>
+  <path d="m76 253 215-123 203 116-215 123Z" style="fill:var(--bg,#081422);stroke:var(--hero-line,#456184)"/>
+  <g style="stroke:var(--hero-line,#456184)" stroke-width="9" stroke-linecap="round" opacity=".65">
+    <path d="m97 250 180 103m-157-116 180 103m-157-116 180 103m-157-116 180 103m-157-116 180 103m-157-116 180 103m-157-116 180 103m-157-116 180 103"/>
+  </g>
+  <path d="m64 253 214 123 229-131" style="stroke:var(--accent,#22d3ee)" stroke-opacity=".7"/>
+  <path d="m92 302 0 24 23 13v-23m303-19v25l23-13v-25" style="fill:var(--hero-metal-dark,#102034);stroke:var(--hero-line,#456184)"/>
+  <!-- Camera and gantry. -->
+  <path d="M102 243V82l90-51 32 18-90 52v160Z" fill="url(#iv-metal)" style="stroke:var(--hero-line,#456184)"/>
+  <path d="m134 101 90-52v15l-77 45v144" style="stroke:var(--accent,#22d3ee)" stroke-opacity=".5"/>
+  <path d="m147 95 53-30 63 36-53 31Z" fill="url(#iv-metal)" style="stroke:var(--hero-line,#456184)"/>
+  <path d="m147 95 63 37v39l-63-37Z" style="fill:var(--hero-metal-dark,#102034);stroke:var(--hero-line,#456184)"/>
+  <path d="m210 132 53-31v39l-53 31Z" style="fill:var(--raised,#19283b);stroke:var(--hero-line,#456184)"/>
+  <ellipse cx="231" cy="141" rx="14" ry="19" transform="rotate(30 231 141)" style="fill:var(--bg,#081422);stroke:var(--accent,#22d3ee)" stroke-width="2"/>
+  <ellipse cx="231" cy="141" rx="6" ry="9" transform="rotate(30 231 141)" style="fill:var(--accent,#22d3ee)" fill-opacity=".55"/>
+  <path d="m161 110 31 18m-31-11 19 11" style="stroke:var(--hero-line,#456184)" stroke-width="3"/>
+  <circle cx="185" cy="94" r="4" style="fill:var(--accent2,#2dd4bf)"/>
+  <path d="m231 149-52 136 142-10Z" fill="url(#iv-beam)"/>
+  <!-- Original stylised bottle, not a dataset image. -->
+  <ellipse cx="251" cy="300" rx="47" ry="17" style="fill:var(--accent,#22d3ee)" fill-opacity=".09"/>
+  <path d="M237 162v28c0 10-24 17-24 33v61c0 19 75 19 75 0v-61c0-16-24-23-24-33v-28Z" fill="url(#iv-glass)" style="stroke:var(--accent,#22d3ee)" stroke-opacity=".85" stroke-width="1.5"/>
+  <ellipse cx="250.5" cy="162" rx="13.5" ry="5" style="fill:var(--raised,#19283b);stroke:var(--accent,#22d3ee)"/>
+  <path d="M237 162v9c0 6 27 6 27 0v-9" style="stroke:var(--accent,#22d3ee)"/>
+  <path d="M226 229v49c0 5 6 7 11 8m6-98v10c0 8-17 14-17 22" style="stroke:var(--text,#f1f7ff)" stroke-opacity=".35" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="271" cy="256" rx="17" ry="22" fill="url(#iv-region)"/>
+  <path d="M204 210h-13v25m0 35v24h14m91-84h13v25m0 35v24h-14" style="stroke:var(--accent,#22d3ee)" stroke-width="1.5"/>
+  <g class="hero-scan-line" style="stroke:var(--accent,#22d3ee)">
+    <path d="M194 240h112" stroke-width="2"/>
+    <path d="M198 245h104" stroke-opacity=".15" stroke-width="8"/>
+  </g>
+  <!-- Image to model: luminous connections and neural processor. -->
+  <path d="M311 222h28v-93h41M311 267h37v40h38" style="stroke:var(--accent,#22d3ee)" stroke-opacity=".5" stroke-dasharray="4 5"/>
+  <g class="hero-neural-panel">
+    <rect x="377" y="55" width="174" height="152" rx="16" style="fill:var(--surface,#101f32);stroke:var(--hero-line,#456184)"/>
+    <rect x="388" y="66" width="152" height="130" rx="10" style="stroke:var(--accent,#22d3ee)" stroke-opacity=".23"/>
+    <path d="m408 93 57 23-57 52m0-75 57 52-57 23m57-52 53-23-53 52 53 23m-53-52 53 52" style="stroke:var(--accent,#22d3ee)" stroke-opacity=".45"/>
+    <g style="fill:var(--surface,#101f32);stroke:var(--accent,#22d3ee)" stroke-width="2">
+      <circle cx="408" cy="93" r="6"/><circle cx="408" cy="168" r="6"/>
+      <circle cx="465" cy="116" r="7"/><circle cx="465" cy="145" r="7"/>
+      <circle cx="518" cy="93" r="6"/><circle cx="518" cy="168" r="6"/>
+    </g>
+    <g class="hero-node-pulse" style="fill:var(--accent2,#2dd4bf)">
+      <circle cx="465" cy="116" r="3"/><circle cx="518" cy="168" r="3"/><circle cx="408" cy="93" r="3"/>
+    </g>
+    <path d="M397 79h22m96 104h16" style="stroke:var(--hero-secondary,#3b82f6)" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <!-- Conceptual interpretation region, no decision or metric. -->
+  <path d="M465 209v23" style="stroke:var(--accent2,#2dd4bf)" stroke-dasharray="3 4"/>
+  <rect x="383" y="236" width="164" height="111" rx="12" style="fill:var(--surface,#101f32);stroke:var(--hero-line,#456184)"/>
+  <rect x="397" y="250" width="136" height="83" rx="5" style="fill:var(--bg,#081422);stroke:var(--accent,#22d3ee)" stroke-opacity=".35"/>
+  <ellipse cx="462" cy="291" rx="43" ry="34" fill="url(#iv-region)"/>
+  <path d="M445 270h-15v14m0 17v13h15m32-44h15v14m0 17v13h-15" style="stroke:var(--accent2,#2dd4bf)" stroke-width="1.5"/>
+  <path d="m327 75 17-10m-1 283 17 10M59 196l16-9" style="stroke:var(--accent,#22d3ee)" stroke-opacity=".35" stroke-width="2"/>
+</svg>

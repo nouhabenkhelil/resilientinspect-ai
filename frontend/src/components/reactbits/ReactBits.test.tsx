@@ -29,6 +29,31 @@ test('CountUp exposes the exact measured value and updates immediately with redu
   expect(screen.getByLabelText('14')).toHaveTextContent('14');
 });
 
+test('CountUp finishes within its duration and never restarts for polling updates', () => {
+  media(false);
+  vi.useFakeTimers();
+  const frames: FrameRequestCallback[] = [];
+  const raf = vi.fn((callback: FrameRequestCallback) => { frames.push(callback); return frames.length; });
+  vi.stubGlobal('requestAnimationFrame', raf);
+  vi.stubGlobal('cancelAnimationFrame', vi.fn());
+  const { rerender, unmount } = render(<CountUp to={15} duration={.75} />);
+  vi.advanceTimersByTime(0);
+  frames.shift()!(100);
+  frames.shift()!(350);
+  const current = Number(screen.getByLabelText('15').textContent);
+  expect(current).toBeGreaterThan(0);
+  expect(current).toBeLessThan(15);
+  frames.shift()!(850);
+  expect(screen.getByLabelText('15')).toHaveTextContent('15');
+  const scheduled = raf.mock.calls.length;
+  rerender(<CountUp to={15} duration={.75} />);
+  rerender(<CountUp to={14} duration={.75} />);
+  expect(screen.getByLabelText('14')).toHaveTextContent('14');
+  expect(raf).toHaveBeenCalledTimes(scheduled);
+  unmount();
+  expect(vi.getTimerCount()).toBe(0);
+});
+
 test('AnimatedList preserves natural tab order and selects only a real item', async () => {
   media(true);
   const select = vi.fn();

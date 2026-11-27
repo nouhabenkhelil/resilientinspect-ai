@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { portalRequest } from './session';
+import { Cpu, Database, Network, ShieldCheck, Workflow } from 'lucide-react';
+import { StatusBadge } from '../components/StatusBadge';
 interface OperationsData {
   measured_at: string;
   database_up: boolean;
@@ -89,29 +91,19 @@ export function Operations() {
         <p role="status">Chargement des indicateurs autorisés…</p>
       ) : (
         <>
-          <div className="table-scroll">
-            <table>
-              <thead>
-                <tr>
-                  <th>Service</th>
-                  <th>État observé</th>
-                </tr>
-              </thead>
-              <tbody>
+          <div className="service-health-grid" aria-label="Santé observée des services">
                 {[
-                  ['Gateway', data.gateway_up],
-                  ['PostgreSQL', data.database_up],
-                  ['Worker · heartbeat récent', data.worker_up],
-                  ['Backend scientifique', data.science_up],
-                  ['Keycloak', data.idp_up],
-                ].map(([name, up]) => (
-                  <tr key={String(name)}>
-                    <td>{name}</td>
-                    <td>{up === null ? 'Non disponible' : up ? 'Disponible' : 'Indisponible'}</td>
-                  </tr>
+                  { name: 'Gateway', up: data.gateway_up, icon: Network },
+                  { name: 'PostgreSQL', up: data.database_up, icon: Database },
+                  { name: 'Worker · heartbeat récent', up: data.worker_up, icon: Workflow },
+                  { name: 'Backend scientifique', up: data.science_up, icon: Cpu },
+                  { name: 'Keycloak', up: data.idp_up, icon: ShieldCheck },
+                ].map(({name, up, icon: Glyph}) => (
+                  <article className="service-health-card" key={name}>
+                    <Glyph size={21} aria-hidden="true" /><strong>{name}</strong>
+                    <StatusBadge tone={up == null ? 'neutral' : up ? 'positive' : 'negative'} label={up == null ? 'Non disponible' : up ? 'Disponible' : 'Indisponible'} />
+                  </article>
                 ))}
-              </tbody>
-            </table>
           </div>
           <dl className="technical-details">
             <div>

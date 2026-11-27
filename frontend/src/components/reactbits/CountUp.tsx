@@ -1,141 +1,53 @@
-// React Bits TS-CSS, d37099f; adapted for the studio. See THIRD_PARTY.md.
-import { useInView, useMotionValue, useSpring } from 'motion/react';
-import { useCallback, useEffect, useRef } from 'react';
+// React Bits CountUp, adapted for a bounded one-time measured-value reveal.
+// See THIRD_PARTY.md. Values updated by polling are rendered immediately.
+import { useInView } from 'motion/react';
+import { useCallback, useLayoutEffect, useRef } from 'react';
 import { useReducedEffects } from './useReducedEffects';
-
 interface CountUpProps {
-  to: number;
-  from?: number;
-  direction?: 'up' | 'down';
-  delay?: number;
-  duration?: number;
-  className?: string;
-  startWhen?: boolean;
-  separator?: string;
-  onStart?: () => void;
-  onEnd?: () => void;
+  to: number; from?: number; direction?: 'up' | 'down'; delay?: number;
+  duration?: number; className?: string; startWhen?: boolean; separator?: string;
+  onStart?: () => void; onEnd?: () => void;
 }
-
-export default function CountUp({
-  to,
-  from = 0,
-  direction = 'up',
-  delay = 0,
-  duration = 2,
-  className = '',
-  startWhen = true,
-  separator = '',
-  onStart,
-  onEnd,
-}: CountUpProps) {
+export default function CountUp({ to, from = 0, direction = 'up', delay = 0,
+  duration = .75, className = '', startWhen = true, separator = '', onStart, onEnd }: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const emptyRef = useRef<HTMLSpanElement>(null);
+  const started = useRef(false);
   const reduced = useReducedEffects();
-  const motionValue = useMotionValue(direction === 'down' ? to : from);
-
-  const damping = 20 + 40 * (1 / Math.max(0.1, duration));
-  const stiffness = 100 * (1 / Math.max(0.1, duration));
-
-  const springValue = useSpring(motionValue, {
-    damping,
-    stiffness,
-  });
-
-  const canObserve = typeof IntersectionObserver !== 'undefined';
-  const visible = useInView(canObserve ? ref : emptyRef, { once: true, margin: '0px' });
-  const isInView = !canObserve || visible;
-
-  const getDecimalPlaces = (num: number): number => {
-    const str = num.toString();
-    if (str.includes('.')) {
-      const decimals = str.split('.')[1];
-      if (parseInt(decimals) !== 0) {
-        return decimals.length;
-      }
+  const observable = typeof IntersectionObserver !== 'undefined';
+  const visible = useInView(observable ? ref : emptyRef, { once: true });
+  const target = direction === 'down' ? from : to;
+  const origin = direction === 'down' ? to : from;
+  const decimals = Math.min(20, Math.max(...[from, to].map((value) => (String(value).split('.')[1] || '').length)));
+  const format = useCallback((value: number) => {
+    const text = Intl.NumberFormat('en-US', { useGrouping: !!separator,
+      minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(value);
+    return separator ? text.replace(/,/g, separator) : text;
+  }, [decimals, separator]);
+  // Set the starting/final text before paint: no target → zero flash on mount,
+  // and polling updates remain exact without a stale intermediate frame.
+  useLayoutEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    const write = (value: number) => { node.textContent = format(value); };
+    if (reduced || started.current || !startWhen || duration <= 0 || origin === target) {
+      write(target); node.dataset.counting = 'false'; return;
     }
-    return 0;
-  };
-
-  const maxDecimals = Math.max(getDecimalPlaces(from), getDecimalPlaces(to));
-
-  const formatValue = useCallback(
-    (latest: number) => {
-      const hasDecimals = maxDecimals > 0;
-
-      const options: Intl.NumberFormatOptions = {
-        useGrouping: !!separator,
-        minimumFractionDigits: hasDecimals ? maxDecimals : 0,
-        maximumFractionDigits: hasDecimals ? maxDecimals : 0,
-      };
-
-      const formattedNumber = Intl.NumberFormat('en-US', options).format(latest);
-
-      return separator ? formattedNumber.replace(/,/g, separator) : formattedNumber;
-    },
-    [maxDecimals, separator],
-  );
-
-  useEffect(() => {
-    if (ref.current) {
-      ref.current.textContent = formatValue(
-        reduced ? (direction === 'down' ? from : to) : direction === 'down' ? to : from,
-      );
-    }
-  }, [from, to, direction, formatValue, reduced]);
-
-  useEffect(() => {
-    if (isInView && startWhen && !reduced) {
-      if (typeof onStart === 'function') {
-        onStart();
-      }
-
-      const timeoutId = setTimeout(() => {
-        motionValue.set(direction === 'down' ? from : to);
-      }, delay * 1000);
-
-      const durationTimeoutId = setTimeout(
-        () => {
-          if (typeof onEnd === 'function') {
-            onEnd();
-          }
-        },
-        delay * 1000 + duration * 1000,
-      );
-
-      return () => {
-        clearTimeout(timeoutId);
-        clearTimeout(durationTimeoutId);
-      };
-    }
-  }, [
-    isInView,
-    startWhen,
-    motionValue,
-    direction,
-    from,
-    to,
-    delay,
-    onStart,
-    onEnd,
-    duration,
-    reduced,
-  ]);
-
-  useEffect(() => {
-    const unsubscribe = springValue.on('change', (latest: number) => {
-      if (ref.current && !reduced) {
-        ref.current.textContent = formatValue(latest);
-      }
-    });
-
-    return () => unsubscribe();
-  }, [springValue, formatValue, reduced]);
-
-  return (
-    <span
-      className={className}
-      ref={ref}
-      aria-label={formatValue(direction === 'down' ? from : to)}
-    />
-  );
+    if (observable && !visible) { write(origin); return; }
+    write(origin);
+    let frame = 0, beginning: number | undefined;
+    const milliseconds = Math.min(900, duration * 1000);
+    const timer = setTimeout(() => {
+      node.dataset.counting = 'true';
+      frame = requestAnimationFrame(function tick(now) {
+        if (beginning === undefined) { beginning = now; started.current = true; onStart?.(); }
+        const progress = Math.min(1, (now - beginning) / milliseconds);
+        write(origin + (target - origin) * (1 - (1 - progress) ** 3));
+        if (progress < 1) frame = requestAnimationFrame(tick);
+        else { write(target); node.dataset.counting = 'false'; onEnd?.(); }
+      });
+    }, delay * 1000);
+    return () => { clearTimeout(timer); cancelAnimationFrame(frame); node.dataset.counting = 'false'; };
+  }, [target, origin, reduced, startWhen, duration, observable, visible, delay, format, onStart, onEnd]);
+  return <span className={className} ref={ref} aria-label={format(target)}>{format(target)}</span>;
 }

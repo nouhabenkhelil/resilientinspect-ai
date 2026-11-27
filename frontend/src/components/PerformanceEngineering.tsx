@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useReducedMotion } from 'motion/react';
 import {
   Bar,
   BarChart,
@@ -28,6 +29,7 @@ const report = raw as unknown as {
   models: Row[];
 };
 export function PerformanceEngineering() {
+  const reducedMotion = useReducedMotion();
   const [category, setCategory] = useState('bottle');
   const [metric, setMetric] = useState<'p50_ms' | 'p95_ms' | 'images_per_second'>('p50_ms');
   const rows = report.models.filter((r) => r.category === category);
@@ -94,8 +96,8 @@ export function PerformanceEngineering() {
                   }}
                 />
                 <Legend />
-                <Bar dataKey="PyTorch" fill="var(--accent)" isAnimationActive={false} />
-                <Bar dataKey="ONNX" fill="var(--accent2)" isAnimationActive={false} />
+                <Bar dataKey="PyTorch" fill="var(--accent)" isAnimationActive={!reducedMotion} animationDuration={380} animationEasing="ease-out" />
+                <Bar dataKey="ONNX" fill="var(--accent2)" isAnimationActive={!reducedMotion} animationDuration={380} animationEasing="ease-out" />
               </BarChart>
             </ResponsiveContainer>
           </div>

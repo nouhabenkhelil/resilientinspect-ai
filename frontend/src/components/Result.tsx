@@ -1,4 +1,5 @@
 import { useId, useRef, useState } from 'react';
+import { RevealSection } from './RevealSection';
 import { Copy, Download, Maximize2 } from 'lucide-react';
 import type { Prediction, VisualizedPrediction } from '../api/contracts';
 import { Icon } from './Icon';
@@ -78,7 +79,7 @@ export function Result({
   const titleId = useId();
   const anomaly = result.decision === 'anomaly';
   return (
-    <section className="panel result-panel" aria-labelledby={titleId}>
+    <RevealSection className="panel result-panel" aria-labelledby={titleId}>
       <div className="panel-heading">
         <h2 id={titleId}>Résultat de l’inspection</h2>
         <span className="eyebrow">INFÉRENCE CPU</span>
@@ -170,7 +171,7 @@ export function Result({
           </dd>
         </div>
       </dl>
-    </section>
+    </RevealSection>
   );
 }
 
@@ -192,7 +193,7 @@ export function Explanation({ result }: { result: VisualizedPrediction }) {
   function frame() {
     return (
       <div className={`visual-frame ${view === 'side' ? 'side-by-side' : ''}`}>
-        <div className="zoom-canvas" style={{ transform: `scale(${zoom})` }}>
+        <div className="zoom-canvas" key={view} style={{ transform: `scale(${zoom})` }}>
           {view === 'side' ? (
             <>
               <figure>

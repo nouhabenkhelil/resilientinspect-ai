@@ -14,6 +14,7 @@ import { recordInspection } from '../studio/history';
 import { Result, Explanation } from './Result';
 import { architectures, categoryLabels } from './InspectionTools';
 import { EngineDuel } from './EngineDuel';
+import { RevealSection } from './RevealSection';
 
 export function classification(decision: string, truth: string) {
   if (truth === 'unknown') return null;
@@ -188,7 +189,7 @@ export function ComparisonLab({ metadata }: { metadata: Metadata | null }) {
             if (!busy) void upload(Array.from(e.dataTransfer.files));
           }}
         >
-          {preview ? <img src={preview} alt="Image commune aux modèles" /> : <Upload size={32} />}
+          {preview ? <img key={preview} className="local-preview" src={preview} alt="Image commune aux modèles" /> : <Upload size={32} />}
           <label className="secondary-button">
             Importer l’image commune
             <input
@@ -238,7 +239,7 @@ export function ComparisonLab({ metadata }: { metadata: Metadata | null }) {
         </div>
       </section>
       {completed.length >= 2 && (
-        <div className={`notice ${disagreement ? 'warning' : 'success'}`} role="status">
+        <div className={`notice comparison-verdict ${disagreement ? 'warning' : 'success'}`} role="status">
           {disagreement ? <TriangleAlert /> : <CheckCheck />}
           <p>
             <strong>
@@ -269,7 +270,7 @@ export function ComparisonLab({ metadata }: { metadata: Metadata | null }) {
       />
       <div className="comparison-results">
         {results.map((row) => (
-          <section key={row.model} className="comparison-result">
+          <RevealSection key={row.model} className="comparison-result">
             <header>
               <h2>{row.model}</h2>
               <p>{architectures[row.model].description}</p>
@@ -298,7 +299,7 @@ export function ComparisonLab({ metadata }: { metadata: Metadata | null }) {
                 </>
               )
             )}
-          </section>
+          </RevealSection>
         ))}
       </div>
     </div>

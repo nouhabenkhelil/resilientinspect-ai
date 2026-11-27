@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { portalRequest, type PortalUser } from './session';
+import { StatusBadge } from '../components/StatusBadge';
 
 export function PortalAdmin() {
   const [users, setUsers] = useState<PortalUser[]>([]);
@@ -62,7 +63,7 @@ export function PortalAdmin() {
                   <small className="muted"> {u.email}</small>
                 </td>
                 <td>{u.role}</td>
-                <td>{u.enabled ? 'Actif' : 'Suspendu'}</td>
+                <td><StatusBadge tone={u.enabled ? 'positive' : 'neutral'} label={u.enabled ? 'Actif' : 'Suspendu'} /></td>
                 <td>
                   <button
                     className="text-button"
